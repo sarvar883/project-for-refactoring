@@ -10,8 +10,8 @@ const orderRoutes = require('./routes/order');
 const app = express();
 
 // Body parser middleware
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // DB Config
 const db = require('./config/keys').mongoURI;
@@ -32,9 +32,9 @@ require('./config/passport')(passport);
 app.use(authRoutes);
 app.use('/order', orderRoutes);
 
-// serve static assets if in production
+// Server static assets if in production
 if (process.env.NODE_ENV === 'production') {
-  // set a static folder
+  // Set static folder
   app.use(express.static('client/build'));
 
   app.get('*', (req, res) => {
