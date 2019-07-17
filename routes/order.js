@@ -13,4 +13,7 @@ router.post('/create-order', passport.authenticate('jwt', { session: false }), o
 // get orders for logged in disinfector
 router.post('/get-my-orders', passport.authenticate('jwt', { session: false }), orderController.getOrders);
 
+// add disinfector comment to order
+router.post('/addDisinfectorComment', passport.authenticate('jwt', { session: false }), orderController.addDisinfectorComment);
+
 module.exports = router;

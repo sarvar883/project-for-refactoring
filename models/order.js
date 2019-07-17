@@ -33,6 +33,9 @@ const orderSchema = new Schema({
   },
   comment: {
     type: String
+  },
+  disinfectorComment: {
+    type: String
   }
 });
 
