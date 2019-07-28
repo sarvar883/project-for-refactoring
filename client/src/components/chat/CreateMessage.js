@@ -63,5 +63,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-
 export default connect(mapStateToProps, { createMessage })(withRouter(CreateMessage));

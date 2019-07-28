@@ -17,7 +17,8 @@ class ShowAnons extends Component {
   componentDidMount() {
     this._isMounted = true;
 
-    const socket = openSocket('http://localhost:5000');
+    // const socket = openSocket('http://localhost:5000');
+    const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
 
     socket.on('createAnons', data => {
       this.addAnonsToDOM(data.anons);
