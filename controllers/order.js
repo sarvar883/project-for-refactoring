@@ -1,13 +1,15 @@
+const mongoose = require('mongoose');
 const User = require('../models/user');
 const Order = require('../models/order');
 const validateOrderInput = require('../validation/order')
 const validateDisinfectorCommentInput = require('../validation/disinfectorComment');
 const io = require('../socket');
 
+
 exports.getAllDisinfectors = (req, res) => {
   User.find({ occupation: 'disinfector' })
     .then(disinfectors => res.json(disinfectors))
-    .catch(err => console.log('getAllDisinfectors ERROR', err))
+    .catch(err => console.log('getAllDisinfectors ERROR', err));
 };
 
 
@@ -21,10 +23,12 @@ exports.createOrder = (req, res) => {
   }
 
   const order = new Order({
+    _id: mongoose.Types.ObjectId(),
     disinfectorId: req.body.disinfectorId,
     client: req.body.client,
     address: req.body.address,
-    date: req.body.date,
+    dateFrom: req.body.dateFrom,
+    dateTo: req.body.dateTo,
     phone: req.body.phone,
     typeOfService: req.body.typeOfService,
     comment: req.body.comment,
@@ -33,15 +37,20 @@ exports.createOrder = (req, res) => {
 
   order.save()
     .then(() => {
-      io.getIO().emit('createOrder', {
-        disinfectorId: req.body.disinfectorId,
-        order: order
-      })
-      return res.redirect('/')
+      Order.findOne(order)
+        .populate('disinfectorId')
+        .exec()
+        .then(savedOrder => {
+          io.getIO().emit('createOrder', {
+            disinfectorId: req.body.disinfectorId,
+            order: savedOrder
+          });
+          return res.json(savedOrder);
+        })
     })
     .catch(err => {
       console.log('createOrder ERROR', err);
-      res.status(400).json(err)
+      res.status(400).json(err);
     });
 };
 

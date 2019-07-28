@@ -19,7 +19,11 @@ const orderSchema = new Schema({
     type: String,
     required: true
   },
-  date: {
+  dateFrom: {
+    type: Date,
+    required: true
+  },
+  dateTo: {
     type: Date,
     required: true
   },

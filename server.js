@@ -6,6 +6,8 @@ const path = require('path');
 
 const authRoutes = require('./routes/auth');
 const orderRoutes = require('./routes/order');
+const chatRoutes = require('./routes/chat');
+const operatorRoutes = require('./routes/operator');
 
 const app = express();
 
@@ -17,10 +19,10 @@ app.use(bodyParser.json());
 const db = require('./config/keys').mongoURI;
 
 // Connect to MongoDB
-// mongoose
-//   .connect(db)
-//   .then(() => console.log('MongoDB Connected'))
-//   .catch(err => console.log('app.js ERROR', err));
+mongoose
+  .connect(db, { useNewUrlParser: true })
+  .then(() => console.log('MongoDB Connected'))
+  .catch(err => console.log('app.js ERROR', err));
 
 // Passport middleware
 app.use(passport.initialize());
@@ -31,6 +33,8 @@ require('./config/passport')(passport);
 // Use Routes
 app.use(authRoutes);
 app.use('/order', orderRoutes);
+app.use('/chat', chatRoutes);
+app.use('/operator', operatorRoutes);
 
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {
@@ -43,15 +47,5 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const port = process.env.PORT || 5000;
-
-// Connect to MongoDB
-mongoose
-  .connect(db)
-  .then((result) => {
-    const server = app.listen(port);
-    const io = require('./socket').init(server);
-    console.log('MongoDB Connected')
-  })
-  .catch(err => console.log('app.js ERROR', err));
-
-// app.listen(port, () => console.log(`Server running on port ${port}`));
+const server = app.listen(port, () => console.log(`Server running on port ${port}`));
+const io = require('./socket').init(server);
