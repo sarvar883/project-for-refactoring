@@ -10,7 +10,7 @@ const OperatorRoute = ({ component: Component, auth, ...rest }) => (
       if (auth.isAuthenticated === false) {
         return <Redirect to="/login" />
       }
-      if (auth.user.occupation === 'operator') {
+      if (auth.user.occupation === 'operator' || auth.user.occupation === 'admin') {
         return <Component {...props} />
       } else {
         return <Redirect to="/" />
