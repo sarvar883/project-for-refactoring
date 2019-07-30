@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Moment from 'react-moment';
 
@@ -9,77 +9,74 @@ class SortedOrders extends Component {
   };
 
   render() {
-    let array = [], currentTime = '';
+    const hours = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+
+    let array = [], currentHour = 0;
     this.state.sortedOrders.forEach((item, index) => {
-      if (index === 0) {
-        if (new Date(item.dateFrom).getMinutes() >= 10) {
-          currentTime = `${new Date(item.dateFrom).getHours()}:${new Date(item.dateFrom).getMinutes()}`;
+      if (new Date(item.dateFrom).getHours() === currentHour) {
+        if (array.length > 0) {
+          array[array.length - 1].times += 1;
+          array[array.length - 1].elements.push(item);
         } else {
-          currentTime = `${new Date(item.dateFrom).getHours()}:0${new Date(item.dateFrom).getMinutes()}`;
-        }
-        array.push({
-          time: currentTime,
-          times: 1,
-          elements: [item]
-        });
-      } else {
-        if (`${new Date(item.dateFrom).getHours()}:${new Date(item.dateFrom).getMinutes()}` !== currentTime) {
-          if (new Date(item.dateFrom).getMinutes() >= 10) {
-            currentTime = `${new Date(item.dateFrom).getHours()}:${new Date(item.dateFrom).getMinutes()}`;
-          } else {
-            currentTime = `${new Date(item.dateFrom).getHours()}:0${new Date(item.dateFrom).getMinutes()}`;
-          }
           array.push({
-            time: currentTime,
+            hour: currentHour,
             times: 1,
             elements: [item]
           });
-        } else {
-          array[array.length - 1].times += 1;
-          array[array.length - 1].elements.push(item);
         }
-
+      } else {
+        currentHour = new Date(item.dateFrom).getHours();
+        array.push({
+          hour: currentHour,
+          times: 1,
+          elements: [item]
+        });
       }
     });
 
-    let sortedOrders = array.map((item, index) => {
-      return (
-        <React.Fragment key={index}>
-          <div className="row mt-3">
-            <div className="col-12">
-              <h1 className="mb-0">{item.time}</h1>
-            </div>
-            {item.elements.map((object, number) => {
-              let colnumber;
-              if (item.times === 1 || item.times === 2) colnumber = 6;
-              if (item.times > 2) colnumber = 4;
-              return (
-                <div className={`col-md-${colnumber} pr-0`} key={number}>
-                  <div className="card order mt-2">
-                    <div className="card-body p-0">
-                      <ul className="font-bold">
-                        <li className="pb-2">Время выполнения C: <Moment format="HH:mm">{object.dateFrom}</Moment></li>
-                        <li className="pb-2">Время выполнения ПО: <Moment format="HH:mm">{object.dateTo}</Moment></li>
-                        <li className="pb-2">Дезинфектор: {object.disinfectorId.name}</li>
-                        <li className="pb-2">Клиент: {object.client}</li>
-                        <li className="pb-2">Адрес: {object.address}</li>
-                        <li className="pb-2">Тип услуги: {object.typeOfService}</li>
-                        <li className="pb-2">Комментарии Оператора: {object.comment ? object.comment : 'Нет комментариев'}</li>
-                        <li className="pb-2">Комментарии Дезинфектора: {object.disinfectorComment ? object.disinfectorComment : 'Нет комментариев'}</li>
-                        <li className="pb-2">Заказ Добавлен: <Moment format="DD/MM/YYYY HH:mm">{object.createdAt}</Moment></li>
-                      </ul>
-                    </div>
-                  </div>
+    let renderOrders;
+    let renderHours = hours.map((item) => {
+
+      renderOrders = {};
+
+      array.forEach(object => {
+        if (object.hour === item) {
+          let colnumber;
+          if (object.times === 1 || object.times === 2) colnumber = 6;
+          if (object.times > 2) colnumber = 4;
+          renderOrders = object.elements.map((element, index) =>
+            <div className={`col-md-${colnumber} pr-0`} key={index}>
+              <div className="card order mt-2">
+                <div className="card-body p-0">
+                  <ul className="font-bold">
+                    <li className="pb-2">Время выполнения C <Moment format="HH:mm">{element.dateFrom}</Moment> ПО <Moment format="HH:mm">{element.dateTo}</Moment></li>
+                    <li className="pb-2">Дезинфектор: {element.disinfectorId.name}</li>
+                    <li className="pb-2">Клиент: {element.client}</li>
+                    <li className="pb-2">Адрес: {element.address}</li>
+                    <li className="pb-2">Тип услуги: {element.typeOfService}</li>
+                  </ul>
                 </div>
-              )
-            })}
+              </div>
+            </div>
+          )
+        }
+      });
+
+      return (
+        <div className="hours" key={item}>
+          <div className="help row mt-3">
+            <Link to="/create-order" className="btn btn-success mr-3">+</Link>
+            <h1 className="d-inline mb-0">{`${item}:00`}</h1>
           </div>
-        </React.Fragment>
+          <div className="row">
+            {renderOrders.length > 0 ? (renderOrders) : ''}
+          </div>
+        </div>
       )
     });
 
     return (
-      sortedOrders
+      renderHours
     )
   }
 }

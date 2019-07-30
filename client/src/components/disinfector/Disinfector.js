@@ -14,7 +14,7 @@ class Disinfector extends Component {
   render() {
     return (
       <div className="container">
-        <h1 className="text-center mt-3">Страница Дезинфектора {this.props.auth.user.name}</h1>
+        <h1 className="text-center">Страница Дезинфектора {this.props.auth.user.name}</h1>
         <h2 className="text-center mt-3">Ваши Заказы</h2>
 
         <div className="container">

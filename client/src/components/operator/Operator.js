@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Calendar from 'react-calendar';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Moment from 'react-moment';
 import Spinner from '../common/Spinner';
@@ -39,6 +39,8 @@ class Operator extends Component {
             <form onSubmit={this.onSubmit}>
               <button type="submit" className="btn btn-success mt-3">Посмотреть</button>
             </form>
+
+            <Link to="/create-order" className="btn btn-primary mt-3">Создать Заказ</Link>
           </div>
           <div className="col-lg-9">
             <h1 className="text-center">Заявки на <Moment format="DD/MM/YYYY">{this.props.operator.date}</Moment></h1>
@@ -52,7 +54,7 @@ class Operator extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   auth: state.auth,
   order: state.order,
   operator: state.operator,

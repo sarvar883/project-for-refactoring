@@ -36,16 +36,6 @@ class Navbar extends Component {
       </div>
     );
 
-    const operatorLinks = (
-      <div className="operatorLinks">
-        <li className="nav-item list-inline-item mr-2">
-          <Link className="nav-link" to="/calendar">
-            Calendar
-          </Link>
-        </li>
-      </div>
-    );
-
     const guestLinks = (
       <div className="guestLinks">
         <li className="nav-item list-inline-item">
@@ -67,13 +57,19 @@ class Navbar extends Component {
       </div>
     );
 
-    const adminLinks = (
-      <div className="adminLinks">
+    const operatorLinks = (
+      <div className="operatorLinks">
         <li className="nav-item mr-2 list-inline-item">
           <Link className="nav-link" to="/create-order">
             Создать заказ
           </Link>
         </li>
+      </div>
+    );
+
+    const adminLinks = (
+      <div className="adminLinks">
+
       </div>
     );
 
@@ -107,7 +103,7 @@ Navbar.propTypes = {
   auth: PropTypes.object.isRequired
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   auth: state.auth
 });
 

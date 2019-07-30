@@ -10,13 +10,14 @@ import store from './store';
 import PrivateRoute from './components/common/PrivateRoute';
 import AdminRoute from './components/common/AdminRoute';
 import DisinfectorRoute from './components/common/DisinfectorRoute';
+import OperatorRoute from './components/common/OperatorRoute';
 
 // Components
 import Navbar from './components/layout/Navbar';
 import Landing from './components/layout/Landing';
 import Admin from './components/admin/Admin';
 import Disinfector from './components/disinfector/Disinfector';
-import CreateOrder from './components/layout/CreateOrder';
+import CreateOrder from './components/operator/CreateOrder';
 import Chat from './components/chat/Chat';
 import ChatRoom from './components/chat/ChatRoom';
 import Anons from './components/chat/Anons';
@@ -74,20 +75,18 @@ class App extends Component {
               <AdminRoute exact path="/admin" component={Admin} />
             </Switch>
 
-            <Switch>
-              <AdminRoute exact path="/create-order" component={CreateOrder} />
-            </Switch>
-
             {/* DisinfectorRoutes */}
             <Switch>
               <DisinfectorRoute exact path="/disinfector" component={Disinfector} />
             </Switch>
 
-            {/* DisinfectorRoutes */}
+            {/* OperatorRoutes */}
             <Switch>
-              <PrivateRoute exact path="/operator" component={Operator} />
+              <OperatorRoute exact path="/operator" component={Operator} />
             </Switch>
-
+            <Switch>
+              <OperatorRoute exact path="/create-order" component={CreateOrder} />
+            </Switch>
 
             {/* Chat Routes */}
             <Switch>

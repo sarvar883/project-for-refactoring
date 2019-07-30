@@ -22,7 +22,6 @@ class DisplayOrders extends Component {
     const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
 
     socket.on('createOrder', data => {
-      console.log('createOrder', data.order);
       if (this.props.auth.user.id === data.disinfectorId) {
         this.addOrder(data.order);
       }

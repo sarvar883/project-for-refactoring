@@ -42,6 +42,7 @@ class Register extends Component {
       email: this.state.email,
       phone: this.state.phone,
       occupation: this.state.occupation,
+      color: '',
       password: this.state.password,
       password2: this.state.password2
     };
@@ -60,6 +61,16 @@ class Register extends Component {
       { label: 'Дезинфектор', value: 'disinfector' },
       { label: 'Маркетолог', value: 'marketer' },
       { label: 'Бухгалтер', value: 'accountant' }
+    ];
+
+    const colorOptions = [
+      { label: '-- Выберите цвет дизинфектора (для календаря) --', value: 0 },
+      { label: 'Красный', value: 'red' },
+      { label: 'Зеленый', value: 'green' },
+      { label: 'Синий', value: 'blue' },
+      { label: 'Оранжевый', value: 'orange' },
+      { label: 'Желтый', value: 'yellow' },
+      { label: 'Фиолетовый', value: 'violet' },
     ];
 
     return (
@@ -101,6 +112,15 @@ class Register extends Component {
                     error={errors.occupation}
                     options={occupationOptions}
                   />
+                  {this.state.occupation === 'disinfector' ? (
+                    <SelectListGroup
+                      name="color"
+                      value={this.state.color}
+                      onChange={this.onChange}
+                      error={errors.color}
+                      options={colorOptions}
+                    />
+                  ) : ''}
                   <TextFieldGroup
                     label="Введите Пароль"
                     type="password"
