@@ -29,8 +29,8 @@ class ShowChat extends Component {
 
     console.log('location', window.location.origin);
 
-    const socket = openSocket('http://localhost:5000');
-    // const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
+    // const socket = openSocket('http://localhost:5000');
+    const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
     // const socket = openSocket(window.location.origin);
 
     socket.on(`createMessageInChat${this.props.match.params.chatId}`, data => {
