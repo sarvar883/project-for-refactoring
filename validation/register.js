@@ -36,7 +36,7 @@ module.exports = function validateRegisterInput(data) {
   }
 
   if (data.occupation === 'disinfector' && Validator.isEmpty(data.color)) {
-    errors.color = 'Выберите цвет дизинфектора';
+    errors.color = 'Выберите цвет дезинфектора';
   }
 
   if (Validator.isEmpty(data.password)) {

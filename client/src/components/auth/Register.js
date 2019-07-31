@@ -59,7 +59,7 @@ class Register extends Component {
     ];
 
     const colorOptions = [
-      { label: '-- Выберите цвет дизинфектора (для календаря) --', value: 0 },
+      { label: '-- Выберите цвет дезинфектора (для календаря) --', value: 0 },
       { label: 'Красный', value: 'red' },
       { label: 'Зеленый', value: 'green' },
       { label: 'Синий', value: 'blue' },

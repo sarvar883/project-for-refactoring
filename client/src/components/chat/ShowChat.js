@@ -138,12 +138,12 @@ class ShowChat extends Component {
                 className="btn btn-danger btn-sm pt-0 pb-0 ml-1 delete-message"
                 onClick={this.deleteClick}
                 value={item._id}
-              >Delete Message</button>
+              >Delete</button>
 
               <button
                 className="btn btn-dark btn-sm pt-0 pb-0 edit-message"
                 onClick={this.editClick.bind(this, item._id, item.body)}
-              >Edit Message</button>
+              >Edit</button>
             </React.Fragment>
           ) : null}
         </div>
