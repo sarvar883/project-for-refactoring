@@ -8,14 +8,41 @@ import SelectListGroup from '../common/SelectListGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 
 class CreateOrder extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+
+    let defaultHour, defaultDate;
+    if (this.props.location.state) {
+      defaultHour = this.props.location.state.state.hour;
+      defaultDate = this.props.location.state.state.date;
+    }
+
+    let defaultDateMonth, defaultDateDay, defaultHourString;
+    if (new Date(defaultDate).getMonth() < 10) {
+      defaultDateMonth = `0${new Date(defaultDate).getMonth() + 1}`;
+    } else {
+      defaultDateMonth = `${new Date(defaultDate).getMonth() + 1}`;
+    }
+
+    if (new Date(defaultDate).getDate() < 10) {
+      defaultDateDay = `0${new Date(defaultDate).getDate()}`;
+    } else {
+      defaultDateDay = new Date(defaultDate).getDate();
+    }
+    const defaultDateString = `${new Date(defaultDate).getFullYear()}-${defaultDateMonth}-${defaultDateDay}`;
+
+    if (defaultHour < 10) {
+      defaultHourString = `0${defaultHour}:00`;
+    } else {
+      defaultHourString = `${defaultHour}:00`;
+    }
+
     this.state = {
       disinfectorId: '',
       client: '',
       address: '',
-      date: '',
-      timeFrom: '',
+      date: defaultDateString,
+      timeFrom: defaultHourString,
       timeTo: '',
       phone: '',
       typeOfService: '',
@@ -71,32 +98,6 @@ class CreateOrder extends Component {
       label: worker.name, value: worker._id
     }));
 
-    let defaultHour, defaultDate;
-    if (this.props.location.state) {
-      defaultHour = this.props.location.state.state.hour;
-      defaultDate = this.props.location.state.state.date;
-    }
-
-    let defaultDateMonth, defaultDateDay, defaultHourString;
-    if (new Date(defaultDate).getMonth() < 10) {
-      defaultDateMonth = `0${new Date(defaultDate).getMonth() + 1}`;
-    } else {
-      defaultDateMonth = `${new Date(defaultDate).getMonth() + 1}`;
-    }
-
-    if (new Date(defaultDate).getDate() < 10) {
-      defaultDateDay = `0${new Date(defaultDate).getDate()}`;
-    } else {
-      defaultDateDay = new Date(defaultDate).getDate();
-    }
-    const defaultDateString = `${new Date(defaultDate).getFullYear()}-${defaultDateMonth}-${defaultDateDay}`;
-
-    if (defaultHour < 10) {
-      defaultHourString = `0${defaultHour}`;
-    } else {
-      defaultHourString = defaultHour;
-    }
-
     return (
       <div className="container create-order mt-4" >
         <div className="row">
@@ -125,7 +126,7 @@ class CreateOrder extends Component {
                     label="Дата выполнения заказа"
                     name="date"
                     type="date"
-                    defaultValue={defaultDate ? defaultDateString : this.state.date}
+                    value={this.state.date}
                     onChange={this.onChange}
                     error={errors.date}
                   />
@@ -133,7 +134,7 @@ class CreateOrder extends Component {
                     label="Время (часы:минуты:AM/PM) C"
                     name="timeFrom"
                     type="time"
-                    defaultValue={defaultHour ? `${defaultHourString}:00` : this.state.date}
+                    value={this.state.timeFrom}
                     onChange={this.onChange}
                     error={errors.timeFrom}
                   />

@@ -30,15 +30,17 @@ class Operator extends Component {
     return (
       <div className="container-fluid">
         <div className="row">
-          <div className="col-lg-3 mt-4">
-            <Calendar
-              onChange={this.onChange}
-              value={this.state.date}
-            />
-            <h4>Дата: <Moment format="DD/MM/YYYY">{this.state.date}</Moment></h4>
-            <form onSubmit={this.onSubmit}>
-              <button type="submit" className="btn btn-success mt-3">Посмотреть</button>
-            </form>
+          <div className="col-lg-3 mt-4 calendar">
+            <div className="sticky-top">
+              <Calendar
+                onChange={this.onChange}
+                value={this.state.date}
+              />
+              <h4>Дата: <Moment format="DD/MM/YYYY">{this.state.date}</Moment></h4>
+              <form onSubmit={this.onSubmit}>
+                <button type="submit" className="btn btn-success mt-3">Посмотреть</button>
+              </form>
+            </div>
           </div>
           <div className="col-lg-9">
             <h1 className="text-center">Заявки на <Moment format="DD/MM/YYYY">{this.props.operator.date}</Moment></h1>

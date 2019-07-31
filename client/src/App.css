@@ -77,6 +77,13 @@ ul.decor-none {
 }
 
 
+/* CALENDAR */
+.calendar {
+  /* position: fixed; */
+}
+/* END OF CALENDAR */
+
+
 /* ORDER */
 .order {
   background-color: #d4e4f7;

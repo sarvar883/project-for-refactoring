@@ -6,7 +6,6 @@ const TextFieldGroup = ({
   name,
   placeholder,
   value,
-  defaultValue,
   label,
   error,
   info,
@@ -26,7 +25,6 @@ const TextFieldGroup = ({
         placeholder={placeholder}
         name={name}
         value={value}
-        defaultValue={defaultValue}
         onChange={onChange}
         disabled={disabled}
         required={required}
