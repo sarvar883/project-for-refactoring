@@ -11,38 +11,22 @@ class CreateOrder extends Component {
   constructor(props) {
     super(props);
 
-    let defaultHour, defaultDate;
+    let date, hour;
+
     if (this.props.location.state) {
-      defaultHour = this.props.location.state.state.hour;
-      defaultDate = this.props.location.state.state.date;
-    }
-
-    let defaultDateMonth, defaultDateDay, defaultHourString;
-    if (new Date(defaultDate).getMonth() < 10) {
-      defaultDateMonth = `0${new Date(defaultDate).getMonth() + 1}`;
+      date = this.props.location.state.state.date;
+      hour = this.props.location.state.state.hour;
     } else {
-      defaultDateMonth = `${new Date(defaultDate).getMonth() + 1}`;
-    }
-
-    if (new Date(defaultDate).getDate() < 10) {
-      defaultDateDay = `0${new Date(defaultDate).getDate()}`;
-    } else {
-      defaultDateDay = new Date(defaultDate).getDate();
-    }
-    const defaultDateString = `${new Date(defaultDate).getFullYear()}-${defaultDateMonth}-${defaultDateDay}`;
-
-    if (defaultHour < 10) {
-      defaultHourString = `0${defaultHour}:00`;
-    } else {
-      defaultHourString = `${defaultHour}:00`;
+      date = '';
+      hour = '';
     }
 
     this.state = {
       disinfectorId: '',
       client: '',
       address: '',
-      date: defaultDateString,
-      timeFrom: defaultHourString,
+      date: date,
+      timeFrom: hour,
       timeTo: '',
       phone: '',
       typeOfService: '',
@@ -84,6 +68,7 @@ class CreateOrder extends Component {
       comment: this.state.comment
     };
 
+    console.log('newOrder', newOrder);
     this.props.createOrder(newOrder, this.props.history);
   };
 

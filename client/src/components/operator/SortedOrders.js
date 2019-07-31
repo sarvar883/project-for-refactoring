@@ -9,9 +9,29 @@ class SortedOrders extends Component {
   };
 
   onClick = (hour, date) => {
+    let defaultDateMonth, defaultDateDay, defaultHourString;
+    if (new Date(date).getMonth() < 10) {
+      defaultDateMonth = `0${new Date(date).getMonth() + 1}`;
+    } else {
+      defaultDateMonth = `${new Date(date).getMonth() + 1}`;
+    }
+
+    if (new Date(date).getDate() < 10) {
+      defaultDateDay = `0${new Date(date).getDate()}`;
+    } else {
+      defaultDateDay = new Date(date).getDate();
+    }
+    const defaultDateString = `${new Date(date).getFullYear()}-${defaultDateMonth}-${defaultDateDay}`;
+
+    if (hour < 10) {
+      defaultHourString = `0${hour}:00`;
+    } else {
+      defaultHourString = `${hour}:00`;
+    }
+
     this.props.history.push('/create-order', {
       pathname: '/create-order',
-      state: { hour: hour, date: date }
+      state: { hour: defaultHourString, date: defaultDateString }
     });
   };
 
