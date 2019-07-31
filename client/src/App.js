@@ -60,7 +60,6 @@ class App extends Component {
           <div className="App">
             <Navbar />
             <Route exact path="/login" component={Login} />
-            <Route exact path="/register" component={Register} />
 
             <Switch>
               <PrivateRoute exact path="/" component={Landing} />
@@ -74,6 +73,9 @@ class App extends Component {
             <Switch>
               <AdminRoute exact path="/admin" component={Admin} />
             </Switch>
+
+            <PrivateRoute exact path="/register" component={Register} />
+
 
             {/* DisinfectorRoutes */}
             <Switch>

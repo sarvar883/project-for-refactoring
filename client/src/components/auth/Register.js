@@ -14,16 +14,11 @@ class Register extends Component {
       email: '',
       phone: '',
       occupation: '',
+      color: '',
       password: '',
       password2: '',
       errors: {}
     };
-  }
-
-  componentDidMount() {
-    if (this.props.auth.isAuthenticated) {
-      this.props.history.push(`/${this.props.auth.user.occupation}`);
-    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -42,7 +37,7 @@ class Register extends Component {
       email: this.state.email,
       phone: this.state.phone,
       occupation: this.state.occupation,
-      color: '',
+      color: this.state.color,
       password: this.state.password,
       password2: this.state.password2
     };

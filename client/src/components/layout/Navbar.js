@@ -39,11 +39,6 @@ class Navbar extends Component {
     const guestLinks = (
       <div className="guestLinks">
         <li className="nav-item list-inline-item">
-          <Link className="nav-link" to="/register">
-            Register
-          </Link>
-        </li>
-        <li className="nav-item list-inline-item">
           <Link className="nav-link" to="/login">
             Login
           </Link>
@@ -69,7 +64,11 @@ class Navbar extends Component {
 
     const adminLinks = (
       <div className="adminLinks">
-
+        <li className="nav-item mr-2 list-inline-item">
+          <Link className="nav-link" to="/register">
+            Добавить Юзер
+          </Link>
+        </li>
       </div>
     );
 

@@ -71,6 +71,32 @@ class CreateOrder extends Component {
       label: worker.name, value: worker._id
     }));
 
+    let defaultHour, defaultDate;
+    if (this.props.location.state) {
+      defaultHour = this.props.location.state.state.hour;
+      defaultDate = this.props.location.state.state.date;
+    }
+
+    let defaultDateMonth, defaultDateDay, defaultHourString;
+    if (new Date(defaultDate).getMonth() < 10) {
+      defaultDateMonth = `0${new Date(defaultDate).getMonth() + 1}`;
+    } else {
+      defaultDateMonth = `${new Date(defaultDate).getMonth() + 1}`;
+    }
+
+    if (new Date(defaultDate).getDate() < 10) {
+      defaultDateDay = `0${new Date(defaultDate).getDate()}`;
+    } else {
+      defaultDateDay = new Date(defaultDate).getDate();
+    }
+    const defaultDateString = `${new Date(defaultDate).getFullYear()}-${defaultDateMonth}-${defaultDateDay}`;
+
+    if (defaultHour < 10) {
+      defaultHourString = `0${defaultHour}`;
+    } else {
+      defaultHourString = defaultHour;
+    }
+
     return (
       <div className="container create-order mt-4" >
         <div className="row">
@@ -99,7 +125,7 @@ class CreateOrder extends Component {
                     label="Дата выполнения заказа"
                     name="date"
                     type="date"
-                    value={this.state.date}
+                    defaultValue={defaultDate ? defaultDateString : this.state.date}
                     onChange={this.onChange}
                     error={errors.date}
                   />
@@ -107,7 +133,7 @@ class CreateOrder extends Component {
                     label="Время (часы:минуты:AM/PM) C"
                     name="timeFrom"
                     type="time"
-                    value={this.state.timeFrom}
+                    defaultValue={defaultHour ? `${defaultHourString}:00` : this.state.date}
                     onChange={this.onChange}
                     error={errors.timeFrom}
                   />

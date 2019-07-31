@@ -27,6 +27,7 @@ exports.registerUser = (req, res) => {
         email: req.body.email,
         phone: req.body.phone,
         occupation: req.body.occupation,
+        color: req.body.color,
         password: req.body.password
       });
 

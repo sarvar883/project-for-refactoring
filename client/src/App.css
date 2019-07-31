@@ -84,6 +84,30 @@ ul.decor-none {
   border-radius: 10px;
   border: 2px solid black;
 }
+.order-bg-red {
+  background-color: red;
+  color: white;
+}
+.order-bg-green {
+  background-color: green;
+  color: white;
+}
+.order-bg-blue {
+  background-color: blue;
+  color: white;
+}
+.order-bg-orange {
+  background-color: orange;
+  color: white;
+}
+.order-bg-yellow {
+  background-color: yellow;
+  color: black;
+}
+.order-bg-violet {
+  background-color: violet;
+  color: white;
+}
 /* END OF ORDER */
 
 
