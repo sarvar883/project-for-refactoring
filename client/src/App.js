@@ -7,10 +7,13 @@ import { clearCurrentProfile } from './actions/profileActions';
 
 import { Provider } from 'react-redux';
 import store from './store';
+
+// import routes
 import PrivateRoute from './components/common/PrivateRoute';
 import AdminRoute from './components/common/AdminRoute';
-import DisinfectorRoute from './components/common/DisinfectorRoute';
 import OperatorRoute from './components/common/OperatorRoute';
+import AccountantRoute from './components/common/AccountantRoute';
+import DisinfectorRoute from './components/common/DisinfectorRoute';
 
 // Components
 import Navbar from './components/layout/Navbar';
@@ -22,6 +25,7 @@ import Chat from './components/chat/Chat';
 import ChatRoom from './components/chat/ChatRoom';
 import Anons from './components/chat/Anons';
 import Operator from './components/operator/Operator';
+import Accountant from './components/accountant/Accountant';
 
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
@@ -73,9 +77,9 @@ class App extends Component {
             <Switch>
               <AdminRoute exact path="/admin" component={Admin} />
             </Switch>
-
-            <PrivateRoute exact path="/register" component={Register} />
-
+            <Switch>
+              <AdminRoute exact path="/register" component={Register} />
+            </Switch>
 
             {/* DisinfectorRoutes */}
             <Switch>
@@ -88,6 +92,11 @@ class App extends Component {
             </Switch>
             <Switch>
               <OperatorRoute exact path="/create-order" component={CreateOrder} />
+            </Switch>
+
+            {/* Accountant Routes */}
+            <Switch>
+              <AccountantRoute exact path="/accountant" component={Accountant} />
             </Switch>
 
             {/* Chat Routes */}

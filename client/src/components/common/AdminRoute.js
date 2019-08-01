@@ -13,7 +13,7 @@ const AdminRoute = ({ component: Component, auth, ...rest }) => (
       if (auth.user.occupation === 'admin') {
         return <Component {...props} />
       } else {
-        return <Redirect to="/" />
+        return <Redirect to={`/${auth.user.occupation}`} />
       }
     }}
   />

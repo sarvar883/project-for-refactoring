@@ -13,7 +13,7 @@ const OperatorRoute = ({ component: Component, auth, ...rest }) => (
       if (auth.user.occupation === 'operator' || auth.user.occupation === 'admin') {
         return <Component {...props} />
       } else {
-        return <Redirect to="/" />
+        return <Redirect to={`/${auth.user.occupation}`} />
       }
     }}
   />

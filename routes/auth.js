@@ -7,11 +7,13 @@ const jwt = require('jsonwebtoken');
 const keys = require('../config/keys');
 const passport = require('passport');
 
+const isAdmin = require('../middleware/isAdmin');
+
 router.post('/login', authController.loginUser);
 
-router.post('/register', authController.registerUser);
+router.post('/register', passport.authenticate('jwt', { session: false }), isAdmin, authController.registerUser);
 
 // @desc    Return current user
-router.get('/current', authController.currentUser);
+router.get('/current', passport.authenticate('jwt', { session: false }), authController.currentUser);
 
 module.exports = router;
