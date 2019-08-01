@@ -2,12 +2,16 @@ import {
   GET_DISINFECTORS,
   SET_LOADING,
   GET_ALL_ORDERS,
-  ADD_ORDER
+  ADD_ORDER,
+  GET_ORDER_BY_ID
 } from '../actions/types';
 
 const initialState = {
   disinfectors: [],
   orders: [],
+  orderById: {
+    disinfectorId: {}
+  },
   loading: false
 };
 
@@ -35,6 +39,13 @@ export default function (state = initialState, action) {
         ...state,
         orders: [...state.orders, action.payload]
       };
+    case GET_ORDER_BY_ID:
+      return {
+        ...state,
+        orderById: action.payload,
+        loading: false
+      };
+
     default:
       return state;
   }

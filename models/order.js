@@ -31,16 +31,20 @@ const orderSchema = new Schema({
     type: String,
     required: true
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
   comment: {
     type: String
   },
   disinfectorComment: {
     type: String
-  }
+  },
+  completed: {
+    type: Boolean,
+    default: false
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
 });
 
 module.exports = mongoose.model('Order', orderSchema);

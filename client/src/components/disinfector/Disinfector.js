@@ -14,16 +14,18 @@ class Disinfector extends Component {
   render() {
     return (
       <div className="container">
-        <h1 className="text-center">Страница Дезинфектора {this.props.auth.user.name}</h1>
-        <h2 className="text-center mt-3">Ваши Заказы</h2>
-
-        <div className="container">
-          {this.props.order.loading ? <Spinner /> : (
-            <div className="row">
-              <DisplayOrders />
-            </div>
-          )}
+        <div className="row">
+          <div className="col-12">
+            <h1 className="text-center">Страница Дезинфектора {this.props.auth.user.name}</h1>
+            <h2 className="text-center mt-3">Ваши Заказы</h2>
+          </div>
         </div>
+
+        {this.props.order.loading ? <Spinner /> : (
+          <div className="row">
+            <DisplayOrders />
+          </div>
+        )}
       </div>
     );
   }
@@ -36,7 +38,7 @@ Disinfector.propTypes = {
   errors: PropTypes.object.isRequired
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   auth: state.auth,
   order: state.order,
   errors: state.errors

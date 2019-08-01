@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getOrders, addDisinfectorComment } from '../../actions/orderActions';
 import Moment from 'react-moment';
@@ -19,7 +19,7 @@ class OrderInfo extends Component {
     e.preventDefault();
     this.setState({
       addComment: !this.state.addComment
-    })
+    });
   };
 
   onSubmit = (e) => {
@@ -37,6 +37,8 @@ class OrderInfo extends Component {
   render() {
     const { orderObject } = this.props;
     const { errors } = this.state;
+
+    let currentTime = new Date();
 
     return (
       <div className="col-lg-6 mt-3">
@@ -68,8 +70,11 @@ class OrderInfo extends Component {
                 </div>
               </form>
             ) : (
-                <button type="button" className="btn btn-success" onClick={this.toggleAddComment}>Добавить Комментарий</button>
+                <button type="button" className="btn btn-success d-block" onClick={this.toggleAddComment}>Добавить Комментарий</button>
               )}
+            {currentTime.getTime() > new Date(orderObject.dateFrom).getTime() ? (
+              <Link to={`/order-complete-form/${orderObject._id}`} className="btn btn-primary mt-3">Форма О Выполнении</Link>
+            ) : ''}
           </div>
         </div>
       </div>

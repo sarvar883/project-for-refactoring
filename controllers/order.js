@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
 const User = require('../models/user');
 const Order = require('../models/order');
-const validateOrderInput = require('../validation/order')
+const CompleteOrder = require('../models/completeOrder');
+
+const validateOrderInput = require('../validation/order');
 const validateDisinfectorCommentInput = require('../validation/disinfectorComment');
+const validateCompleteOrder = require('../validation/completeOrder');
 const io = require('../socket');
 
 
@@ -55,9 +58,9 @@ exports.createOrder = (req, res) => {
 };
 
 
-// get orders for logged in disinfector
+// get orders for logged in disinfector (only not completed orders)
 exports.getOrders = (req, res) => {
-  Order.find({ disinfectorId: req.body.userId })
+  Order.find({ disinfectorId: req.body.userId, completed: false })
     .populate('disinfectorId')
     .exec()
     .then(orders => res.json(orders))
@@ -70,20 +73,62 @@ exports.getOrders = (req, res) => {
 
 // add disinfector comment to order
 exports.addDisinfectorComment = (req, res) => {
-  // const { errors, isValid } = validateDisinfectorCommentInput(req.body);
-
-  // Check Validation
-  // if (!isValid) {
-  // Return any errors with 400 status
-  // return res.status(400).json(errors);
-  // }
-
   Order.findById(req.body.id)
     .then(order => {
       order.disinfectorComment = req.body.comment;
       order.save();
+      return res.json(order);
     })
     .catch(err => {
       console.log('getOrders ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.getOrderById = (req, res) => {
+  Order.findById(req.body.id)
+    .populate('disinfectorId')
+    .exec()
+    .then(order => res.json(order))
+    .catch(err => {
+      console.log('getOrderById ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.submitCompleteOrder = (req, res) => {
+  const { order } = req.body;
+  const { errors, isValid } = validateCompleteOrder(req.body.order);
+
+  // Check Validation
+  if (!isValid) {
+    // Return any errors with 400 status
+    return res.status(400).json(errors);
+  }
+
+  Order.findById(order.orderId)
+    .then(foundOrder => {
+      foundOrder.completed = true;
+      foundOrder.save();
+    });
+
+  const completeOrder = new CompleteOrder({
+    _id: mongoose.Types.ObjectId(),
+    orderId: order.orderId,
+    disinfectorId: order.disinfectorId,
+    consumption: order.consumption,
+    clientReview: order.clientReview,
+    score: order.score,
+    paymentMethod: order.paymentMethod,
+    cost: order.cost
+  });
+
+  completeOrder.save()
+    .then(newCompleteOrder => res.json(newCompleteOrder))
+    .catch(err => {
+      console.log('getOrderById ERROR', err);
+      res.status(400).json(err);
     });
 };

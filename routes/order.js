@@ -18,4 +18,10 @@ router.post('/get-my-orders', passport.authenticate('jwt', { session: false }), 
 // add disinfector comment to order
 router.post('/addDisinfectorComment', passport.authenticate('jwt', { session: false }), isDisinfector, orderController.addDisinfectorComment);
 
+// get order by id to fill out order completion form
+router.post('/get-order-by-id', passport.authenticate('jwt', { session: false }), orderController.getOrderById);
+
+// order completion form is submitted
+router.post('/submit-complete-order', passport.authenticate('jwt', { session: false }), isDisinfector, orderController.submitCompleteOrder);
+
 module.exports = router;

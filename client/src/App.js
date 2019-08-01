@@ -21,6 +21,7 @@ import Landing from './components/layout/Landing';
 import Admin from './components/admin/Admin';
 import Disinfector from './components/disinfector/Disinfector';
 import CreateOrder from './components/operator/CreateOrder';
+import OrderComplete from './components/disinfector/OrderComplete';
 import Chat from './components/chat/Chat';
 import ChatRoom from './components/chat/ChatRoom';
 import Anons from './components/chat/Anons';
@@ -84,6 +85,9 @@ class App extends Component {
             {/* DisinfectorRoutes */}
             <Switch>
               <DisinfectorRoute exact path="/disinfector" component={Disinfector} />
+            </Switch>
+            <Switch>
+              <DisinfectorRoute exact path="/order-complete-form/:id" component={OrderComplete} />
             </Switch>
 
             {/* OperatorRoutes */}

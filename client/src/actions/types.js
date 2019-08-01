@@ -25,3 +25,4 @@ export const ADD_ANONS = 'ADD_ANONS';
 // operator
 export const GET_SORTED_ORDERS = 'GET_SORTED_ORDERS';
 export const SET_LOADING_SORTED_ORDERS = 'SET_LOADING_SORTED_ORDERS';
+export const GET_ORDER_BY_ID = 'GET_ORDER_BY_ID';
