@@ -68,7 +68,7 @@ class CreateOrder extends Component {
       comment: this.state.comment
     };
 
-    this.props.createOrder(newOrder, this.props.history);
+    this.props.createOrder(newOrder, this.props.history, this.props.auth.user.occupation);
   };
 
   render() {

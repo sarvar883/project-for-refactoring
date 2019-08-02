@@ -16,14 +16,6 @@ const completeOrderSchema = new Schema({
     type: String,
     required: true
   },
-  clientReview: {
-    type: String,
-    required: true
-  },
-  score: {
-    type: Number,
-    required: true
-  },
   paymentMethod: {
     type: String,
     required: true
@@ -31,6 +23,10 @@ const completeOrderSchema = new Schema({
   cost: {
     type: Number,
     required: true
+  },
+  confirmed: {
+    type: Boolean,
+    default: false
   },
   createdAt: {
     type: Date,

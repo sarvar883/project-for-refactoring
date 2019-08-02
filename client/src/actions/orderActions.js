@@ -23,26 +23,20 @@ export const getDisinfectors = () => dispatch => {
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };
 
 
 // create new order
-export const createOrder = (newOrder, history) => (dispatch) => {
+export const createOrder = (newOrder, history, occupation) => (dispatch) => {
   axios.post('/order/create-order', newOrder)
-    .then(res => {
-      // dispatch({
-      //   type: ADD_ORDER,
-      //   payload: res.data
-      // });
-      return history.push('/');
-    })
+    .then(res => history.push(`/${occupation}`))
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };
@@ -52,16 +46,16 @@ export const createOrder = (newOrder, history) => (dispatch) => {
 export const getOrders = (userId) => (dispatch) => {
   dispatch(setLoading());
   axios.post('/order/get-my-orders', { userId: userId })
-    .then(orders =>
+    .then(res =>
       dispatch({
         type: GET_ALL_ORDERS,
-        payload: orders
+        payload: res.data
       })
     )
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };
@@ -74,7 +68,7 @@ export const addDisinfectorComment = (object, history) => (dispatch) => {
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };
@@ -93,7 +87,7 @@ export const getOrderById = (id) => (dispatch) => {
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };
@@ -106,7 +100,7 @@ export const submitCompleteOrder = (object, history) => (dispatch) => {
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };

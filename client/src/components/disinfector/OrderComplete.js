@@ -5,14 +5,11 @@ import Spinner from '../common/Spinner';
 import Moment from 'react-moment';
 import TextFieldGroup from '../common/TextFieldGroup';
 import SelectListGroup from '../common/SelectListGroup';
-import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 import { getOrderById, submitCompleteOrder } from '../../actions/orderActions';
 
 class OrderComplete extends Component {
   state = {
     consumption: '',
-    clientReview: '',
-    score: '',
     paymentMethod: '',
     cost: '',
     errors: {}
@@ -36,8 +33,6 @@ class OrderComplete extends Component {
       orderId: this.props.match.params.id,
       disinfectorId: this.props.order.orderById.disinfectorId._id,
       consumption: this.state.consumption,
-      clientReview: this.state.clientReview,
-      score: this.state.score,
       paymentMethod: this.state.paymentMethod,
       cost: this.state.cost
     };
@@ -96,21 +91,6 @@ class OrderComplete extends Component {
                     onChange={this.onChange}
                     error={errors.consumption}
                   />
-                  <TextFieldGroup
-                    label="Балл:"
-                    type="number"
-                    name="score"
-                    value={this.state.score}
-                    onChange={this.onChange}
-                    error={errors.score}
-                  />
-                  <TextAreaFieldGroup
-                    name="clientReview"
-                    placeholder="Отзыв Клиента"
-                    value={this.state.clientReview}
-                    onChange={this.onChange}
-                    error={errors.clientReview}
-                  />
                   <SelectListGroup
                     name="paymentMethod"
                     value={this.state.paymentMethod}
@@ -126,7 +106,7 @@ class OrderComplete extends Component {
                     onChange={this.onChange}
                     error={errors.cost}
                   />
-                  <button className="btn btn-success btn-block">Готово</button>
+                  <button className="btn btn-success btn-block">Отправить Запрос О Выполнении</button>
                 </form>
               </div>
             </div>

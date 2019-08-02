@@ -21,7 +21,9 @@ import Landing from './components/layout/Landing';
 import Admin from './components/admin/Admin';
 import Disinfector from './components/disinfector/Disinfector';
 import CreateOrder from './components/operator/CreateOrder';
+import OrderDetails from './components/operator/OrderDetails';
 import OrderComplete from './components/disinfector/OrderComplete';
+import OrderQueries from './components/operator/OrderQueries';
 import Chat from './components/chat/Chat';
 import ChatRoom from './components/chat/ChatRoom';
 import Anons from './components/chat/Anons';
@@ -96,6 +98,12 @@ class App extends Component {
             </Switch>
             <Switch>
               <OperatorRoute exact path="/create-order" component={CreateOrder} />
+            </Switch>
+            <Switch>
+              <OperatorRoute exact path="/order-details/:id" component={OrderDetails} />
+            </Switch>
+            <Switch>
+              <OperatorRoute exact path="/order-queries" component={OrderQueries} />
             </Switch>
 
             {/* Accountant Routes */}

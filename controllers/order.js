@@ -119,8 +119,6 @@ exports.submitCompleteOrder = (req, res) => {
     orderId: order.orderId,
     disinfectorId: order.disinfectorId,
     consumption: order.consumption,
-    clientReview: order.clientReview,
-    score: order.score,
     paymentMethod: order.paymentMethod,
     cost: order.cost
   });

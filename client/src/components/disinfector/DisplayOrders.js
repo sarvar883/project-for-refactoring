@@ -12,7 +12,7 @@ class DisplayOrders extends Component {
   _isMounted = false;
 
   state = {
-    orders: this.props.order.orders.data
+    orders: this.props.order.orders
   };
 
   componentDidMount() {

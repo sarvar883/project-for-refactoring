@@ -59,6 +59,11 @@ class Navbar extends Component {
             Создать заказ
           </Link>
         </li>
+        <li className="nav-item mr-2 list-inline-item">
+          <Link className="nav-link" to="/order-queries">
+            Запросы
+          </Link>
+        </li>
       </div>
     );
 

@@ -8,14 +8,6 @@ module.exports = function validateCompleteOrder(data) {
     errors.consumption = 'Это поле обязательное';
   }
 
-  if (Validator.isEmpty(data.clientReview)) {
-    errors.clientReview = 'Это поле обязательное';
-  }
-
-  if (Validator.isEmpty(data.score)) {
-    errors.score = 'Это поле обязательное';
-  }
-
   if (Validator.isEmpty(data.paymentMethod)) {
     errors.paymentMethod = 'Это поле обязательное';
   }

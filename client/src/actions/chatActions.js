@@ -30,7 +30,7 @@ export const getAllUsers = () => (dispatch) => {
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };
@@ -48,7 +48,7 @@ export const getAllChatsOfUser = (userId) => (dispatch) => {
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };
@@ -66,7 +66,7 @@ export const createChat = (newChat, history) => (dispatch) => {
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };
@@ -101,7 +101,7 @@ export const createMessage = (object) => (dispatch) => {
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };
@@ -118,7 +118,7 @@ export const deleteMessage = (chatId, messageId) => (dispatch) => {
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };
@@ -135,7 +135,7 @@ export const editMessage = (object) => (dispatch) => {
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };
@@ -154,7 +154,7 @@ export const getAllAnons = () => (dispatch) => {
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };
@@ -172,7 +172,7 @@ export const addAnons = (object, history) => (dispatch) => {
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };
