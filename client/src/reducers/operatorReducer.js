@@ -1,6 +1,7 @@
 import {
   GET_SORTED_ORDERS,
   GET_COMPLETE_ORDERS,
+  GET_COMPLETE_ORDER_BY_ID,
   SET_LOADING_SORTED_ORDERS,
   SET_LOADING_COMPLETE_ORDERS
 } from '../actions/types';
@@ -8,6 +9,10 @@ import {
 const initialState = {
   sortedOrders: [],
   completeOrders: [],
+  completeOrderById: {
+    orderId: {},
+    disinfectorId: {}
+  },
   date: {},
   loadingSortedOrders: false,
   loadingCompleteOrders: false
@@ -39,6 +44,13 @@ export default function (state = initialState, action) {
       return {
         ...state,
         completeOrders: action.payload,
+        loadingCompleteOrders: false
+      };
+
+    case GET_COMPLETE_ORDER_BY_ID:
+      return {
+        ...state,
+        completeOrderById: action.payload,
         loadingCompleteOrders: false
       };
 

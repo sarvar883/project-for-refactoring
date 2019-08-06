@@ -20,10 +20,12 @@ import Navbar from './components/layout/Navbar';
 import Landing from './components/layout/Landing';
 import Admin from './components/admin/Admin';
 import Disinfector from './components/disinfector/Disinfector';
+import DisinfQueries from './components/disinfector/DisinfQueries';
 import CreateOrder from './components/operator/CreateOrder';
 import OrderDetails from './components/operator/OrderDetails';
 import OrderComplete from './components/disinfector/OrderComplete';
 import OrderQueries from './components/operator/OrderQueries';
+import ConfirmOrder from './components/operator/ConfirmOrder';
 import Chat from './components/chat/Chat';
 import ChatRoom from './components/chat/ChatRoom';
 import Anons from './components/chat/Anons';
@@ -91,6 +93,9 @@ class App extends Component {
             <Switch>
               <DisinfectorRoute exact path="/order-complete-form/:id" component={OrderComplete} />
             </Switch>
+            <Switch>
+              <DisinfectorRoute exact path="/disinfector/queries" component={DisinfQueries} />
+            </Switch>
 
             {/* OperatorRoutes */}
             <Switch>
@@ -104,6 +109,9 @@ class App extends Component {
             </Switch>
             <Switch>
               <OperatorRoute exact path="/order-queries" component={OrderQueries} />
+            </Switch>
+            <Switch>
+              <OperatorRoute exact path="/order-confirm/:id" component={ConfirmOrder} />
             </Switch>
 
             {/* Accountant Routes */}

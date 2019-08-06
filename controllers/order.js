@@ -124,9 +124,33 @@ exports.submitCompleteOrder = (req, res) => {
   });
 
   completeOrder.save()
-    .then(newCompleteOrder => res.json(newCompleteOrder))
+    .then(newCompleteOrder => {
+      io.getIO().emit('submitCompleteOrder', {
+        completeOrder: newCompleteOrder
+      });
+      return res.json(newCompleteOrder)
+    })
     .catch(err => {
       console.log('getOrderById ERROR', err);
+      res.status(400).json(err);
+    });
+};
+
+
+exports.getCompleteOrdersInMonth = (req, res) => {
+  const month = Number(req.body.month);
+  const year = Number(req.body.year);
+  const disinfectorId = req.body.disinfectorId;
+
+  CompleteOrder.find({ disinfectorId: disinfectorId })
+    .populate('orderId')
+    .exec()
+    .then(orders => {
+      let sortedOrders = orders.filter(item => new Date(item.createdAt).getMonth() === month && new Date(item.createdAt).getFullYear() === year);
+      return res.json(sortedOrders);
+    })
+    .catch(err => {
+      console.log('getCompleteOrdersInMonth ERROR', err);
       res.status(400).json(err);
     });
 };

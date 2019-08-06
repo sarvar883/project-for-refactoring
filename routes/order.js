@@ -24,4 +24,6 @@ router.post('/get-order-by-id', passport.authenticate('jwt', { session: false })
 // order completion form is submitted
 router.post('/submit-complete-order', passport.authenticate('jwt', { session: false }), isDisinfector, orderController.submitCompleteOrder);
 
+router.post('/get-complete-order-in-month', passport.authenticate('jwt', { session: false }), isDisinfector, orderController.getCompleteOrdersInMonth)
+
 module.exports = router;

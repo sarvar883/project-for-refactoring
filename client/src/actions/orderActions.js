@@ -4,7 +4,8 @@ import {
   SET_LOADING,
   GET_ERRORS,
   GET_ALL_ORDERS,
-  GET_ORDER_BY_ID
+  GET_ORDER_BY_ID,
+  GET_COMPLETE_ORDERS_IN_MONTH
   // ADD_ORDER
 } from './types';
 
@@ -36,7 +37,7 @@ export const createOrder = (newOrder, history, occupation) => (dispatch) => {
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err
+        payload: err.response.data
       })
     );
 };
@@ -100,9 +101,33 @@ export const submitCompleteOrder = (object, history) => (dispatch) => {
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+
+// disinfectors gets his completed orders for some month
+export const getCompleteOrdersInMonth = (month, year, disinfectorId) => (dispatch) => {
+  dispatch(setLoading());
+  axios.post('/order/get-complete-order-in-month', {
+    month: month,
+    year: year,
+    disinfectorId: disinfectorId
+  })
+    .then(res =>
+      dispatch({
+        type: GET_COMPLETE_ORDERS_IN_MONTH,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
         payload: err
       })
     );
+
 };
 
 

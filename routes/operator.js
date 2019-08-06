@@ -9,4 +9,8 @@ router.post('/get-sorted-orders', passport.authenticate('jwt', { session: false 
 
 router.post('/get-complete-orders', passport.authenticate('jwt', { session: false }), isOperatorOrAdmin, operatorController.getCompleteOrders);
 
+router.post('/get-complete-order-by-id/:id', passport.authenticate('jwt', { session: false }), isOperatorOrAdmin, operatorController.getCompleteOrderById);
+
+router.post('/confirm-complete-order', passport.authenticate('jwt', { session: false }), isOperatorOrAdmin, operatorController.confirmCompleteOrder);
+
 module.exports = router;

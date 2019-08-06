@@ -8,6 +8,7 @@ module.exports = function validateRegisterInput(data) {
   data.email = !isEmpty(data.email) ? data.email : '';
   data.phone = !isEmpty(data.phone) ? data.phone : '';
   data.occupation = !isEmpty(data.occupation) ? data.occupation : '';
+  data.color = !isEmpty(data.color) ? data.color : '';
   data.password = !isEmpty(data.password) ? data.password : '';
   data.password2 = !isEmpty(data.password2) ? data.password2 : '';
 

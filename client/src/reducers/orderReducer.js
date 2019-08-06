@@ -3,7 +3,8 @@ import {
   SET_LOADING,
   GET_ALL_ORDERS,
   ADD_ORDER,
-  GET_ORDER_BY_ID
+  GET_ORDER_BY_ID,
+  GET_COMPLETE_ORDERS_IN_MONTH
 } from '../actions/types';
 
 const initialState = {
@@ -12,6 +13,7 @@ const initialState = {
   orderById: {
     disinfectorId: {}
   },
+  completeOrdersInMonth: [],
   loading: false
 };
 
@@ -22,27 +24,38 @@ export default function (state = initialState, action) {
         ...state,
         loading: true
       };
+
     case GET_DISINFECTORS:
       return {
         ...state,
         disinfectors: action.payload,
         loading: false
       };
+
     case GET_ALL_ORDERS:
       return {
         ...state,
         orders: action.payload,
         loading: false
       };
+
     case ADD_ORDER:
       return {
         ...state,
         orders: [...state.orders, action.payload]
       };
+
     case GET_ORDER_BY_ID:
       return {
         ...state,
         orderById: action.payload,
+        loading: false
+      };
+
+    case GET_COMPLETE_ORDERS_IN_MONTH:
+      return {
+        ...state,
+        completeOrdersInMonth: action.payload,
         loading: false
       };
 

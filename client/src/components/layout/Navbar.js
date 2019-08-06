@@ -48,7 +48,11 @@ class Navbar extends Component {
 
     const disinfectorLinks = (
       <div className="disinfectorLinks">
-
+        <li className="nav-item mr-2 list-inline-item">
+          <Link className="nav-link" to="/disinfector/queries">
+            Запросы
+          </Link>
+        </li>
       </div>
     );
 

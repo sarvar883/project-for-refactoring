@@ -4,8 +4,10 @@ const Chat = require('../models/chat');
 const Anons = require('../models/anons');
 const Order = require('../models/order');
 const CompleteOrder = require('../models/completeOrder');
+const ConfirmedOrder = require('../models/confirmedOrder');
 const io = require('../socket');
 
+const validateConfirmedOrder = require('../validation/confirmOrder');
 
 exports.getSortedOrders = (req, res) => {
   const date = new Date(req.body.date);
@@ -31,12 +33,49 @@ exports.getSortedOrders = (req, res) => {
 
 
 exports.getCompleteOrders = (req, res) => {
-  CompleteOrder.find()
+  CompleteOrder.find({ confirmed: false })
     .populate('orderId disinfectorId')
     .exec()
     .then(completeOrders => res.json(completeOrders))
     .catch(err => {
       console.log('getCompleteOrders ERROR', err);
+      return res.status(400).json(err);
+    });
+};
+
+
+exports.getCompleteOrderById = (req, res) => {
+  CompleteOrder.findById(req.params.id)
+    .populate('orderId disinfectorId')
+    .exec()
+    .then(order => res.json(order))
+    .catch(err => {
+      console.log('getCompleteOrderById ERROR', err);
+      return res.status(404).json(err);
+    });
+};
+
+
+exports.confirmCompleteOrder = (req, res) => {
+  const { errors, isValid } = validateConfirmedOrder(req.body.object);
+
+  // Check Validation
+  if (!isValid) {
+    // Return any errors with 400 status
+    return res.status(400).json(errors);
+  }
+
+  const newObject = new ConfirmedOrder({
+    completeOrderId: req.body.object.completeOrderId,
+    disinfectorId: req.body.object.disinfectorId,
+    clientReview: req.body.object.clientReview,
+    score: req.body.object.score
+  });
+
+  newObject.save()
+    .then(savedObject => res.json(savedObject))
+    .catch(err => {
+      console.log('confirmCompleteOrder ERROR', err);
       return res.status(400).json(err);
     });
 };
