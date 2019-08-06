@@ -30,6 +30,7 @@ import Chat from './components/chat/Chat';
 import ChatRoom from './components/chat/ChatRoom';
 import Anons from './components/chat/Anons';
 import Operator from './components/operator/Operator';
+import OperatorStats from './components/operator/OperatorStats';
 import Accountant from './components/accountant/Accountant';
 
 import Register from './components/auth/Register';
@@ -108,10 +109,13 @@ class App extends Component {
               <OperatorRoute exact path="/order-details/:id" component={OrderDetails} />
             </Switch>
             <Switch>
-              <OperatorRoute exact path="/order-queries" component={OrderQueries} />
+              <OperatorRoute exact path="/operator/order-queries" component={OrderQueries} />
             </Switch>
             <Switch>
               <OperatorRoute exact path="/order-confirm/:id" component={ConfirmOrder} />
+            </Switch>
+            <Switch>
+              <OperatorRoute exact path="/operator/stats" component={OperatorStats} />
             </Switch>
 
             {/* Accountant Routes */}

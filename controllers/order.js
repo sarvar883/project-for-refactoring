@@ -100,13 +100,13 @@ exports.getOrderById = (req, res) => {
 
 exports.submitCompleteOrder = (req, res) => {
   const { order } = req.body;
-  const { errors, isValid } = validateCompleteOrder(req.body.order);
+  // const { errors, isValid } = validateCompleteOrder(req.body.order);
 
   // Check Validation
-  if (!isValid) {
-    // Return any errors with 400 status
-    return res.status(400).json(errors);
-  }
+  // if (!isValid) {
+  // Return any errors with 400 status
+  // return res.status(400).json(errors);
+  // }
 
   Order.findById(order.orderId)
     .then(foundOrder => {

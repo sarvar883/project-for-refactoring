@@ -12,10 +12,17 @@ const completeOrderSchema = new Schema({
     ref: 'User',
     required: true
   },
-  consumption: {
-    type: String,
-    required: true
-  },
+  consumption: [{
+    material: {
+      type: String
+    },
+    amount: {
+      type: Number
+    },
+    unit: {
+      type: String
+    }
+  }],
   paymentMethod: {
     type: String,
     required: true

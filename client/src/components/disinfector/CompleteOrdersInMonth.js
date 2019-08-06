@@ -21,7 +21,7 @@ class CompleteOrdersInMonth extends Component {
               <li className="pb-2">Адрес: {order.orderId.address}</li>
               <li className="pb-2">Тип услуги: {order.orderId.typeOfService}</li>
               <li className="pb-2">Комментарии Дезинфектора: {order.disinfectorComment ? order.disinfectorComment : 'Нет комментариев'}</li>
-              <li className="pb-2">Расход Материалов: {order.consumption}</li>
+              {/* <li className="pb-2">Расход Материалов: {order.consumption}</li> */}
               <li className="pb-2">Общая Цена: {order.cost.toLocaleString()} Сум</li>
               <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{order.createdAt}</Moment></li>
             </ul>

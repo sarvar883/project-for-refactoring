@@ -2,8 +2,10 @@ import {
   GET_SORTED_ORDERS,
   GET_COMPLETE_ORDERS,
   GET_COMPLETE_ORDER_BY_ID,
+  GOT_STATS_FOR_OPERATOR,
   SET_LOADING_SORTED_ORDERS,
-  SET_LOADING_COMPLETE_ORDERS
+  SET_LOADING_COMPLETE_ORDERS,
+  SET_LOADING_OPERATOR_STATS
 } from '../actions/types';
 
 const initialState = {
@@ -14,8 +16,13 @@ const initialState = {
     disinfectorId: {}
   },
   date: {},
+  stats: {
+    orders: [],
+    completeOrders: []
+  },
   loadingSortedOrders: false,
-  loadingCompleteOrders: false
+  loadingCompleteOrders: false,
+  loadingStats: false
 };
 
 export default function (state = initialState, action) {
@@ -30,6 +37,12 @@ export default function (state = initialState, action) {
       return {
         ...state,
         loadingCompleteOrders: true
+      };
+
+    case SET_LOADING_OPERATOR_STATS:
+      return {
+        ...state,
+        loadingStats: true
       };
 
     case GET_SORTED_ORDERS:
@@ -52,6 +65,17 @@ export default function (state = initialState, action) {
         ...state,
         completeOrderById: action.payload,
         loadingCompleteOrders: false
+      };
+
+    case GOT_STATS_FOR_OPERATOR:
+      return {
+        ...state,
+        stats: {
+          ...state.stats,
+          orders: action.payload.orders,
+          completeOrders: action.payload.completeOrders
+        },
+        loadingStats: false
       };
 
     default:

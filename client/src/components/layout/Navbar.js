@@ -59,12 +59,17 @@ class Navbar extends Component {
     const operatorLinks = (
       <div className="operatorLinks">
         <li className="nav-item mr-2 list-inline-item">
+          <Link className="nav-link" to="/operator/stats">
+            Статистика
+          </Link>
+        </li>
+        <li className="nav-item mr-2 list-inline-item">
           <Link className="nav-link" to="/create-order">
             Создать заказ
           </Link>
         </li>
         <li className="nav-item mr-2 list-inline-item">
-          <Link className="nav-link" to="/order-queries">
+          <Link className="nav-link" to="/operator/order-queries">
             Запросы
           </Link>
         </li>

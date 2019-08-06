@@ -4,8 +4,10 @@ import {
   GET_SORTED_ORDERS,
   GET_COMPLETE_ORDERS,
   GET_COMPLETE_ORDER_BY_ID,
+  GOT_STATS_FOR_OPERATOR,
   SET_LOADING_SORTED_ORDERS,
-  SET_LOADING_COMPLETE_ORDERS
+  SET_LOADING_COMPLETE_ORDERS,
+  SET_LOADING_OPERATOR_STATS
 } from './types';
 
 
@@ -80,6 +82,26 @@ export const confirmCompleteOrder = (object) => (dispatch) => {
 };
 
 
+// get stats for operator
+export const getOperatorStats = (month, year) => (dispatch) => {
+  dispatch(setLoadingStats());
+  axios.post('/stats/for-operator', { month: month, year: year })
+    .then(res => {
+      console.log('getOperatorStats', res.data);
+      dispatch({
+        type: GOT_STATS_FOR_OPERATOR,
+        payload: res.data
+      })
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
 // Loading sorted orders
 export const setLoadingSortedOrders = () => {
   return {
@@ -94,3 +116,11 @@ export const setLoadingCompleteOrders = () => {
     type: SET_LOADING_COMPLETE_ORDERS
   };
 };
+
+
+// loading stats
+export const setLoadingStats = () => {
+  return {
+    type: SET_LOADING_OPERATOR_STATS
+  };
+}
