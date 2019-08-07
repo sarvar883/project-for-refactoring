@@ -68,11 +68,9 @@ export const getCompleteOrderById = (id) => (dispatch) => {
 
 
 // operator confirms completed order
-export const confirmCompleteOrder = (object) => (dispatch) => {
+export const confirmCompleteOrder = (object, history) => (dispatch) => {
   axios.post('/operator/confirm-complete-order', { object: object })
-    .then(res => {
-      console.log('res', res.data);
-    })
+    .then(() => history.push('/operator'))
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
@@ -86,13 +84,12 @@ export const confirmCompleteOrder = (object) => (dispatch) => {
 export const getOperatorStats = (month, year) => (dispatch) => {
   dispatch(setLoadingStats());
   axios.post('/stats/for-operator', { month: month, year: year })
-    .then(res => {
-      console.log('getOperatorStats', res.data);
+    .then(res =>
       dispatch({
         type: GOT_STATS_FOR_OPERATOR,
         payload: res.data
       })
-    })
+    )
     .catch(err =>
       dispatch({
         type: GET_ERRORS,

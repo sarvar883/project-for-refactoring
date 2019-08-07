@@ -120,7 +120,8 @@ exports.submitCompleteOrder = (req, res) => {
     disinfectorId: order.disinfectorId,
     consumption: order.consumption,
     paymentMethod: order.paymentMethod,
-    cost: order.cost
+    cost: order.cost,
+    orderDate: order.orderDate
   });
 
   completeOrder.save()

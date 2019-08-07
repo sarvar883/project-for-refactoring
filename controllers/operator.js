@@ -65,11 +65,19 @@ exports.confirmCompleteOrder = (req, res) => {
     return res.status(400).json(errors);
   }
 
+  CompleteOrder
+    .findById(req.body.object.completeOrderId)
+    .then(foundOrder => {
+      foundOrder.confirmed = true;
+      foundOrder.save();
+    });
+
   const newObject = new ConfirmedOrder({
     completeOrderId: req.body.object.completeOrderId,
     disinfectorId: req.body.object.disinfectorId,
     clientReview: req.body.object.clientReview,
-    score: req.body.object.score
+    score: req.body.object.score,
+    orderDate: req.body.object.orderDate
   });
 
   newObject.save()

@@ -26,7 +26,8 @@ export const DELETE_MESSAGE = 'DELETE_MESSAGE';
 export const ADD_ANONS = 'ADD_ANONS';
 
 // disinfector
-
+export const GET_DISINF_STATS = 'GET_DISINF_STATS';
+export const LOADING_DISINF_STATS = 'LOADING_DISINF_STATS';
 
 // operator
 export const GET_SORTED_ORDERS = 'GET_SORTED_ORDERS';

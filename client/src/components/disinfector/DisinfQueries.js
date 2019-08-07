@@ -98,7 +98,7 @@ class DisinfQueries extends Component {
               <button type="submit" className="btn btn-success">Искать</button>
             </form>
           </div>
-          <div className="col-lg-9">
+          <div className="col-lg-9 pl-0 pr-0">
             {this.props.order.loading ? <Spinner /> : <CompleteOrdersInMonth />}
           </div>
         </div>

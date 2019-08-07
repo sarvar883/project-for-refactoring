@@ -52,8 +52,6 @@ class ShowOrderQueries extends Component {
               <li className="pb-2">Время выполнения: С <Moment format="HH:mm">{order.orderId.dateFrom}</Moment> ПО <Moment format="HH:mm">{order.orderId.dateTo}</Moment></li>
               <li className="pb-2">Адрес: {order.orderId.address}</li>
               <li className="pb-2">Тип услуги: {order.orderId.typeOfService}</li>
-              <li className="pb-2">Комментарии Оператора: {order.comment ? order.comment : 'Нет комментариев'}</li>
-              <li className="pb-2">Комментарии Дезинфектора: {order.disinfectorComment ? order.disinfectorComment : 'Нет комментариев'}</li>
               <li className="pb-2">Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{order.createdAt}</Moment></li>
             </ul>
             <Link to={`/order-confirm/${order._id}`} className="btn btn-dark">Форма Подтверждения</Link>

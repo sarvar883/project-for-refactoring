@@ -21,6 +21,7 @@ import Landing from './components/layout/Landing';
 import Admin from './components/admin/Admin';
 import Disinfector from './components/disinfector/Disinfector';
 import DisinfQueries from './components/disinfector/DisinfQueries';
+import DisinfStats from './components/disinfector/DisinfStats';
 import CreateOrder from './components/operator/CreateOrder';
 import OrderDetails from './components/operator/OrderDetails';
 import OrderComplete from './components/disinfector/OrderComplete';
@@ -96,6 +97,9 @@ class App extends Component {
             </Switch>
             <Switch>
               <DisinfectorRoute exact path="/disinfector/queries" component={DisinfQueries} />
+            </Switch>
+            <Switch>
+              <DisinfectorRoute exact path="/disinfector/stats" component={DisinfStats} />
             </Switch>
 
             {/* OperatorRoutes */}

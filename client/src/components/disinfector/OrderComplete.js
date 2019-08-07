@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Spinner from '../common/Spinner';
 import Moment from 'react-moment';
 import { getOrderById, submitCompleteOrder } from '../../actions/orderActions';
+import materials from '../common/materials';
 
 class OrderComplete extends Component {
   state = {
@@ -12,7 +13,7 @@ class OrderComplete extends Component {
       {
         material: '',
         amount: '',
-        unit: 'кг'
+        unit: ''
       }
     ],
     paymentMethod: '',
@@ -28,11 +29,11 @@ class OrderComplete extends Component {
   changeSelect = (e) => {
     const index = e.target.name.split('-')[1];
     let newConsumptionArray = this.state.consumption;
-    newConsumptionArray[index].material = e.target.value;
+    newConsumptionArray[index].material = e.target.value.split('+')[0];
+    newConsumptionArray[index].unit = e.target.value.split('+')[1];
     this.setState({
       consumption: newConsumptionArray
     });
-    console.log('changeSelect', this.state.consumption);
   }
 
   changeAmount = (e) => {
@@ -42,7 +43,6 @@ class OrderComplete extends Component {
     this.setState({
       consumption: newConsumptionArray
     });
-    console.log('changeAmount', this.state.consumption);
   }
 
   addMaterial = (e) => {
@@ -53,13 +53,12 @@ class OrderComplete extends Component {
     newConsumption.push({
       material: '',
       amount: '',
-      unit: 'кг'
+      unit: ''
     });
     this.setState({
       array: newArray,
       consumption: newConsumption
     });
-    console.log('add', this.state);
   }
 
   deleteMaterial = (e) => {
@@ -72,7 +71,6 @@ class OrderComplete extends Component {
       array: newArray,
       consumption: newConsumption
     });
-    console.log('delete', this.state);
   }
 
   onSubmit = (e) => {
@@ -82,58 +80,56 @@ class OrderComplete extends Component {
       disinfectorId: this.props.order.orderById.disinfectorId._id,
       consumption: this.state.consumption,
       paymentMethod: this.state.paymentMethod,
-      cost: this.state.cost
+      cost: this.state.cost,
+      orderDate: this.props.order.orderById.dateFrom
     };
-
     this.props.submitCompleteOrder(object, this.props.history);
-
-    console.log('onSubmit', this.state);
   };
 
   render() {
     const order = this.props.order.orderById;
 
-    // const paymentOptions = [
-    //   { label: '-- Выберите тип платежа --', value: 0 },
-    //   { label: 'Наличный', value: 'Наличный' },
-    //   { label: 'Безналичный', value: 'Безналичный' }
-    // ];
-
-    const consumptionMaterials = [
-      { label: '-- Выберите вещество --', value: "" },
-      { label: 'Вещество 1', value: 'material1' },
-      { label: 'Вещество 2', value: 'material2' },
-      { label: 'Вещество 3', value: 'material3' },
-      { label: 'Вещество 4', value: 'material4' },
+    let consumptionMaterials = [
+      { label: '-- Выберите вещество --', value: "" }
+      // { label: 'Вещество 1', value: 'material1' },
+      // { label: 'Вещество 2', value: 'material2' },
+      // { label: 'Вещество 3', value: 'material3' },
+      // { label: 'Вещество 4', value: 'material4' },
     ];
 
+    materials.forEach((item, index) => {
+      consumptionMaterials.push({
+        label: item.material,
+        value: `material1${index + 1}`,
+        unit: item.unit
+      })
+    });
+
     const consumptionOptions = consumptionMaterials.map((option, index) =>
-      <option value={option.value} key={index}>{option.label}</option>
+      <option value={`${option.value}+${option.unit}`} key={index}>{option.label} {option.unit ? `(${option.unit})` : ''}</option>
     );
 
-    let renderConsumption = this.state.array.map((item, index) => {
-      return (
-        <React.Fragment key={index}>
-          <div className="form-group">
-            <select name={`consumption-${index}`} className="form-control" onChange={this.changeSelect} required>
-              {consumptionOptions}
-            </select>
-          </div>
-          <div className="form-group">
-            <label htmlFor={`quantity-${index}`}>Количество:</label>
-            <input
-              type="number"
-              step="0.001"
-              className="form-control"
-              name={`quantity-${index}`}
-              onChange={this.changeAmount}
-              required
-            />
-          </div>
-          <hr />
-        </React.Fragment>
-      )
-    })
+    let renderConsumption = this.state.array.map((item, index) =>
+      <React.Fragment key={index}>
+        <div className="form-group">
+          <select name={`consumption-${index}`} className="form-control" onChange={this.changeSelect} required>
+            {consumptionOptions}
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor={`quantity-${index}`}>Количество:</label>
+          <input
+            type="number"
+            step="0.001"
+            className="form-control"
+            name={`quantity-${index}`}
+            onChange={this.changeAmount}
+            required
+          />
+        </div>
+        <hr />
+      </React.Fragment>
+    );
 
     return (
       <div className="container">
@@ -181,7 +177,7 @@ class OrderComplete extends Component {
                     </select>
                   </div>
                   <div className="form-group">
-                    <label htmlFor="cost">Общая Сумма:</label>
+                    <label htmlFor="cost">Общая Сумма: (UZS)</label>
                     <input type="number" className="form-control" name="cost" onChange={this.onChange} required />
                   </div>
                   <button className="btn btn-success btn-block">Отправить Запрос О Выполнении</button>

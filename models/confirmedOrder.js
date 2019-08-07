@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const confirmedOrderSchema = new Schema({
   completeOrderId: {
     type: Schema.Types.ObjectId,
-    ref: 'Order',
+    ref: 'CompleteOrder',
     required: true
   },
   disinfectorId: {
@@ -18,6 +18,10 @@ const confirmedOrderSchema = new Schema({
   },
   score: {
     type: Number,
+    required: true
+  },
+  orderDate: {
+    type: Date,
     required: true
   },
   confirmedAt: {

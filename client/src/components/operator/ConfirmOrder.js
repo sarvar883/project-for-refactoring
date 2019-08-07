@@ -30,12 +30,13 @@ class ConfirmOrder extends Component {
   onSubmit = (e) => {
     e.preventDefault();
     const object = {
-      completedOrderId: this.props.match.params.id,
+      completeOrderId: this.props.operator.completeOrderById._id,
       disinfectorId: this.props.operator.completeOrderById.disinfectorId._id,
       clientReview: this.state.clientReview,
-      score: this.state.score
+      score: this.state.score,
+      orderDate: this.props.operator.completeOrderById.orderId.dateFrom
     };
-    this.props.confirmCompleteOrder(object);
+    this.props.confirmCompleteOrder(object, this.props.history);
   }
 
   reject = (e) => {
@@ -46,6 +47,13 @@ class ConfirmOrder extends Component {
   render() {
     const completeOrder = this.props.operator.completeOrderById;
     const { errors } = this.state;
+
+    let consumptionRender;
+    if (completeOrder.consumption) {
+      consumptionRender = completeOrder.consumption.map((item, index) =>
+        <li key={index}>{item.material} : {item.amount} {item.unit}</li>
+      );
+    }
 
     return (
       <div className="container-fluid">
@@ -65,6 +73,12 @@ class ConfirmOrder extends Component {
                     <li className="pb-2">Тип услуги: {completeOrder.orderId.typeOfService}</li>
                     <li className="pb-2">Комментарии Оператора: {completeOrder.comment ? completeOrder.comment : 'Нет комментариев'}</li>
                     <li className="pb-2">Комментарии Дезинфектора: {completeOrder.disinfectorComment ? completeOrder.disinfectorComment : 'Нет комментариев'}</li>
+                    <li>Расход Материалов:</li>
+                    <ul className="font-bold mb-0">
+                      {consumptionRender}
+                    </ul>
+                    <li className="pb-2">Тип Платежа: {completeOrder.paymentMethod}</li>
+                    <li className="pb-2">Общая Сумма: {completeOrder.cost ? completeOrder.cost.toLocaleString() : ''} UZS</li>
                     <li className="pb-2">Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{completeOrder.createdAt}</Moment></li>
                   </ul>
                   <button className="btn btn-danger" onClick={this.reject}>Отменить Выполнение Заказа</button>

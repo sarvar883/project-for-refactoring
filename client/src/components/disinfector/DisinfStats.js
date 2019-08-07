@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Spinner from '../common/Spinner';
+import { disinfStats } from '../../actions/disinfectorActions';
+import ShowDisinfStats from './ShowDisinfStats';
 
-import ShowStats from './ShowStats';
-import { getOperatorStats } from '../../actions/operatorActions';
-
-class OperatorStats extends Component {
+class DisinfStats extends Component {
   state = {
     month: '',
     year: '',
@@ -19,7 +18,7 @@ class OperatorStats extends Component {
   componentDidMount() {
     const thisMonth = new Date().getMonth();
     const thisYear = new Date().getFullYear();
-    this.props.getOperatorStats(thisMonth, thisYear);
+    this.props.disinfStats(this.props.auth.user.id, thisMonth, thisYear);
     this.setState({
       headingMonth: thisMonth,
       headingYear: thisYear
@@ -30,7 +29,7 @@ class OperatorStats extends Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    this.props.getOperatorStats(this.state.month, this.state.year);
+    this.props.disinfStats(this.props.auth.user.id, this.state.month, this.state.year);
     this.setState({
       headingMonth: this.state.month,
       headingYear: this.state.year
@@ -97,12 +96,12 @@ class OperatorStats extends Component {
 
         <div className="row">
           <div className="col-12">
-            <h2 className="text-center pl-3 pr-3">Статистика за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2>
+            <h2 className="text-center pl-3 pr-3"> Ваша Статистика за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2>
           </div>
         </div>
 
         <div className="row">
-          {this.props.operator.loadingStats ? <div className="col-12"><Spinner /></div> : <ShowStats />}
+          {this.props.disinfector.loadingDisinfStats ? <div className="col-12"><Spinner /></div> : <ShowDisinfStats />}
         </div>
       </div>
     )
@@ -111,10 +110,9 @@ class OperatorStats extends Component {
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  chat: state.chat,
   order: state.order,
-  operator: state.operator,
+  disinfector: state.disinfector,
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getOperatorStats })(withRouter(OperatorStats));
+export default connect(mapStateToProps, { disinfStats })(withRouter(DisinfStats));
