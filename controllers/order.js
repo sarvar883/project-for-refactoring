@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const User = require('../models/user');
 const Order = require('../models/order');
-const CompleteOrder = require('../models/completeOrder');
 
 const validateOrderInput = require('../validation/order');
 const validateDisinfectorCommentInput = require('../validation/disinfectorComment');
@@ -31,17 +30,17 @@ exports.createOrder = (req, res) => {
     client: req.body.client,
     address: req.body.address,
     dateFrom: req.body.dateFrom,
-    dateTo: req.body.dateTo,
     phone: req.body.phone,
     typeOfService: req.body.typeOfService,
     comment: req.body.comment,
-    disinfectorComment: ''
+    disinfectorComment: '',
+    userCreated: req.body.userCreated
   });
 
   order.save()
     .then(() => {
       Order.findOne(order)
-        .populate('disinfectorId')
+        .populate('disinfectorId userCreated')
         .exec()
         .then(savedOrder => {
           io.getIO().emit('createOrder', {
@@ -60,8 +59,11 @@ exports.createOrder = (req, res) => {
 
 // get orders for logged in disinfector (only not completed orders)
 exports.getOrders = (req, res) => {
-  Order.find({ disinfectorId: req.body.userId, completed: false })
-    .populate('disinfectorId')
+  Order.find({
+    disinfectorId: req.body.userId,
+    completed: false
+  })
+    .populate('disinfectorId userCreated')
     .exec()
     .then(orders => res.json(orders))
     .catch(err => {
@@ -88,7 +90,7 @@ exports.addDisinfectorComment = (req, res) => {
 
 exports.getOrderById = (req, res) => {
   Order.findById(req.body.id)
-    .populate('disinfectorId')
+    .populate('disinfectorId userCreated')
     .exec()
     .then(order => res.json(order))
     .catch(err => {
@@ -100,31 +102,16 @@ exports.getOrderById = (req, res) => {
 
 exports.submitCompleteOrder = (req, res) => {
   const { order } = req.body;
-  // const { errors, isValid } = validateCompleteOrder(req.body.order);
-
-  // Check Validation
-  // if (!isValid) {
-  // Return any errors with 400 status
-  // return res.status(400).json(errors);
-  // }
 
   Order.findById(order.orderId)
     .then(foundOrder => {
       foundOrder.completed = true;
-      foundOrder.save();
-    });
-
-  const completeOrder = new CompleteOrder({
-    _id: mongoose.Types.ObjectId(),
-    orderId: order.orderId,
-    disinfectorId: order.disinfectorId,
-    consumption: order.consumption,
-    paymentMethod: order.paymentMethod,
-    cost: order.cost,
-    orderDate: order.orderDate
-  });
-
-  completeOrder.save()
+      foundOrder.consumption = order.consumption;
+      foundOrder.paymentMethod = order.paymentMethod;
+      foundOrder.cost = order.cost;
+      foundOrder.completedAt = new Date();
+      return foundOrder.save();
+    })
     .then(newCompleteOrder => {
       io.getIO().emit('submitCompleteOrder', {
         completeOrder: newCompleteOrder
@@ -143,12 +130,13 @@ exports.getCompleteOrdersInMonth = (req, res) => {
   const year = Number(req.body.year);
   const disinfectorId = req.body.disinfectorId;
 
-  CompleteOrder.find({ disinfectorId: disinfectorId })
-    .populate('orderId')
-    .exec()
+  Order.find({
+    disinfectorId: disinfectorId,
+    completed: true
+  })
     .then(orders => {
-      let sortedOrders = orders.filter(item => new Date(item.createdAt).getMonth() === month && new Date(item.createdAt).getFullYear() === year);
-      return res.json(sortedOrders);
+      orders = orders.filter(item => new Date(item.createdAt).getMonth() === month && new Date(item.createdAt).getFullYear() === year);
+      return res.json(orders);
     })
     .catch(err => {
       console.log('getCompleteOrdersInMonth ERROR', err);

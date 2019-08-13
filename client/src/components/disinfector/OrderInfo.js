@@ -47,13 +47,12 @@ class OrderInfo extends Component {
             <ul className="font-bold">
               <li className="pb-2">Дезинфектор: {orderObject.disinfectorId.name}</li>
               <li className="pb-2">Клиент: {orderObject.client}</li>
-              <li className="pb-2">Дата: <Moment format="DD/MM/YYYY">{orderObject.dateFrom}</Moment></li>
-              <li className="pb-2">Время выполнения: С <Moment format="HH:mm">{orderObject.dateFrom}</Moment> ПО <Moment format="HH:mm">{orderObject.dateTo}</Moment></li>
+              <li className="pb-2">Дата и Время выполнения: <Moment format="DD/MM/YYYY HH:mm">{orderObject.dateFrom}</Moment></li>
               <li className="pb-2">Адрес: {orderObject.address}</li>
               <li className="pb-2">Тип услуги: {orderObject.typeOfService}</li>
               <li className="pb-2">Комментарии Оператора: {orderObject.comment ? orderObject.comment : 'Нет комментариев'}</li>
               <li className="pb-2">Комментарии Дезинфектора: {this.state.disinfectorComment ? this.state.disinfectorComment : 'Нет комментариев'}</li>
-              <li className="pb-2">Заказ Добавлен: <Moment format="DD/MM/YYYY HH:mm">{orderObject.createdAt}</Moment></li>
+              <li className="pb-2">Заказ Добавлен: {orderObject.userCreated.name} <Moment format="DD/MM/YYYY HH:mm">{orderObject.createdAt}</Moment></li>
             </ul>
             {this.state.addComment ? (
               <form onSubmit={this.onSubmit}>

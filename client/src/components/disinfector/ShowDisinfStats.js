@@ -1,54 +1,57 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import materials from '../common/materials';
 
 class ShowDisinfStats extends Component {
   state = {
-    confirmedOrders: this.props.disinfector.stats.confirmedOrders,
     orders: this.props.disinfector.stats.orders
   };
 
   render() {
-    let confirmedOrdersNumber = this.state.confirmedOrders.length;
+    let operatorDecidedOrders = [], confirmedOrders = [], rejectedOders = [];
+
+    this.state.orders.forEach(item => {
+      if (item.completed && item.operatorDecided) {
+        operatorDecidedOrders.push(item);
+
+        if (item.operatorConfirmed) {
+          confirmedOrders.push(item);
+        } else {
+          rejectedOders.push(item);
+        }
+      }
+    })
+
     let ordersNumber = this.state.orders.length;
     let totalSum = 0, cash = 0;
 
     let allConsumptions = [];
 
-    this.state.confirmedOrders.forEach(item => {
-      totalSum += item.completeOrderId.cost;
-      if (item.completeOrderId.paymentMethod === 'Наличный') cash++;
-      item.completeOrderId.consumption.forEach(element => allConsumptions.push(element));
+    confirmedOrders.forEach(item => {
+      totalSum += item.cost;
+      if (item.paymentMethod === 'Наличный') cash++;
+      item.consumption.forEach(element => allConsumptions.push(element));
     });
 
-    let notCash = confirmedOrdersNumber - cash;
-    const cashPercent = (cash * 100 / confirmedOrdersNumber).toFixed(1);
+    let notCash = confirmedOrders.length - cash;
+    const cashPercent = (cash * 100 / confirmedOrders.length).toFixed(1);
     const notCashPercent = (100 - cashPercent).toFixed(1);
 
     let consumptionArrayResult = [];
-    allConsumptions.forEach((item, index) => {
-      let b = 0;
-      if (index === 0) {
-        consumptionArrayResult.push({
-          material: item.material,
-          amount: item.amount,
-          unit: item.unit
-        });
-      } else {
-        consumptionArrayResult.forEach((element, i) => {
-          if (element.material === item.material) {
-            element.amount += item.amount;
-            b++;
-          }
-        });
-        if (b === 0) {
-          consumptionArrayResult.push({
-            material: item.material,
-            amount: item.amount,
-            unit: item.unit
-          });
+    materials.forEach(object => consumptionArrayResult.push({
+      material: object.material,
+      amount: 0,
+      unit: object.unit
+    }));
+
+    allConsumptions.forEach(item => {
+      consumptionArrayResult.forEach(element => {
+        if (element.material === item.material) {
+          element.amount += item.amount;
+          return;
         }
-      }
+      })
     });
 
     let renderConsumption;
@@ -64,7 +67,7 @@ class ShowDisinfStats extends Component {
               <h2 className="text-center">Заказы</h2>
               <ul className="font-bold mb-0 list-unstyled">
                 <li className="pb-2">Всего Получено Заказов: {ordersNumber}</li>
-                <li className="pb-2">Выполнено Заказов: {confirmedOrdersNumber}</li>
+                <li className="pb-2">Выполнено и Подтверждено Заказов: {confirmedOrders.length}</li>
                 <li className="pb-2">Общая Сумма: {totalSum.toLocaleString()} UZS</li>
                 <li>Тип Платежей:</li>
                 <ul className="font-bold mb-1">

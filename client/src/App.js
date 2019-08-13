@@ -31,7 +31,6 @@ import Chat from './components/chat/Chat';
 import ChatRoom from './components/chat/ChatRoom';
 import Anons from './components/chat/Anons';
 import Operator from './components/operator/Operator';
-import OperatorStats from './components/operator/OperatorStats';
 import Accountant from './components/accountant/Accountant';
 
 import Register from './components/auth/Register';
@@ -80,6 +79,7 @@ class App extends Component {
               <PrivateRoute exact path="/anons" component={Anons} />
             </Switch>
 
+
             {/* Admin Routes */}
             <Switch>
               <AdminRoute exact path="/admin" component={Admin} />
@@ -87,6 +87,7 @@ class App extends Component {
             <Switch>
               <AdminRoute exact path="/register" component={Register} />
             </Switch>
+
 
             {/* DisinfectorRoutes */}
             <Switch>
@@ -101,6 +102,7 @@ class App extends Component {
             <Switch>
               <DisinfectorRoute exact path="/disinfector/stats" component={DisinfStats} />
             </Switch>
+
 
             {/* OperatorRoutes */}
             <Switch>
@@ -118,14 +120,13 @@ class App extends Component {
             <Switch>
               <OperatorRoute exact path="/order-confirm/:id" component={ConfirmOrder} />
             </Switch>
-            <Switch>
-              <OperatorRoute exact path="/operator/stats" component={OperatorStats} />
-            </Switch>
+
 
             {/* Accountant Routes */}
             <Switch>
               <AccountantRoute exact path="/accountant" component={Accountant} />
             </Switch>
+
 
             {/* Chat Routes */}
             <Switch>

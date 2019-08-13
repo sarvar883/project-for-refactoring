@@ -11,7 +11,7 @@ import {
 const initialState = {
   sortedOrders: [],
   completeOrders: [],
-  completeOrderById: {
+  orderToConfirm: {
     orderId: {},
     disinfectorId: {}
   },
@@ -63,7 +63,7 @@ export default function (state = initialState, action) {
     case GET_COMPLETE_ORDER_BY_ID:
       return {
         ...state,
-        completeOrderById: action.payload,
+        orderToConfirm: action.payload,
         loadingCompleteOrders: false
       };
 

@@ -4,32 +4,22 @@ const Schema = mongoose.Schema;
 const orderSchema = new Schema({
   disinfectorId: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: 'User'
   },
   client: {
-    type: String,
-    required: true
+    type: String
   },
   address: {
-    type: String,
-    required: true
+    type: String
   },
   phone: {
-    type: String,
-    required: true
+    type: String
   },
   dateFrom: {
-    type: Date,
-    required: true
-  },
-  dateTo: {
-    type: Date,
-    required: true
+    type: Date
   },
   typeOfService: {
-    type: String,
-    required: true
+    type: String
   },
   comment: {
     type: String
@@ -37,14 +27,66 @@ const orderSchema = new Schema({
   disinfectorComment: {
     type: String
   },
+  userCreated: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+
+
+  // disinfector completes the order
   completed: {
     type: Boolean,
     default: false
   },
+  consumption: [{
+    material: {
+      type: String
+    },
+    amount: {
+      type: Number
+    },
+    unit: {
+      type: String
+    }
+  }],
+  paymentMethod: {
+    type: String
+  },
+  cost: {
+    type: Number
+  },
+  completedAt: {
+    type: Date
+  },
+
+
+  // for operator
+  clientReview: {
+    type: String
+  },
+  score: {
+    type: Number
+  },
+  operatorCheckedAt: {
+    type: Date
+  },
+  operatorDecided: {
+    type: Boolean,
+    default: false
+  },
+  operatorConfirmed: {
+    type: Boolean,
+    default: false
+  },
+
+
+  // for admin
+
+
   createdAt: {
     type: Date,
     default: Date.now
-  },
+  }
 });
 
 module.exports = mongoose.model('Order', orderSchema);

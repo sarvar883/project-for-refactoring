@@ -1,2 +1,0 @@
-http://qaru.site/questions/16960853/got-troubles-to-deploy-on-heroku
-https://github.com/bradtraversy/mern_shopping_list/issues/7

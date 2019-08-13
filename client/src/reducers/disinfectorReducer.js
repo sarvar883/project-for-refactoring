@@ -5,8 +5,7 @@ import {
 
 const initialState = {
   stats: {
-    orders: [],
-    confirmedOrders: []
+    orders: []
   },
   loadingDisinfStats: false
 };
@@ -24,8 +23,7 @@ export default function (state = initialState, action) {
         ...state,
         stats: {
           ...state.stats,
-          orders: action.payload.orders,
-          confirmedOrders: action.payload.confirmedOrders
+          orders: action.payload
         },
         loadingDisinfStats: false
       };

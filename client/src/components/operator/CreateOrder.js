@@ -27,7 +27,6 @@ class CreateOrder extends Component {
       address: '',
       date: date,
       timeFrom: hour,
-      timeTo: '',
       phone: '',
       typeOfService: '',
       comment: '',
@@ -52,7 +51,6 @@ class CreateOrder extends Component {
 
     const date = this.state.date.split('-');
     const dateStringFrom = new Date(`${date[1]}-${date[2]}-${date[0]} ${this.state.timeFrom}`);
-    const dateStringTo = new Date(`${date[1]}-${date[2]}-${date[0]} ${this.state.timeTo}`);
 
     const newOrder = {
       disinfectorId: this.state.disinfectorId,
@@ -60,12 +58,11 @@ class CreateOrder extends Component {
       address: this.state.address,
       date: this.state.date,
       dateFrom: dateStringFrom,
-      dateTo: dateStringTo,
       timeFrom: this.state.timeFrom,
-      timeTo: this.state.timeTo,
       phone: this.state.phone,
       typeOfService: this.state.typeOfService,
-      comment: this.state.comment
+      comment: this.state.comment,
+      userCreated: this.props.auth.user.id
     };
 
     this.props.createOrder(newOrder, this.props.history, this.props.auth.user.occupation);
@@ -81,6 +78,17 @@ class CreateOrder extends Component {
     disinfectors.forEach(worker => disinfectorOptions.push({
       label: worker.name, value: worker._id
     }));
+
+    const orderTypes = [
+      { label: '-- Выберите тип заказа --', value: 0 },
+      { label: 'DF', value: 'DF' },
+      { label: 'DZ', value: 'DZ' },
+      { label: 'KL', value: 'KL' },
+      { label: 'TR', value: 'TR' },
+      { label: 'GR', value: 'GR' },
+      { label: 'MX', value: 'MX' },
+      { label: 'KOMP', value: 'KOMP' }
+    ];
 
     return (
       <div className="container create-order mt-4" >
@@ -123,14 +131,6 @@ class CreateOrder extends Component {
                     error={errors.timeFrom}
                   />
                   <TextFieldGroup
-                    label="Время (часы:минуты:AM/PM) ПО"
-                    name="timeTo"
-                    type="time"
-                    value={this.state.timeTo}
-                    onChange={this.onChange}
-                    error={errors.timeTo}
-                  />
-                  <TextFieldGroup
                     label="Телефон"
                     type="phone"
                     name="phone"
@@ -138,13 +138,12 @@ class CreateOrder extends Component {
                     onChange={this.onChange}
                     error={errors.phone}
                   />
-                  <TextFieldGroup
-                    label="Тип Услуги"
-                    type="text"
+                  <SelectListGroup
                     name="typeOfService"
                     value={this.state.typeOfService}
                     onChange={this.onChange}
                     error={errors.typeOfService}
+                    options={orderTypes}
                   />
                   {this.props.order.loading ? (
                     <p>Дезинфекторы загружаются...</p>

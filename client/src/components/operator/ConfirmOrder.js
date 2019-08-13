@@ -30,11 +30,10 @@ class ConfirmOrder extends Component {
   onSubmit = (e) => {
     e.preventDefault();
     const object = {
-      completeOrderId: this.props.operator.completeOrderById._id,
-      disinfectorId: this.props.operator.completeOrderById.disinfectorId._id,
+      orderId: this.props.operator.orderToConfirm._id,
       clientReview: this.state.clientReview,
       score: this.state.score,
-      orderDate: this.props.operator.completeOrderById.orderId.dateFrom
+      operatorCheckedAt: new Date()
     };
     this.props.confirmCompleteOrder(object, this.props.history);
   }
@@ -45,7 +44,7 @@ class ConfirmOrder extends Component {
   }
 
   render() {
-    const completeOrder = this.props.operator.completeOrderById;
+    const completeOrder = this.props.operator.orderToConfirm;
     const { errors } = this.state;
 
     let consumptionRender;
@@ -66,11 +65,11 @@ class ConfirmOrder extends Component {
                 <div className="card-body p-0">
                   <ul className="font-bold mb-0">
                     <li className="pb-2">Дезинфектор: {completeOrder.disinfectorId.name}</li>
-                    <li className="pb-2">Клиент: {completeOrder.orderId.client}</li>
-                    <li className="pb-2">Дата: <Moment format="DD/MM/YYYY">{completeOrder.orderId.dateFrom}</Moment></li>
-                    <li className="pb-2">Время выполнения: С <Moment format="HH:mm">{completeOrder.orderId.dateFrom}</Moment> ПО <Moment format="HH:mm">{completeOrder.orderId.dateTo}</Moment></li>
-                    <li className="pb-2">Адрес: {completeOrder.orderId.address}</li>
-                    <li className="pb-2">Тип услуги: {completeOrder.orderId.typeOfService}</li>
+                    <li className="pb-2">Клиент: {completeOrder.client}</li>
+                    <li className="pb-2">Дата: <Moment format="DD/MM/YYYY">{completeOrder.dateFrom}</Moment></li>
+                    <li className="pb-2">Время выполнения: С <Moment format="HH:mm">{completeOrder.dateFrom}</Moment> ПО <Moment format="HH:mm">{completeOrder.completedAt}</Moment></li>
+                    <li className="pb-2">Адрес: {completeOrder.address}</li>
+                    <li className="pb-2">Тип услуги: {completeOrder.typeOfService}</li>
                     <li className="pb-2">Комментарии Оператора: {completeOrder.comment ? completeOrder.comment : 'Нет комментариев'}</li>
                     <li className="pb-2">Комментарии Дезинфектора: {completeOrder.disinfectorComment ? completeOrder.disinfectorComment : 'Нет комментариев'}</li>
                     <li>Расход Материалов:</li>
@@ -79,13 +78,14 @@ class ConfirmOrder extends Component {
                     </ul>
                     <li className="pb-2">Тип Платежа: {completeOrder.paymentMethod}</li>
                     <li className="pb-2">Общая Сумма: {completeOrder.cost ? completeOrder.cost.toLocaleString() : ''} UZS</li>
-                    <li className="pb-2">Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{completeOrder.createdAt}</Moment></li>
+                    <li className="pb-2">Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{completeOrder.completedAt}</Moment></li>
                   </ul>
                   <button className="btn btn-danger" onClick={this.reject}>Отменить Выполнение Заказа</button>
                 </div>
               </div>
             </div>
           )}
+
           <div className="col-lg-6 col-md-9 mx-auto">
             <div className="card mt-3 mb-3">
               <div className="card-body p-2">

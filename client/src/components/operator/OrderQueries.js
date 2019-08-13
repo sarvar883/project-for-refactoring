@@ -8,7 +8,7 @@ import ShowOrderQueries from './ShowOrderQueries';
 
 class OrderQueries extends Component {
   componentDidMount() {
-    this.props.getCompleteOrders();
+    this.props.getCompleteOrders(this.props.auth.user.id);
   }
 
   render() {

@@ -9,7 +9,6 @@ module.exports = function validateOrderInput(data) {
   data.address = !isEmpty(data.address) ? data.address : '';
   data.date = !isEmpty(data.date) ? data.date : '';
   data.timeFrom = !isEmpty(data.timeFrom) ? data.timeFrom : '';
-  data.timeTo = !isEmpty(data.timeTo) ? data.timeTo : '';
   data.phone = !isEmpty(data.phone) ? data.phone : '';
   data.typeOfService = !isEmpty(data.typeOfService) ? data.typeOfService : '';
 
@@ -34,10 +33,6 @@ module.exports = function validateOrderInput(data) {
 
   if (Validator.isEmpty(data.timeFrom)) {
     errors.timeFrom = 'Это поле обязательное';
-  }
-
-  if (Validator.isEmpty(data.timeTo)) {
-    errors.timeTo = 'Это поле обязательное';
   }
 
   if (Validator.isEmpty(data.typeOfService)) {

@@ -31,9 +31,9 @@ export const getSortedOrders = (date) => (dispatch) => {
 
 
 // operator gets complete orders for confirmation
-export const getCompleteOrders = () => (dispatch) => {
+export const getCompleteOrders = (id) => (dispatch) => {
   dispatch(setLoadingCompleteOrders());
-  axios.post('/operator/get-complete-orders')
+  axios.post('/operator/get-complete-orders', { id: id })
     .then(res =>
       dispatch({
         type: GET_COMPLETE_ORDERS,

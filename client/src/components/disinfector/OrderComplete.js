@@ -77,11 +77,9 @@ class OrderComplete extends Component {
     e.preventDefault();
     const object = {
       orderId: this.props.match.params.id,
-      disinfectorId: this.props.order.orderById.disinfectorId._id,
       consumption: this.state.consumption,
       paymentMethod: this.state.paymentMethod,
-      cost: this.state.cost,
-      orderDate: this.props.order.orderById.dateFrom
+      cost: this.state.cost
     };
     this.props.submitCompleteOrder(object, this.props.history);
   };
@@ -90,23 +88,19 @@ class OrderComplete extends Component {
     const order = this.props.order.orderById;
 
     let consumptionMaterials = [
-      { label: '-- Выберите вещество --', value: "" }
-      // { label: 'Вещество 1', value: 'material1' },
-      // { label: 'Вещество 2', value: 'material2' },
-      // { label: 'Вещество 3', value: 'material3' },
-      // { label: 'Вещество 4', value: 'material4' },
+      { label: '-- Выберите вещество --', value: "", unit: "" }
     ];
 
-    materials.forEach((item, index) => {
+    materials.forEach(item => {
       consumptionMaterials.push({
         label: item.material,
-        value: `material1${index + 1}`,
+        value: item.material,
         unit: item.unit
       })
     });
 
     const consumptionOptions = consumptionMaterials.map((option, index) =>
-      <option value={`${option.value}+${option.unit}`} key={index}>{option.label} {option.unit ? `(${option.unit})` : ''}</option>
+      <option value={`${option.value}+${option.unit}`} key={index}>{option.label} {option.unit}</option>
     );
 
     let renderConsumption = this.state.array.map((item, index) =>
@@ -145,7 +139,7 @@ class OrderComplete extends Component {
                     <li className="pb-2">Дезинфектор: {order.disinfectorId.name}</li>
                     <li className="pb-2">Клиент: {order.client}</li>
                     <li className="pb-2">Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
-                    <li className="pb-2">Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment> ПО <Moment format="HH:mm">{order.dateTo}</Moment></li>
+                    <li className="pb-2">Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment></li>
                     <li className="pb-2">Адрес: {order.address}</li>
                     <li className="pb-2">Тип услуги: {order.typeOfService}</li>
                     <li className="pb-2">Комментарии Оператора: {order.comment ? order.comment : 'Нет комментариев'}</li>

@@ -3,8 +3,6 @@ const User = require('../models/user');
 const Chat = require('../models/chat');
 const Anons = require('../models/anons');
 const Order = require('../models/order');
-const CompleteOrder = require('../models/completeOrder');
-const ConfirmedOrder = require('../models/confirmedOrder');
 const io = require('../socket');
 
 const validateConfirmedOrder = require('../validation/confirmOrder');
@@ -33,8 +31,14 @@ exports.getSortedOrders = (req, res) => {
 
 
 exports.getCompleteOrders = (req, res) => {
-  CompleteOrder.find({ confirmed: false })
-    .populate('orderId disinfectorId')
+  const operatorId = req.body.id;
+
+  Order.find({
+    userCreated: operatorId,
+    completed: true,
+    operatorDecided: false
+  })
+    .populate('disinfectorId userCreated')
     .exec()
     .then(completeOrders => res.json(completeOrders))
     .catch(err => {
@@ -45,8 +49,8 @@ exports.getCompleteOrders = (req, res) => {
 
 
 exports.getCompleteOrderById = (req, res) => {
-  CompleteOrder.findById(req.params.id)
-    .populate('orderId disinfectorId')
+  Order.findById(req.params.id)
+    .populate('disinfectorId')
     .exec()
     .then(order => res.json(order))
     .catch(err => {
@@ -65,23 +69,17 @@ exports.confirmCompleteOrder = (req, res) => {
     return res.status(400).json(errors);
   }
 
-  CompleteOrder
-    .findById(req.body.object.completeOrderId)
+  Order
+    .findById(req.body.object.orderId)
     .then(foundOrder => {
-      foundOrder.confirmed = true;
-      foundOrder.save();
-    });
-
-  const newObject = new ConfirmedOrder({
-    completeOrderId: req.body.object.completeOrderId,
-    disinfectorId: req.body.object.disinfectorId,
-    clientReview: req.body.object.clientReview,
-    score: req.body.object.score,
-    orderDate: req.body.object.orderDate
-  });
-
-  newObject.save()
-    .then(savedObject => res.json(savedObject))
+      foundOrder.operatorDecided = true;
+      foundOrder.operatorConfirmed = true;
+      foundOrder.clientReview = req.body.object.clientReview;
+      foundOrder.score = req.body.object.score;
+      foundOrder.operatorCheckedAt = req.body.object.operatorCheckedAt;
+      return foundOrder.save();
+    })
+    .then(confirmedOrder => res.json(confirmedOrder))
     .catch(err => {
       console.log('confirmCompleteOrder ERROR', err);
       return res.status(400).json(err);
