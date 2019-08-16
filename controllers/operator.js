@@ -14,14 +14,14 @@ exports.getSortedOrders = (req, res) => {
   const year = date.getFullYear();
 
   Order.find()
-    .populate('disinfectorId')
+    .populate('disinfectorId userCreated')
     .exec()
     .then(orders => {
-      let sortedOrders = orders.filter(item => item.dateFrom.getDate() === day && item.dateFrom.getMonth() === month && item.dateFrom.getFullYear() === year);
+      let sortedOrders = orders.filter(item => new Date(item.dateFrom).getDate() === day && new Date(item.dateFrom).getMonth() === month && new Date(item.dateFrom).getFullYear() === year);
       // sortedOrders.sort(function (a, b) {
       //   return a.dateFrom.getTime() - b.dateFrom.getTime();
       // });
-      res.json(sortedOrders);
+      return res.json(sortedOrders);
     })
     .catch(err => {
       console.log('getSortedOrders ERROR', err);

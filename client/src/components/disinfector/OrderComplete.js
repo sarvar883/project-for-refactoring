@@ -75,13 +75,23 @@ class OrderComplete extends Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    const object = {
-      orderId: this.props.match.params.id,
-      consumption: this.state.consumption,
-      paymentMethod: this.state.paymentMethod,
-      cost: this.state.cost
-    };
-    this.props.submitCompleteOrder(object, this.props.history);
+    let emptyFields = 0;
+    this.state.consumption.forEach(item => {
+      if (item.material === '') {
+        emptyFields++;
+      }
+    });
+    if (emptyFields > 0) {
+      alert('Заполните Поле "Расход Материалов"');
+    } else {
+      const object = {
+        orderId: this.props.match.params.id,
+        consumption: this.state.consumption,
+        paymentMethod: this.state.paymentMethod,
+        cost: this.state.cost
+      };
+      this.props.submitCompleteOrder(object, this.props.history);
+    }
   };
 
   render() {
@@ -160,7 +170,7 @@ class OrderComplete extends Component {
                 <form onSubmit={this.onSubmit}>
                   <label htmlFor="consumption">Расход Материалов:</label>
                   {renderConsumption}
-                  <button className="btn btn-primary mr-2" onClick={this.addMaterial}>Добавить Материал</button>
+                  {this.state.array.length < materials.length ? <button className="btn btn-primary mr-2" onClick={this.addMaterial}>Добавить Материал</button> : ''}
                   {this.state.array.length === 1 ? '' : <button className="btn btn-danger" onClick={this.deleteMaterial}>Удалить последний материал</button>}
                   <hr />
                   <div className="form-group">

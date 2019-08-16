@@ -18,6 +18,10 @@ operator1
 operator@gmail.com
 123456
 
+operator2
+operator2@gmail.com
+123456
+
 buxgalter1
 buxgalter@gmail.com
 123456

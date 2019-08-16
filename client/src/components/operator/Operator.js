@@ -10,18 +10,23 @@ import SortedOrders from './SortedOrders';
 
 class Operator extends Component {
   state = {
-    date: new Date(),
+    date: new Date()
   }
 
   componentDidMount() {
     this.props.getSortedOrders(this.state.date);
   };
 
-  onChange = (date) => this.setState({ date });
-
-  onSubmit = (e) => {
-    e.preventDefault();
-    this.props.getSortedOrders(this.state.date);
+  onChange = (date) => {
+    let today = new Date().setHours(0, 0, 0, 0);
+    if (date < today) {
+      alert('Нельзя смотреть прошедшие дни');
+    } else {
+      this.setState({
+        date: date
+      });
+      this.props.getSortedOrders(date);
+    }
   };
 
   render() {
@@ -36,16 +41,12 @@ class Operator extends Component {
                 onChange={this.onChange}
                 value={this.state.date}
               />
-              <h4>Дата: <Moment format="DD/MM/YYYY">{this.state.date}</Moment></h4>
-              <form onSubmit={this.onSubmit}>
-                <button type="submit" className="btn btn-success mt-3">Посмотреть</button>
-              </form>
             </div>
           </div>
           <div className="col-lg-9">
-            <h1 className="text-center">Заявки на <Moment format="DD/MM/YYYY">{this.props.operator.date}</Moment></h1>
+            <h1 className="text-center">Заявки на <Moment format="DD/MM/YYYY">{this.state.date}</Moment></h1>
             {loadingSortedOrders ? <Spinner /> : (
-              <SortedOrders />
+              <SortedOrders date={this.state.date} />
             )}
           </div>
         </div>

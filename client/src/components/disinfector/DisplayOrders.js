@@ -26,7 +26,7 @@ class DisplayOrders extends Component {
       if (this.props.auth.user.id === data.disinfectorId) {
         this.addOrder(data.order);
       }
-    })
+    });
   }
 
   addOrder = (order) => {

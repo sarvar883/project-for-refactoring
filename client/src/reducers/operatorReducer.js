@@ -15,7 +15,6 @@ const initialState = {
     orderId: {},
     disinfectorId: {}
   },
-  date: {},
   stats: {
     orders: [],
     completeOrders: []
