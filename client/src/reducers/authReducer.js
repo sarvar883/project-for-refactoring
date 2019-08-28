@@ -1,9 +1,16 @@
 import isEmpty from '../validation/is-empty';
-import { SET_CURRENT_USER } from '../actions/types';
+import {
+  SET_CURRENT_USER,
+  GET_DISINFECTOR_MATERIALS,
+  LOADING_CURRENT_DISINFECTOR
+} from '../actions/types';
 
 const initialState = {
   isAuthenticated: false,
-  user: {}
+  loadingUser: false,
+  user: {
+    materials: []
+  }
 };
 
 export default function (state = initialState, action) {
@@ -14,6 +21,23 @@ export default function (state = initialState, action) {
         isAuthenticated: !isEmpty(action.payload),
         user: action.payload
       };
+
+    case LOADING_CURRENT_DISINFECTOR:
+      return {
+        ...state,
+        loadingUser: true
+      };
+
+    case GET_DISINFECTOR_MATERIALS:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          materials: action.payload
+        },
+        loadingUser: false
+      };
+
     default:
       return state;
   }

@@ -10,7 +10,6 @@ import DisplayUsersWithChat from './DisplayUsersWithChat';
 
 class Chat extends Component {
   componentDidMount() {
-    // this.props.getAllUsers();
     this.props.getAllChatsOfUser(this.props.auth.user.id);
   }
 

@@ -53,6 +53,11 @@ ul.navbar-nav li.nav-item .logout button {
   transition: 0.5s;
   color: white;
 }
+.dropdown .dropdown-menu .nav-item:hover {
+  background-color: #343d83;
+  transition: 0.5s;
+  color: white;
+}
 @media (max-width: 991px) {
   ul.navbar-nav li.nav-item {
     background: none;
@@ -214,3 +219,53 @@ button.edit-message, button.delete-message {
   font-size: 18px;
 }
 /* END OF ANNOUNCEMENTS */
+
+
+
+
+/* CALENDAR SELECT WEEKS */
+.SelectedWeekExample .DayPicker-Month {
+  border-collapse: separate;
+}
+.SelectedWeekExample .DayPicker-WeekNumber {
+  outline: none;
+}
+.SelectedWeekExample .DayPicker-Day {
+  outline: none;
+  border: 1px solid transparent;
+}
+.SelectedWeekExample .DayPicker-Day--hoverRange {
+  /* background-color: #EFEFEF !important; */
+}
+
+.SelectedWeekExample .DayPicker-Day--selectedRange {
+  background-color: #fff7ba !important;
+  border-top-color: #FFEB3B;
+  border-bottom-color: #FFEB3B;
+  border-left-color: #fff7ba;
+  border-right-color: #fff7ba;
+}
+
+.SelectedWeekExample .DayPicker-Day--selectedRangeStart {
+  background-color: #FFEB3B !important;
+  border-left: 1px solid #FFEB3B;
+}
+
+.SelectedWeekExample .DayPicker-Day--selectedRangeEnd {
+  background-color: #FFEB3B !important;
+  border-right: 1px solid #FFEB3B;
+}
+
+.SelectedWeekExample .DayPicker-Day--selectedRange:not(.DayPicker-Day--outside).DayPicker-Day--selected,
+.SelectedWeekExample .DayPicker-Day--hoverRange:not(.DayPicker-Day--outside).DayPicker-Day--selected {
+  border-radius: 0 !important;
+  color: black !important;
+}
+.SelectedWeekExample .DayPicker-Day--hoverRange:hover {
+  border-radius: 0 !important;
+}
+/* END OF CALENDAR SELECT WEEKS */
+
+.weekly-stats {
+  border: 2px solid red;
+}

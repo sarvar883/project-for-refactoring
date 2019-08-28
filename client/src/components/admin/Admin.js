@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { addAnons } from '../../actions/chatActions';
 
@@ -27,43 +27,48 @@ class Admin extends Component {
           <h2 className="m-auto">Страница Админа {this.props.auth.user.name}</h2>
         </div>
 
-        <div className="ads">
-          <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#createAnons">
-            Создать Объявление
+        <div className="row">
+          <div className="ads">
+            <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#createAnons">
+              Создать Объявление
           </button>
-          <div className="modal fade" id="createAnons">
-            <div className="modal-dialog">
-              <div className="modal-content">
+            <div className="modal fade" id="createAnons">
+              <div className="modal-dialog">
+                <div className="modal-content">
 
-                <div className="modal-header">
-                  <h4 className="modal-title">Создать Объявление</h4>
-                  <button type="button" className="close" data-dismiss="modal">&times;</button>
-                </div>
+                  <div className="modal-header">
+                    <h4 className="modal-title">Создать Объявление</h4>
+                    <button type="button" className="close" data-dismiss="modal">&times;</button>
+                  </div>
 
-                <form onSubmit={this.createAd}>
-                  <div className="modal-body">
-                    <div className="form-group">
-                      <textarea
-                        className="form-control"
-                        rows="5"
-                        name="anons"
-                        defaultValue={this.state.anons}
-                        placeholder="Пишите Ваше Объяление ..."
-                        required
-                        onChange={this.onChange}
-                      />
+                  <form onSubmit={this.createAd}>
+                    <div className="modal-body">
+                      <div className="form-group">
+                        <textarea
+                          className="form-control"
+                          rows="5"
+                          name="anons"
+                          defaultValue={this.state.anons}
+                          placeholder="Пишите Ваше Объяление ..."
+                          required
+                          onChange={this.onChange}
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="modal-footer">
-                    <button type="submit" className="btn btn-success">Создать</button>
-                  </div>
-                </form>
+                    <div className="modal-footer">
+                      <button type="submit" className="btn btn-success">Создать</button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
+        <div className="row mt-3">
+          <Link to="/admin/materials" className="btn btn-success">Материалы</Link>
+        </div>
       </div>
     )
   }
@@ -71,6 +76,7 @@ class Admin extends Component {
 
 const mapStateToProps = state => ({
   auth: state.auth,
+  admin: state.admin,
   errors: state.errors
 });
 

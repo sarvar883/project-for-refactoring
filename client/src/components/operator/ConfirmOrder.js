@@ -77,6 +77,9 @@ class ConfirmOrder extends Component {
                       {consumptionRender}
                     </ul>
                     <li className="pb-2">Тип Платежа: {completeOrder.paymentMethod}</li>
+
+                    {completeOrder.paymentMethod === 'Безналичный' ? <li className="pb-2">Счет-Фактура: {completeOrder.invoice}</li> : ''}
+
                     <li className="pb-2">Общая Сумма: {completeOrder.cost ? completeOrder.cost.toLocaleString() : ''} UZS</li>
                     <li className="pb-2">Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{completeOrder.completedAt}</Moment></li>
                   </ul>

@@ -5,6 +5,7 @@ import orderReducer from './orderReducer';
 import chatReducer from './chatReducer';
 import operatorReducer from './operatorReducer';
 import disinfectorReducer from './disinfectorReducer';
+import adminReducer from './adminReducer';
 
 export default combineReducers({
   auth: authReducer,
@@ -12,5 +13,6 @@ export default combineReducers({
   order: orderReducer,
   chat: chatReducer,
   disinfector: disinfectorReducer,
-  operator: operatorReducer
+  operator: operatorReducer,
+  admin: adminReducer
 });

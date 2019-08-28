@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('../models/user');
 const Order = require('../models/order');
+const AddMaterial = require('../models/addMaterial');
 
 const validateOrderInput = require('../validation/order');
 const validateDisinfectorCommentInput = require('../validation/disinfectorComment');
@@ -103,11 +104,21 @@ exports.getOrderById = (req, res) => {
 exports.submitCompleteOrder = (req, res) => {
   const { order } = req.body;
 
+  User.findById(order.disinfectorId)
+    .then(user => {
+      user.subtractConsumptionMaterials(order.consumption)
+    });
+
   Order.findById(order.orderId)
     .then(foundOrder => {
       foundOrder.completed = true;
       foundOrder.consumption = order.consumption;
       foundOrder.paymentMethod = order.paymentMethod;
+      if (order.paymentMethod === 'Безналичный') {
+        foundOrder.invoice = order.invoice;
+      } else {
+        foundOrder.invoice = -1;
+      }
       foundOrder.cost = order.cost;
       foundOrder.completedAt = new Date();
       return foundOrder.save();
@@ -116,7 +127,7 @@ exports.submitCompleteOrder = (req, res) => {
       io.getIO().emit('submitCompleteOrder', {
         completeOrder: newCompleteOrder
       });
-      return res.json(newCompleteOrder)
+      return res.json(newCompleteOrder);
     })
     .catch(err => {
       console.log('getOrderById ERROR', err);
@@ -140,6 +151,19 @@ exports.getCompleteOrdersInMonth = (req, res) => {
     })
     .catch(err => {
       console.log('getCompleteOrdersInMonth ERROR', err);
+      res.status(400).json(err);
+    });
+};
+
+
+exports.getAddMaterialsEvents = (req, res) => {
+  const id = req.body.id;
+  AddMaterial.find({ disinfector: id })
+    .populate('disinfector admin')
+    .exec()
+    .then(events => res.json(events))
+    .catch(err => {
+      console.log('getAddMaterialsEvents ERROR', err);
       res.status(400).json(err);
     });
 };

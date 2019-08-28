@@ -49,6 +49,11 @@ class Navbar extends Component {
     const disinfectorLinks = (
       <div className="disinfectorLinks">
         <li className="nav-item mr-2 list-inline-item">
+          <Link className="nav-link" to="/disinfector/materials">
+            Материалы
+          </Link>
+        </li>
+        <li className="nav-item mr-2 list-inline-item">
           <Link className="nav-link" to="/disinfector/stats">
             Статистика
           </Link>
@@ -79,9 +84,17 @@ class Navbar extends Component {
     const adminLinks = (
       <div className="adminLinks">
         <li className="nav-item mr-2 list-inline-item">
-          <Link className="nav-link" to="/register">
-            Добавить Юзер
+          <Link className="nav-link" to="/admin/stats">
+            Статистика
           </Link>
+        </li>
+        <li className="nav-item mr-2 list-inline-item">
+          <Link className="nav-link" to="/admin/order-queries">
+            Запросы
+          </Link>
+        </li>
+        <li className="nav-item mr-2 list-inline-item">
+          <Link className="nav-link" to="/register">Добавить Юзер</Link>
         </li>
       </div>
     );

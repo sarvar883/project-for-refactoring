@@ -52,6 +52,9 @@ const orderSchema = new Schema({
   paymentMethod: {
     type: String
   },
+  invoice: {
+    type: Number
+  },
   cost: {
     type: Number
   },
@@ -60,7 +63,7 @@ const orderSchema = new Schema({
   },
 
 
-  // for operator
+  // operator
   clientReview: {
     type: String
   },
@@ -81,6 +84,17 @@ const orderSchema = new Schema({
 
 
   // for admin
+  adminCheckedAt: {
+    type: Date
+  },
+  adminDecided: {
+    type: Boolean,
+    default: false
+  },
+  adminConfirmed: {
+    type: Boolean,
+    default: false
+  },
 
 
   createdAt: {

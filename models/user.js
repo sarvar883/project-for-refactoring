@@ -18,6 +18,22 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  materials: [
+    {
+      material: {
+        type: String,
+        default: 'Вещество 1'
+      },
+      amount: {
+        type: Number,
+        default: 0
+      },
+      unit: {
+        type: String,
+        default: 'гр'
+      }
+    }
+  ],
   color: {
     type: String,
     required: false
@@ -27,5 +43,18 @@ const userSchema = new Schema({
     required: true
   }
 });
+
+userSchema.methods.subtractConsumptionMaterials = function (consumptionArray) {
+  consumptionArray.forEach(item => {
+    this.materials.forEach(thing => {
+      if (thing.material === item.material && thing.unit === item.unit) {
+        thing.amount -= item.amount;
+        return;
+      }
+    });
+  });
+  return this.save();
+  // return this.materials;
+};
 
 module.exports = mongoose.model('User', userSchema);

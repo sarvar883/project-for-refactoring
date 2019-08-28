@@ -2,7 +2,6 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const keys = require('../config/keys');
-const passport = require('passport');
 
 // Load Input Validation
 const validateRegisterInput = require('../validation/register');
@@ -76,7 +75,9 @@ exports.loginUser = (req, res) => {
           name: user.name,
           email: user.email,
           phone: user.phone,
-          occupation: user.occupation
+          occupation: user.occupation,
+          materials: user.materials,
+          color: user.color
         };
 
         // Sign Token
@@ -108,6 +109,18 @@ exports.currentUser = (req, res) => {
     name: req.user.name,
     email: req.user.email,
     phone: req.user.phone,
-    occupation: req.user.occupation
+    occupation: req.user.occupation,
+    materials: req.user.materials,
+    color: req.user.color
   });
+};
+
+
+exports.getDisinfectorMaterials = (req, res) => {
+  User.findById(req.body.id)
+    .then(disinfector => res.json(disinfector.materials))
+    .catch(err => {
+      console.log('getCurrentDisinfector ERROR', err);
+      return res.status(404).json(err);
+    });
 };

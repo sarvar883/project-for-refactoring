@@ -19,9 +19,13 @@ import DisinfectorRoute from './components/common/DisinfectorRoute';
 import Navbar from './components/layout/Navbar';
 import Landing from './components/layout/Landing';
 import Admin from './components/admin/Admin';
+import AdminStats from './components/admin/AdminStats';
+import AdminQueries from './components/admin/AdminQueries';
+import AdminMaterials from './components/admin/AdminMaterials';
 import Disinfector from './components/disinfector/Disinfector';
 import DisinfQueries from './components/disinfector/DisinfQueries';
 import DisinfStats from './components/disinfector/DisinfStats';
+import Materials from './components/disinfector/Materials';
 import CreateOrder from './components/operator/CreateOrder';
 import OrderDetails from './components/operator/OrderDetails';
 import OrderComplete from './components/disinfector/OrderComplete';
@@ -87,6 +91,15 @@ class App extends Component {
             <Switch>
               <AdminRoute exact path="/register" component={Register} />
             </Switch>
+            <Switch>
+              <AdminRoute exact path="/admin/stats" component={AdminStats} />
+            </Switch>
+            <Switch>
+              <AdminRoute exact path="/admin/order-queries" component={AdminQueries} />
+            </Switch>
+            <Switch>
+              <AdminRoute exact path="/admin/materials" component={AdminMaterials} />
+            </Switch>
 
 
             {/* DisinfectorRoutes */}
@@ -101,6 +114,9 @@ class App extends Component {
             </Switch>
             <Switch>
               <DisinfectorRoute exact path="/disinfector/stats" component={DisinfStats} />
+            </Switch>
+            <Switch>
+              <DisinfectorRoute exact path="/disinfector/materials" component={Materials} />
             </Switch>
 
 
@@ -136,6 +152,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute exact path="/chat/:chatId" component={ChatRoom} />
             </Switch>
+
           </div>
         </Router>
       </Provider>

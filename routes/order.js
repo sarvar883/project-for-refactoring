@@ -26,4 +26,7 @@ router.post('/submit-complete-order', passport.authenticate('jwt', { session: fa
 
 router.post('/get-complete-order-in-month', passport.authenticate('jwt', { session: false }), isDisinfector, orderController.getCompleteOrdersInMonth)
 
+// get events when materials were added to disinfector
+router.post('/get-add-material-events', passport.authenticate('jwt', { session: false }), isDisinfector, orderController.getAddMaterialsEvents);
+
 module.exports = router;

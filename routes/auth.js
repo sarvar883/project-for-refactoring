@@ -8,10 +8,13 @@ const keys = require('../config/keys');
 const passport = require('passport');
 
 const isAdmin = require('../middleware/isAdmin');
+const isDisinfector = require('../middleware/isDisinfector');
 
 router.post('/login', authController.loginUser);
 
 router.post('/register', passport.authenticate('jwt', { session: false }), isAdmin, authController.registerUser);
+
+router.post('/auth/get-disinfector-materials', passport.authenticate('jwt', { session: false }), isDisinfector, authController.getDisinfectorMaterials);
 
 // @desc    Return current user
 router.get('/current', passport.authenticate('jwt', { session: false }), authController.currentUser);

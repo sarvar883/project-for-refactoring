@@ -5,9 +5,15 @@ const router = express.Router();
 const statsController = require('../controllers/stats');
 const isDisinfector = require('../middleware/isDisinfector');
 const isOperatorOrAdmin = require('../middleware/isOperatorOrAdmin');
-
+const isAdmin = require('../middleware/isAdmin');
 
 // stats for disinfector
-router.post('/for-disinfector', passport.authenticate('jwt', { session: false }), isDisinfector, statsController.statsForDisinfector);
+router.post('/for-disinfector-month', passport.authenticate('jwt', { session: false }), isDisinfector, statsController.monthStatsForDisinfector);
+
+router.post('/for-disinfector-week', passport.authenticate('jwt', { session: false }), isDisinfector, statsController.weekStatsForDisinfector);
+
+router.post('/for-admin-month', passport.authenticate('jwt', { session: false }), isAdmin, statsController.monthStatsForAdmin);
+
+router.post('/for-admin-week', passport.authenticate('jwt', { session: false }), isAdmin, statsController.weekStatsForAdmin);
 
 module.exports = router;

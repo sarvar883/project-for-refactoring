@@ -1,0 +1,25 @@
+        const array = [
+          {
+            material: 'Вещество 1',
+            amount: 0,
+            unit: 'гр'
+          },
+          {
+            material: 'Вещество 2',
+            amount: 0,
+            unit: 'гр'
+          },
+          {
+            material: 'Вещество 3',
+            amount: 0,
+            unit: 'гр'
+          },
+          {
+            material: 'Вещество 4',
+            amount: 0,
+            unit: 'гр'
+          }
+        ];
+
+        item.materials = array;
+        item.save();

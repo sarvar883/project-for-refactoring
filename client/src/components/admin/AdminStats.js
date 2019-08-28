@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Spinner from '../common/Spinner';
-import moment from 'moment';
 import Moment from 'react-moment';
-import { getMonthStats, getWeekStats } from '../../actions/disinfectorActions';
-import ShowDisinfStats from './ShowDisinfStats';
+import moment from 'moment';
+
+import { getMonthStatsForAdmin, getWeekStatsForAdmin } from '../../actions/adminActions';
+import ShowAdminStats from './ShowAdminStats';
 
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
@@ -37,7 +38,7 @@ function getWeekRange(date) {
 
 
 
-class DisinfStats extends Component {
+class AdminStats extends Component {
   state = {
     month: '',
     year: '',
@@ -53,7 +54,7 @@ class DisinfStats extends Component {
   componentDidMount() {
     const thisMonth = new Date().getMonth();
     const thisYear = new Date().getFullYear();
-    this.props.getMonthStats(this.props.auth.user.id, thisMonth, thisYear);
+    this.props.getMonthStatsForAdmin(thisMonth, thisYear);
     this.setState({
       headingMonth: thisMonth,
       headingYear: thisYear
@@ -64,7 +65,7 @@ class DisinfStats extends Component {
 
   getMonthStats = (e) => {
     e.preventDefault();
-    this.props.getMonthStats(this.props.auth.user.id, this.state.month, this.state.year);
+    this.props.getMonthStatsForAdmin(this.state.month, this.state.year);
     this.setState({
       headingMonth: this.state.month,
       headingYear: this.state.year
@@ -75,7 +76,7 @@ class DisinfStats extends Component {
 
   // weekly calendar
   handleDayChange = date => {
-    this.props.getWeekStats(this.props.auth.user.id, getWeekDays(getWeekRange(date).from));
+    this.props.getWeekStatsForAdmin(getWeekDays(getWeekRange(date).from));
     this.setState({
       selectedDays: getWeekDays(getWeekRange(date).from)
     });
@@ -94,7 +95,7 @@ class DisinfStats extends Component {
   };
 
   handleWeekClick = (weekNumber, days, e) => {
-    this.props.getWeekStats(this.props.auth.user.id, getWeekDays(getWeekRange(days[0]).from));
+    this.props.getWeekStatsForAdmin(getWeekDays(getWeekRange(days[0]).from));
     this.setState({
       selectedDays: getWeekDays(getWeekRange(days[0]).from)
     });
@@ -195,28 +196,22 @@ class DisinfStats extends Component {
                 onDayMouseLeave={this.handleDayLeave}
                 onWeekClick={this.handleWeekClick}
               />
-              {/* {selectedDays.length === 7 && (
-                <div>
-                  {moment(selectedDays[0]).format('LL')} –{' '}
-                  {moment(selectedDays[6]).format('LL')}
-                </div>
-              )} */}
             </div>
           </div>
         </div>
 
         <div className="row mt-2">
           <div className="col-12">
-            {this.props.disinfector.method === 'week' ?
-              <h2 className="text-center pl-3 pr-3">Ваша Недельная статистика за <Moment format="DD/MM/YYYY">{this.state.selectedDays[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDays[6]}</Moment></h2> :
-              <h2 className="text-center pl-3 pr-3">Ваша Месячная Статистика за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2>
+            {this.props.admin.method === 'week' ?
+              <h2 className="text-center pl-3 pr-3">Недельная статистика за <Moment format="DD/MM/YYYY">{this.state.selectedDays[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDays[6]}</Moment></h2> :
+              <h2 className="text-center pl-3 pr-3">Месячная Статистика за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2>
             }
           </div>
         </div>
 
         <div className="row">
           <div className="col-12">
-            {this.props.disinfector.loadingDisinfStats ? <Spinner /> : <ShowDisinfStats />}
+            {this.props.admin.loadingStats ? <Spinner /> : <ShowAdminStats />}
           </div>
         </div>
       </div>
@@ -224,11 +219,10 @@ class DisinfStats extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   auth: state.auth,
-  order: state.order,
-  disinfector: state.disinfector,
+  admin: state.admin,
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getMonthStats, getWeekStats })(withRouter(DisinfStats));
+export default connect(mapStateToProps, { getMonthStatsForAdmin, getWeekStatsForAdmin })(withRouter(AdminStats));

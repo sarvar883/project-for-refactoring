@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const User = require('../models/user');
-const Chat = require('../models/chat');
-const Anons = require('../models/anons');
 const Order = require('../models/order');
 const io = require('../socket');
 
@@ -17,7 +15,11 @@ exports.getSortedOrders = (req, res) => {
     .populate('disinfectorId userCreated')
     .exec()
     .then(orders => {
-      let sortedOrders = orders.filter(item => new Date(item.dateFrom).getDate() === day && new Date(item.dateFrom).getMonth() === month && new Date(item.dateFrom).getFullYear() === year);
+      let sortedOrders = orders.filter(item =>
+        new Date(item.dateFrom).getDate() === day &&
+        new Date(item.dateFrom).getMonth() === month &&
+        new Date(item.dateFrom).getFullYear() === year
+      );
       // sortedOrders.sort(function (a, b) {
       //   return a.dateFrom.getTime() - b.dateFrom.getTime();
       // });

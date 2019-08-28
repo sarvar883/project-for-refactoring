@@ -21,9 +21,16 @@ class CompleteOrdersInMonth extends Component {
               <ul className="font-bold mb-0">
                 <li className="pb-2">{order.operatorDecided ? 'Оператор рассмотрел заявку' : 'Оператор еще не рассмотрел заявку'}</li>
                 {order.operatorDecided ?
-                  <li className={order.operatorConfirmed ? "pb-2 text-success" : "pb-2 text-danger"}>Статус: {order.operatorConfirmed ? "Подтвержден" : "Отклонен"}</li>
+                  <li className={order.operatorConfirmed ? "pb-2 text-success" : "pb-2 text-danger"}> {order.operatorConfirmed ? "Оператор Подтвердил" : "Оператор Отклонил"}</li>
                   : ''
                 }
+
+                <li className="pb-2">{order.adminDecided ? 'Админ рассмотрел заявку' : 'Админ еще не рассмотрел заявку'}</li>
+                {order.adminDecided ?
+                  <li className={order.adminConfirmed ? "pb-2 text-success" : "pb-2 text-danger"}>{order.adminConfirmed ? "Админ Подтвердил" : "Админ Отклонил"}</li>
+                  : ''
+                }
+
                 <li className="pb-2">Клиент: {order.client}</li>
                 <li className="pb-2">Дата выполнения: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
                 <li className="pb-2">Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment> ПО <Moment format="HH:mm">{order.completedAt}</Moment></li>
@@ -31,6 +38,9 @@ class CompleteOrdersInMonth extends Component {
                 <li className="pb-2">Тип услуги: {order.typeOfService}</li>
                 <li className="pb-2">Комментарии Дезинфектора: {order.disinfectorComment ? order.disinfectorComment : 'Нет комментариев'}</li>
                 <li className="pb-2">Тип Платежа: {order.paymentMethod}</li>
+
+                {order.paymentMethod === 'Безналичный' ? <li className="pb-2">Счет-Фактура: {order.invoice}</li> : ''}
+
                 <li>Расход Материалов:</li>
                 <ul className="font-bold mb-0">
                   {consumptionRender}

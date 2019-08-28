@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Spinner from '../common/Spinner';
 import Moment from 'react-moment';
 import { getOrderById, submitCompleteOrder } from '../../actions/orderActions';
+import { getDisinfectorMaterials } from '../../actions/disinfectorActions';
 import materials from '../common/materials';
 
 class OrderComplete extends Component {
@@ -17,11 +18,17 @@ class OrderComplete extends Component {
       }
     ],
     paymentMethod: '',
+    invoice: '',
     cost: '',
+
+    // materials disinfector currently has
+    currentMaterials: this.props.auth.user.materials
   };
 
   componentDidMount() {
     this.props.getOrderById(this.props.match.params.id);
+    this.props.getDisinfectorMaterials(this.props.auth.user.id);
+    window.scrollTo({ top: 0 });
   }
 
   onChange = (e) => this.setState({ [e.target.name]: e.target.value });
@@ -85,9 +92,11 @@ class OrderComplete extends Component {
       alert('Заполните Поле "Расход Материалов"');
     } else {
       const object = {
+        disinfectorId: this.props.auth.user.id,
         orderId: this.props.match.params.id,
         consumption: this.state.consumption,
         paymentMethod: this.state.paymentMethod,
+        invoice: this.state.invoice,
         cost: this.state.cost
       };
       this.props.submitCompleteOrder(object, this.props.history);
@@ -135,21 +144,24 @@ class OrderComplete extends Component {
       </React.Fragment>
     );
 
+    let currentMaterials = this.state.currentMaterials.map((item, index) =>
+      <li key={index}>{item.material}: {item.amount} {item.unit}</li>
+    );
+
     return (
-      <div className="container">
+      <div className="container p-0">
         {this.props.order.loading ? <Spinner /> : (
-          <div className="row">
-            <div className="col-12">
-              <h1 className="text-center">Заказ</h1>
-            </div>
-            <div className="col-lg-8 col-md-10 m-auto">
+          <div className="row m-0">
+
+            <div className="col-md-6">
               <div className="card order mt-2">
                 <div className="card-body p-0">
+                  <h3 className="text-center">Заказ</h3>
                   <ul className="font-bold">
                     <li className="pb-2">Дезинфектор: {order.disinfectorId.name}</li>
                     <li className="pb-2">Клиент: {order.client}</li>
                     <li className="pb-2">Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
-                    <li className="pb-2">Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment></li>
+                    <li className="pb-2">Время выполнения: <Moment format="HH:mm">{order.dateFrom}</Moment></li>
                     <li className="pb-2">Адрес: {order.address}</li>
                     <li className="pb-2">Тип услуги: {order.typeOfService}</li>
                     <li className="pb-2">Комментарии Оператора: {order.comment ? order.comment : 'Нет комментариев'}</li>
@@ -159,10 +171,21 @@ class OrderComplete extends Component {
                 </div>
               </div>
             </div>
+
+            <div className="col-md-6">
+              <div className="card order mt-2">
+                <div className="card-body p-0">
+                  <h3 className="text-center">У вас имеется в наличии материалов:</h3>
+                  <ul className="font-bold">
+                    {currentMaterials}
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
-        <div className="row">
+        <div className="row m-0">
           <div className="col-lg-8 col-md-10 m-auto">
             <div className="card mt-3 mb-3">
               <div className="card-body">
@@ -180,6 +203,14 @@ class OrderComplete extends Component {
                       <option value="Безналичный">Безналичный</option>
                     </select>
                   </div>
+
+                  {this.state.paymentMethod === 'Безналичный' ? (
+                    <div className="form-group">
+                      <label htmlFor="invoice">Счет-Фактура:</label>
+                      <input type="number" className="form-control" name="invoice" onChange={this.onChange} required />
+                    </div>
+                  ) : ''}
+
                   <div className="form-group">
                     <label htmlFor="cost">Общая Сумма: (UZS)</label>
                     <input type="number" className="form-control" name="cost" onChange={this.onChange} required />
@@ -198,7 +229,8 @@ class OrderComplete extends Component {
 const mapStateToProps = state => ({
   auth: state.auth,
   order: state.order,
+  disinfector: state.disinfector,
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getOrderById, submitCompleteOrder })(withRouter(OrderComplete));
+export default connect(mapStateToProps, { getOrderById, getDisinfectorMaterials, submitCompleteOrder })(withRouter(OrderComplete));

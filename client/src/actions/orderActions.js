@@ -97,7 +97,7 @@ export const getOrderById = (id) => (dispatch) => {
 // submit completed order
 export const submitCompleteOrder = (object, history) => (dispatch) => {
   axios.post('/order/submit-complete-order', { order: object })
-    .then(res => history.push('/disinfector'))
+    .then(() => history.push('/disinfector'))
     .catch(err =>
       dispatch({
         type: GET_ERRORS,

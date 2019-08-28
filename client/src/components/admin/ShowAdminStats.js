@@ -5,44 +5,42 @@ import Moment from 'react-moment';
 
 import materials from '../common/materials';
 
-class ShowDisinfStats extends Component {
+class ShowAdminStats extends Component {
   state = {
-    orders: this.props.disinfector.stats.orders,
-    addedMaterials: this.props.disinfector.stats.addedMaterials
+    orders: this.props.admin.stats.orders
   };
 
   render() {
-    let operatorDecidedOrders = [],
+    const { orders } = this.state;
+
+    let totalSum = 0,
+      cash = 0,
+      totalScore = 0,
+      allConsumptions = [],
+      completedOrders = [],
       confirmedOrders = [],
-      rejectedOders = [],
-      totalScore = 0;
+      rejectedOders = [];
 
-    this.state.orders.forEach(item => {
-      if (item.completed && item.operatorDecided) {
-        operatorDecidedOrders.push(item);
+    orders.forEach(order => {
+      if (order.completed) {
+        completedOrders.push(order);
 
-        if (item.operatorConfirmed && item.adminConfirmed) {
-          confirmedOrders.push(item);
-          totalScore += item.score;
-        } else {
-          rejectedOders.push(item);
+        if (order.operatorConfirmed && order.adminConfirmed) {
+          confirmedOrders.push(order);
+          totalSum += order.cost;
+          if (order.paymentMethod === 'Наличный') cash++;
+          order.consumption.forEach(element => allConsumptions.push(element));
+          totalScore += order.score;
+        }
+
+        if (!order.operatorConfirmed || !order.adminConfirmed) {
+          rejectedOders.push(order);
         }
       }
     });
 
-    let ordersNumber = this.state.orders.length;
-    let totalSum = 0, cash = 0;
-
-    let allConsumptions = [];
-
-    confirmedOrders.forEach(item => {
-      totalSum += item.cost;
-      if (item.paymentMethod === 'Наличный') cash++;
-      item.consumption.forEach(element => allConsumptions.push(element));
-    });
-
-    let notCash = confirmedOrders.length - cash;
-    const cashPercent = (cash * 100 / confirmedOrders.length).toFixed(1);
+    let notCash = orders.length - cash;
+    const cashPercent = (cash * 100 / orders.length).toFixed(1);
     const notCashPercent = (100 - cashPercent).toFixed(1);
 
     let consumptionArrayResult = [];
@@ -58,7 +56,7 @@ class ShowDisinfStats extends Component {
           element.amount += item.amount;
           return;
         }
-      });
+      })
     });
 
     let renderConsumption;
@@ -77,13 +75,13 @@ class ShowDisinfStats extends Component {
           <div className="card order mt-2">
             <div className="card-body p-0">
               <ul className="font-bold mb-0 list-unstyled">
-                <li>Клиент: {item.client}</li>
-                <li>Телефон: {item.phone}</li>
-                <li>Адрес: {item.address}</li>
-                <li>Дата выполнения: <Moment format="DD/MM/YYYY">{item.dateFrom}</Moment></li>
-                <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
-                <li>Сумма: {item.cost.toLocaleString()} UZS</li>
-                <li>Тип Платежа: {item.paymentMethod}</li>
+                <li className="pb-2">Клиент: {item.client}</li>
+                <li className="pb-2">Телефон: {item.phone}</li>
+                <li className="pb-2">Адрес: {item.address}</li>
+                <li className="pb-2">Дата выполнения: <Moment format="DD/MM/YYYY">{item.dateFrom}</Moment></li>
+                <li className="pb-2">Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
+                <li className="pb-2">Сумма: {item.cost.toLocaleString()} UZS</li>
+                <li className="pb-2">Тип Платежа: {item.paymentMethod}</li>
 
                 {item.paymentMethod === 'Безналичный' ? <li className="pb-2">Счет-Фактура: {item.invoice}</li> : ''}
 
@@ -91,35 +89,14 @@ class ShowDisinfStats extends Component {
                 <ul className="font-bold mb-0">
                   {renderConsumptionOfOrder}
                 </ul>
-                <li>Балл: {item.score}</li>
-                <li>Отзыв Клиента: {item.clientReview}</li>
+                <li className="pb-2">Балл: {item.score}</li>
+                <li className="pb-2">Отзыв Клиента: {item.clientReview}</li>
               </ul>
             </div>
           </div>
         </div>
       )
     });
-
-    let receivedMaterials = this.state.addedMaterials.map((item, index) => {
-      let listItems = item.materials.map((thing, number) =>
-        <li key={number}>{thing.material}: {thing.amount} {thing.unit}</li>
-      );
-      return (
-        <div className="col-lg-4 col-md-6" key={index}>
-          <div className="card order mt-2">
-            <div className="card-body p-0">
-              <ul className="font-bold mb-0 pl-3">
-                <li>Админ: {item.admin.name}</li>
-                <li>Когда получено: <Moment format="DD/MM/YYYY HH:mm">{item.createdAt}</Moment></li>
-                <h5 className="mb-0">Материалы:</h5>
-                {listItems}
-              </ul>
-            </div>
-          </div>
-        </div>
-      );
-    }
-    );
 
     return (
       <React.Fragment>
@@ -129,8 +106,9 @@ class ShowDisinfStats extends Component {
               <div className="card-body p-0">
                 <h2 className="text-center">Заказы</h2>
                 <ul className="font-bold mb-0 list-unstyled">
-                  <li>Всего Получено Заказов: {ordersNumber}</li>
-                  <li>Выполнено и Подтверждено Заказов: {confirmedOrders.length}</li>
+                  <li>Всего Получено Заказов: {orders.length}</li>
+                  <li>Выполнено Заказов: {completedOrders.length}</li>
+                  <li>Подтверждено Заказов: {confirmedOrders.length}</li>
                   <li>Общая Сумма: {totalSum.toLocaleString()} UZS</li>
                   <li>Тип Платежей:</li>
                   <ul className="font-bold mb-1">
@@ -147,7 +125,7 @@ class ShowDisinfStats extends Component {
               <div className="card-body p-0">
                 <h2 className="text-center">Рейтинг:</h2>
                 <ul className="font-bold mb-0 pl-3">
-                  <li className="pb-2">Средний балл: {(totalScore / confirmedOrders.length).toFixed(2)} (из 10)</li>
+                  <li>Средний балл: {(totalScore / orders.length).toFixed(2)} (из 10)</li>
                 </ul>
               </div>
             </div>
@@ -165,13 +143,6 @@ class ShowDisinfStats extends Component {
           </div>
         </div>
 
-        <div className="row mt-3">
-          <div className="col-12">
-            <h2 className="text-center pl-3 pr-3">Ваши Полученные Материалы</h2>
-          </div>
-          {this.state.addedMaterials.length > 0 ? receivedMaterials : <h3>Нет полученных материалов за этот период</h3>}
-        </div>
-
         <div className="row mt-2">
           <div className="col-12">
             <h2 className="text-center pl-3 pr-3">Подтвержденные Заказы</h2>
@@ -186,8 +157,8 @@ class ShowDisinfStats extends Component {
 const mapStateToProps = (state) => ({
   auth: state.auth,
   order: state.order,
-  disinfector: state.disinfector,
+  admin: state.admin,
   errors: state.errors
 });
 
-export default connect(mapStateToProps, {})(withRouter(ShowDisinfStats));
+export default connect(mapStateToProps, {})(withRouter(ShowAdminStats));

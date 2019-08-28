@@ -45,7 +45,7 @@ class ShowOrderQueries extends Component {
       <div className="col-lg-4 col-md-6" key={index}>
         <div className="card order mt-2">
           <div className="card-body p-0">
-            <ul className="font-bold mb-0">
+            <ul className="font-bold mb-0 pl-3">
               <li className="pb-2">Дезинфектор: {order.disinfectorId.name}</li>
               <li className="pb-2">Клиент: {order.client}</li>
               <li className="pb-2">Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
