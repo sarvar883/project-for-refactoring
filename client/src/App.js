@@ -18,24 +18,30 @@ import DisinfectorRoute from './components/common/DisinfectorRoute';
 // Components
 import Navbar from './components/layout/Navbar';
 import Landing from './components/layout/Landing';
+
 import Admin from './components/admin/Admin';
 import AdminStats from './components/admin/AdminStats';
+import DisStats from './components/admin/DisStats';
 import AdminQueries from './components/admin/AdminQueries';
 import AdminMaterials from './components/admin/AdminMaterials';
+import MaterialHistory from './components/admin/MaterialHistory';
+
 import Disinfector from './components/disinfector/Disinfector';
 import DisinfQueries from './components/disinfector/DisinfQueries';
 import DisinfStats from './components/disinfector/DisinfStats';
-import Materials from './components/disinfector/Materials';
+import OrderComplete from './components/disinfector/OrderComplete';
+
+import Operator from './components/operator/Operator';
 import CreateOrder from './components/operator/CreateOrder';
 import OrderDetails from './components/operator/OrderDetails';
-import OrderComplete from './components/disinfector/OrderComplete';
 import OrderQueries from './components/operator/OrderQueries';
 import ConfirmOrder from './components/operator/ConfirmOrder';
+
+import Accountant from './components/accountant/Accountant';
+
 import Chat from './components/chat/Chat';
 import ChatRoom from './components/chat/ChatRoom';
 import Anons from './components/chat/Anons';
-import Operator from './components/operator/Operator';
-import Accountant from './components/accountant/Accountant';
 
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
@@ -95,10 +101,16 @@ class App extends Component {
               <AdminRoute exact path="/admin/stats" component={AdminStats} />
             </Switch>
             <Switch>
+              <AdminRoute exact path="/admin/disinf-stats" component={DisStats} />
+            </Switch>
+            <Switch>
               <AdminRoute exact path="/admin/order-queries" component={AdminQueries} />
             </Switch>
             <Switch>
               <AdminRoute exact path="/admin/materials" component={AdminMaterials} />
+            </Switch>
+            <Switch>
+              <AdminRoute exact path="/admin/material-history" component={MaterialHistory} />
             </Switch>
 
 
@@ -114,9 +126,6 @@ class App extends Component {
             </Switch>
             <Switch>
               <DisinfectorRoute exact path="/disinfector/stats" component={DisinfStats} />
-            </Switch>
-            <Switch>
-              <DisinfectorRoute exact path="/disinfector/materials" component={Materials} />
             </Switch>
 
 

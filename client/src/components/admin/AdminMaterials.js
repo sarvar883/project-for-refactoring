@@ -90,7 +90,7 @@ class AdminMaterials extends Component {
         admin: this.props.auth.user.id,
         materials: this.state.materials
       };
-      this.props.addMaterialToDisinfector(object);
+      this.props.addMaterialToDisinfector(object, this.props.history);
       this.props.getAllDisinfectors();
     }
   }

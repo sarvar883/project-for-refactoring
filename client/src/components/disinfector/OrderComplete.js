@@ -82,14 +82,21 @@ class OrderComplete extends Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    let emptyFields = 0;
+    let hasEmptyFields = false, notEnoughMaterials = false;
     this.state.consumption.forEach(item => {
       if (item.material === '') {
-        emptyFields++;
+        hasEmptyFields = true;
       }
+      this.state.currentMaterials.forEach(element => {
+        if (element.material === item.material && element.unit === item.unit && element.amount < item.amount) {
+          notEnoughMaterials = true;
+        }
+      });
     });
-    if (emptyFields > 0) {
+    if (hasEmptyFields) {
       alert('Заполните Поле "Расход Материалов"');
+    } else if (notEnoughMaterials) {
+      alert('У вас недостатотчно материалов');
     } else {
       const object = {
         disinfectorId: this.props.auth.user.id,

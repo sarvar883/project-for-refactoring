@@ -220,6 +220,9 @@ button.edit-message, button.delete-message {
 }
 /* END OF ANNOUNCEMENTS */
 
+.border-between-disinfectors {
+  border-top: 3px solid red;
+}
 
 
 

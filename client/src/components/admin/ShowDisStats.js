@@ -5,7 +5,7 @@ import Moment from 'react-moment';
 
 import materials from '../common/materials';
 
-class ShowAdminStats extends Component {
+class ShowDisStats extends Component {
   state = {
     orders: this.props.admin.stats.orders
   };
@@ -64,7 +64,7 @@ class ShowAdminStats extends Component {
       <li key={index}>{item.material}: {item.amount} {item.unit}</li>
     );
 
-    let renderConfirmedOrders = confirmedOrders.map((item, key) => {
+    let renderOrders = orders.map((item, key) => {
 
       let renderConsumptionOfOrder = item.consumption.map((material, index) =>
         <li key={index}>{material.material} : {material.amount.toLocaleString()} {material.unit}</li>
@@ -75,24 +75,43 @@ class ShowAdminStats extends Component {
           <div className="card order mt-2">
             <div className="card-body p-0">
               <ul className="font-bold mb-0 list-unstyled">
-                <li>Дизинфектор: {item.disinfectorId.name}</li>
                 <li>Оператор, получивший заказ: {item.userCreated.name}</li>
                 <li>Клиент: {item.client}</li>
                 <li>Телефон: {item.phone}</li>
                 <li>Адрес: {item.address}</li>
                 <li>Дата выполнения: <Moment format="DD/MM/YYYY">{item.dateFrom}</Moment></li>
-                <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
-                <li>Сумма: {item.cost.toLocaleString()} UZS</li>
-                <li>Тип Платежа: {item.paymentMethod}</li>
 
-                {item.paymentMethod === 'Безналичный' ? <li>Счет-Фактура: {item.invoice}</li> : ''}
+                {item.completed ? (
+                  <React.Fragment>
+                    <li className="text-success">Заказ Выполнен</li>
+                    <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
+                    <li>Сумма: {item.cost.toLocaleString()} UZS</li>
+                    <li>Тип Платежа: {item.paymentMethod}</li>
 
-                <li>Расход Материалов:</li>
-                <ul className="font-bold mb-0">
-                  {renderConsumptionOfOrder}
-                </ul>
-                <li>Балл: {item.score}</li>
-                <li>Отзыв Клиента: {item.clientReview}</li>
+                    {item.paymentMethod === 'Безналичный' ? <li>Счет-Фактура: {item.invoice}</li> : ''}
+
+                    <li>Расход Материалов:</li>
+                    <ul className="font-bold mb-0">
+                      {renderConsumptionOfOrder}
+                    </ul>
+                  </React.Fragment>
+                ) : <li>Заказ еще не выполнен</li>}
+
+                {item.completed && item.operatorDecided ? (
+                  <React.Fragment>
+                    <li>Оператор рассмотрел заявку (время: <Moment format="DD/MM/YYYY HH:mm">{item.operatorCheckedAt}</Moment>)</li>
+                    {item.operatorConfirmed ? <li className="text-success">Оператор подтвердил заяку</li> : <li className="text-danger">Оператор отверг заяку</li>}
+                    <li>Балл: {item.score}</li>
+                    <li>Отзыв Клиента: {item.clientReview}</li>
+                  </React.Fragment>
+                ) : <li>Оператор еще рассмотрел заявку</li>}
+
+                {item.completed && item.adminDecided ? (
+                  <React.Fragment>
+                    <li>Админ рассмотрел заявку (время: <Moment format="DD/MM/YYYY HH:mm">{item.adminCheckedAt}</Moment>)</li>
+                    {item.adminConfirmed ? <li className="text-success">Админ подтвердил заяку</li> : <li className="text-danger">Админ отверг заяку</li>}
+                  </React.Fragment>
+                ) : ''}
               </ul>
             </div>
           </div>
@@ -147,9 +166,9 @@ class ShowAdminStats extends Component {
 
         <div className="row mt-2">
           <div className="col-12">
-            <h2 className="text-center pl-3 pr-3">Подтвержденные Заказы</h2>
+            <h2 className="text-center pl-3 pr-3">Все Заказы Дизинфектора</h2>
           </div>
-          {confirmedOrders.length > 0 ? (renderConfirmedOrders) : <h2>Нет подтвержденных заказов</h2>}
+          {confirmedOrders.length > 0 ? (renderOrders) : <h2>Нет подтвержденных заказов</h2>}
         </div>
       </React.Fragment>
     )
@@ -163,4 +182,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, {})(withRouter(ShowAdminStats));
+export default connect(mapStateToProps)(withRouter(ShowDisStats));

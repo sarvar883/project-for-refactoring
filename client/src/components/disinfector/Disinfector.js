@@ -16,7 +16,7 @@ class Disinfector extends Component {
   render() {
     let currentMaterials = this.props.auth.user.materials.map((item, index) => {
       return (
-        <li key={index}>{item.material}: {item.amount} {item.unit}</li>
+        <li key={index}>{item.material}: {item.amount.toLocaleString()} {item.unit}</li>
       );
     });
 

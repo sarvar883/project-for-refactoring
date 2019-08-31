@@ -18,7 +18,19 @@ class Navbar extends Component {
 
     const authLinks = (
       <div className="authLinks">
-        <li className="nav-item mr-2 list-inline-item">
+        <div className="dropdown d-inline-block">
+          <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Чат</button>
+          <div className="dropdown-menu">
+            <li className="nav-item">
+              <Link to="/chat" className="nav-link">Чат</Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/anons" className="nav-link">Анонсы</Link>
+            </li>
+          </div>
+        </div>
+
+        {/* <li className="nav-item mr-2 list-inline-item">
           <Link to="/chat" className="nav-link">
             Чат
           </Link>
@@ -27,7 +39,8 @@ class Navbar extends Component {
           <Link to="/anons" className="nav-link">
             Анонсы
           </Link>
-        </li>
+        </li> */}
+
         <li className="nav-item list-inline-item">
           <Link to="/login" onClick={this.onLogoutClick} className="nav-link logout">
             Logout
@@ -48,21 +61,18 @@ class Navbar extends Component {
 
     const disinfectorLinks = (
       <div className="disinfectorLinks">
-        <li className="nav-item mr-2 list-inline-item">
-          <Link className="nav-link" to="/disinfector/materials">
-            Материалы
-          </Link>
-        </li>
-        <li className="nav-item mr-2 list-inline-item">
-          <Link className="nav-link" to="/disinfector/stats">
-            Статистика
-          </Link>
-        </li>
-        <li className="nav-item mr-2 list-inline-item">
-          <Link className="nav-link" to="/disinfector/queries">
-            Запросы
-          </Link>
-        </li>
+
+        <div className="dropdown d-inline-block">
+          <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Функции</button>
+          <div className="dropdown-menu">
+            <li className="nav-item">
+              <Link className="nav-link" to="/disinfector/stats">Статистика</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/disinfector/queries">Запросы</Link>
+            </li>
+          </div>
+        </div>
       </div>
     );
 
@@ -83,19 +93,35 @@ class Navbar extends Component {
 
     const adminLinks = (
       <div className="adminLinks">
-        <li className="nav-item mr-2 list-inline-item">
-          <Link className="nav-link" to="/admin/stats">
-            Статистика
-          </Link>
-        </li>
-        <li className="nav-item mr-2 list-inline-item">
-          <Link className="nav-link" to="/admin/order-queries">
-            Запросы
-          </Link>
-        </li>
-        <li className="nav-item mr-2 list-inline-item">
-          <Link className="nav-link" to="/register">Добавить Юзер</Link>
-        </li>
+        <div className="dropdown d-inline-block">
+          <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Функции</button>
+          <div className="dropdown-menu">
+            <li className="nav-item">
+              <Link className="nav-link" to="/admin/stats">Общая Статистика</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/admin/disinf-stats">Статистика Дизинфекторов</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/admin/order-queries">Запросы</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/admin/material-history">Раздачи Материалов</Link>
+            </li>
+          </div>
+        </div>
+
+        <div className="dropdown d-inline-block">
+          <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Добавить</button>
+          <div className="dropdown-menu">
+            <li className="nav-item">
+              <Link className="nav-link" to="/register">Пользователь</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/admin/materials">Материалы Дизинфектору</Link>
+            </li>
+          </div>
+        </div>
       </div>
     );
 

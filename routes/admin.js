@@ -13,4 +13,8 @@ router.post('/get-all-disinfectors', passport.authenticate('jwt', { session: fal
 
 router.post('/add-materials-to-disinfector', passport.authenticate('jwt', { session: false }), isAdmin, adminController.addMaterialToDisinfector);
 
+router.post('/get-add-material-events-month', passport.authenticate('jwt', { session: false }), isAdmin, adminController.addMatEventsMonth);
+
+router.post('/get-add-material-events-week', passport.authenticate('jwt', { session: false }), isAdmin, adminController.addMatEventsWeek);
+
 module.exports = router;

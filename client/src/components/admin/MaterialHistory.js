@@ -5,13 +5,12 @@ import Spinner from '../common/Spinner';
 import Moment from 'react-moment';
 import moment from 'moment';
 
-import { getMonthStatsForAdmin, getWeekStatsForAdmin } from '../../actions/adminActions';
-import ShowAdminStats from './ShowAdminStats';
+import { getAddMaterialEventsMonth, getAddMaterialEventsWeek, getAllDisinfectors } from '../../actions/adminActions';
 
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 
-
+import ShowAddMatEvents from './ShowAddMatEvents';
 
 function getWeekDays(weekStart) {
   const days = [];
@@ -38,7 +37,8 @@ function getWeekRange(date) {
 
 
 
-class AdminStats extends Component {
+
+class MaterialHistory extends Component {
   state = {
     month: '',
     year: '',
@@ -54,7 +54,8 @@ class AdminStats extends Component {
   componentDidMount() {
     const thisMonth = new Date().getMonth();
     const thisYear = new Date().getFullYear();
-    this.props.getMonthStatsForAdmin(thisMonth, thisYear);
+    this.props.getAddMaterialEventsMonth(thisMonth, thisYear);
+    this.props.getAllDisinfectors();
     this.setState({
       headingMonth: thisMonth,
       headingYear: thisYear
@@ -65,7 +66,7 @@ class AdminStats extends Component {
 
   getMonthStats = (e) => {
     e.preventDefault();
-    this.props.getMonthStatsForAdmin(this.state.month, this.state.year);
+    this.props.getAddMaterialEventsMonth(this.state.month, this.state.year);
     this.setState({
       headingMonth: this.state.month,
       headingYear: this.state.year
@@ -76,7 +77,7 @@ class AdminStats extends Component {
 
   // weekly calendar
   handleDayChange = date => {
-    this.props.getWeekStatsForAdmin(getWeekDays(getWeekRange(date).from));
+    this.props.getAddMaterialEventsWeek(getWeekDays(getWeekRange(date).from));
     this.setState({
       selectedDays: getWeekDays(getWeekRange(date).from)
     });
@@ -95,7 +96,7 @@ class AdminStats extends Component {
   };
 
   handleWeekClick = (weekNumber, days, e) => {
-    this.props.getWeekStatsForAdmin(getWeekDays(getWeekRange(days[0]).from));
+    this.props.getAddMaterialEventsWeek(getWeekDays(getWeekRange(days[0]).from));
     this.setState({
       selectedDays: getWeekDays(getWeekRange(days[0]).from)
     });
@@ -160,11 +161,12 @@ class AdminStats extends Component {
     // end of calendar
 
 
+
     return (
       <div className="container-fluid" >
         <div className="row">
           <div className="col-lg-4 col-md-6">
-            <h2 className="text-center">Статистика по месяцам</h2>
+            <h2 className="text-center">Раздача Материалов по месяцам</h2>
             <form onSubmit={this.getMonthStats}>
               <div className="form-group">
                 <label htmlFor="year"><strong>Выберите Год:</strong></label>
@@ -184,7 +186,7 @@ class AdminStats extends Component {
 
           <div className="col-lg-4 col-md-6 ml-auto weekly-stats">
             <div className="SelectedWeekExample">
-              <h2 className="text-center">Статистика по неделям</h2>
+              <h2 className="text-center">Раздача Материалов по неделям</h2>
               <DayPicker
                 selectedDays={selectedDays}
                 showWeekNumbers
@@ -202,16 +204,16 @@ class AdminStats extends Component {
 
         <div className="row mt-2">
           <div className="col-12">
-            {this.props.admin.method === 'week' ?
-              <h2 className="text-center pl-3 pr-3">Недельная статистика за <Moment format="DD/MM/YYYY">{this.state.selectedDays[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDays[6]}</Moment></h2> :
-              <h2 className="text-center pl-3 pr-3">Месячная Статистика за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2>
+            {this.props.admin.addMatEventsMethod === 'week' ?
+              <h2 className="text-center pl-3 pr-3">Недельная Раздача Материалов за <Moment format="DD/MM/YYYY">{this.state.selectedDays[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDays[6]}</Moment></h2> :
+              <h2 className="text-center pl-3 pr-3">Месячная Раздача Материалов за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2>
             }
           </div>
         </div>
 
         <div className="row">
           <div className="col-12">
-            {this.props.admin.loadingStats ? <Spinner /> : <ShowAdminStats />}
+            {this.props.admin.loadingAddMatEvents ? <Spinner /> : <ShowAddMatEvents />}
           </div>
         </div>
       </div>
@@ -219,10 +221,10 @@ class AdminStats extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   auth: state.auth,
   admin: state.admin,
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getMonthStatsForAdmin, getWeekStatsForAdmin })(withRouter(AdminStats));
+export default connect(mapStateToProps, { getAddMaterialEventsMonth, getAddMaterialEventsWeek, getAllDisinfectors })(withRouter(MaterialHistory));

@@ -18,6 +18,8 @@ exports.monthStatsForDisinfector = async (req, res) => {
   );
 
   Order.find({ disinfectorId: id })
+    .populate('userCreated')
+    .exec()
     .then(orders => {
       orders = orders.filter(order =>
         new Date(order.dateFrom).getMonth() === month &&
@@ -47,6 +49,8 @@ exports.weekStatsForDisinfector = async (req, res) => {
   );
 
   Order.find({ disinfectorId: id })
+    .populate('userCreated')
+    .exec()
     .then(orders => {
       orders = orders.filter(order =>
         new Date(order.dateFrom) >= new Date(days[0]) &&
@@ -69,6 +73,8 @@ exports.monthStatsForAdmin = (req, res) => {
   const year = Number(req.body.year);
 
   Order.find()
+    .populate('disinfectorId userCreated')
+    .exec()
     .then(orders => {
       orders = orders.filter(order =>
         new Date(order.dateFrom).getMonth() === month &&
@@ -87,6 +93,8 @@ exports.weekStatsForAdmin = (req, res) => {
   const days = req.body.days;
 
   Order.find()
+    .populate('disinfectorId userCreated')
+    .exec()
     .then(orders => {
       orders = orders.filter(order =>
         new Date(order.dateFrom) >= new Date(days[0]) &&
@@ -96,6 +104,49 @@ exports.weekStatsForAdmin = (req, res) => {
     })
     .catch(err => {
       console.log('weekStatsForAdmin ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.disinfMonthStatsForAdmin = (req, res) => {
+  const id = req.body.id;
+  const month = Number(req.body.month);
+  const year = Number(req.body.year);
+
+  Order.find({ disinfectorId: id })
+    .populate('userCreated')
+    .exec()
+    .then(orders => {
+      orders = orders.filter(order =>
+        new Date(order.dateFrom).getMonth() === month &&
+        new Date(order.dateFrom).getFullYear() === year
+      );
+      return res.json(orders);
+    })
+    .catch(err => {
+      console.log('disinfMonthStatsForAdmin ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.disinfWeekStatsForAdmin = (req, res) => {
+  const id = req.body.id;
+  const days = req.body.days;
+
+  Order.find({ disinfectorId: id })
+    .populate('userCreated')
+    .exec()
+    .then(orders => {
+      orders = orders.filter(order =>
+        new Date(order.dateFrom) >= new Date(days[0]) &&
+        new Date(order.dateFrom).setHours(0, 0, 0, 0) <= new Date(days[6])
+      );
+      return res.json(orders);
+    })
+    .catch(err => {
+      console.log('disinfWeekStatsForAdmin ERROR', err);
       res.status(404).json(err);
     });
 };

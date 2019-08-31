@@ -45,16 +45,23 @@ class ShowDisinfStats extends Component {
     const cashPercent = (cash * 100 / confirmedOrders.length).toFixed(1);
     const notCashPercent = (100 - cashPercent).toFixed(1);
 
-    let consumptionArrayResult = [];
-    materials.forEach(object => consumptionArrayResult.push({
-      material: object.material,
-      amount: 0,
-      unit: object.unit
-    }));
+    let consumptionArrayResult = [], totalAdded = [];
+    materials.forEach(object => {
+      consumptionArrayResult.push({
+        material: object.material,
+        amount: 0,
+        unit: object.unit
+      });
+      totalAdded.push({
+        material: object.material,
+        amount: 0,
+        unit: object.unit
+      });
+    });
 
     allConsumptions.forEach(item => {
       consumptionArrayResult.forEach(element => {
-        if (element.material === item.material) {
+        if (element.material === item.material && element.unit === item.unit) {
           element.amount += item.amount;
           return;
         }
@@ -101,9 +108,19 @@ class ShowDisinfStats extends Component {
     });
 
     let receivedMaterials = this.state.addedMaterials.map((item, index) => {
-      let listItems = item.materials.map((thing, number) =>
-        <li key={number}>{thing.material}: {thing.amount} {thing.unit}</li>
-      );
+
+      let listItems = item.materials.map((thing, number) => {
+        totalAdded.forEach(element => {
+          if (element.material === thing.material && element.unit === thing.unit) {
+            element.amount += thing.amount;
+            return;
+          }
+        });
+        return (
+          <li key={number}>{thing.material}: {thing.amount.toLocaleString()} {thing.unit}</li>
+        );
+      });
+
       return (
         <div className="col-lg-4 col-md-6" key={index}>
           <div className="card order mt-2">
@@ -118,7 +135,10 @@ class ShowDisinfStats extends Component {
           </div>
         </div>
       );
-    }
+    });
+
+    let renderTotalReceived = totalAdded.map((item, index) =>
+      <li key={index}>{item.material}: {item.amount.toLocaleString()} {item.unit}</li>
     );
 
     return (
@@ -167,9 +187,27 @@ class ShowDisinfStats extends Component {
 
         <div className="row mt-3">
           <div className="col-12">
-            <h2 className="text-center pl-3 pr-3">Ваши Полученные Материалы</h2>
+            <h2 className="text-center pl-3 pr-3">Ваши полученные материалы за этот период</h2>
           </div>
-          {this.state.addedMaterials.length > 0 ? receivedMaterials : <h3>Нет полученных материалов за этот период</h3>}
+        </div>
+
+        <div className="row mt-2">
+          {this.state.addedMaterials.length > 0 ? (
+            <div className="col-lg-4 col-md-6">
+              <div className="card order mt-2">
+                <div className="card-body p-0">
+                  <h4 className="text-center">Всего получено материалов за этот период</h4>
+                  <ul className="font-bold mb-0 pl-3">
+                    {renderTotalReceived}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          ) : <h3>Нет полученных материалов за этот период</h3>}
+        </div>
+
+        <div className="row mt-2">
+          {this.state.addedMaterials.length > 0 ? receivedMaterials : ''}
         </div>
 
         <div className="row mt-2">

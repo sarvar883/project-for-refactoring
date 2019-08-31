@@ -76,3 +76,44 @@ exports.addMaterialToDisinfector = (req, res) => {
       return res.status(400).json(err);
     });
 };
+
+
+exports.addMatEventsMonth = (req, res) => {
+  const month = Number(req.body.month);
+  const year = Number(req.body.year);
+
+  AddMaterial.find()
+    .populate('disinfector admin')
+    .exec()
+    .then(events => {
+      events = events.filter(item =>
+        new Date(item.createdAt).getMonth() === month &&
+        new Date(item.createdAt).getFullYear() === year
+      );
+      return res.json(events);
+    })
+    .catch(err => {
+      console.log('addMatEventsMonth ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.addMatEventsWeek = (req, res) => {
+  const days = req.body.days;
+
+  AddMaterial.find()
+    .populate('disinfector admin')
+    .exec()
+    .then(events => {
+      events = events.filter(item =>
+        new Date(item.createdAt) >= new Date(days[0]) &&
+        new Date(item.createdAt).setHours(0, 0, 0, 0) <= new Date(days[6])
+      );
+      return res.json(events);
+    })
+    .catch(err => {
+      console.log('addMatEventsWeek ERROR', err);
+      res.status(404).json(err);
+    });
+};
