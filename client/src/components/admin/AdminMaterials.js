@@ -96,6 +96,7 @@ class AdminMaterials extends Component {
       this.state.currentMaterials.forEach(element => {
         if (item.material === element.material && item.unit === element.unit && item.amount > element.amount) {
           notEnoughMaterials++;
+          return;
         }
       });
     });

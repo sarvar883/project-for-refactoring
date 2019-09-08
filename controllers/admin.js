@@ -81,13 +81,26 @@ exports.addMaterialToDisinfector = (req, res) => {
     .then(user => {
       req.body.object.materials.forEach(mat => {
         user.materials.forEach(item => {
-          if (item.material === mat.material) {
+          if (item.material === mat.material && item.unit === mat.unit) {
             item.amount += Number(mat.amount);
             return;
           }
         });
       });
       user.save();
+    });
+
+  CurrentMaterial.findOne()
+    .then(currentMaterials => {
+      currentMaterials.materials.forEach(item => {
+        req.body.object.materials.forEach(element => {
+          if (item.material === element.material && item.unit === element.unit) {
+            item.amount -= element.amount;
+            return;
+          }
+        });
+      });
+      currentMaterials.save();
     });
 
   const newObject = new AddMaterial({
@@ -191,6 +204,7 @@ exports.addMatComing = (req, res) => {
         array.forEach(element => {
           if (item.material === element.material && item.unit === element.unit) {
             element.amount += item.amount;
+            return;
           }
         });
       });
