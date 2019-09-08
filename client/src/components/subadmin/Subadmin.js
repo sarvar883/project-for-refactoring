@@ -5,11 +5,11 @@ import { connect } from 'react-redux';
 import Moment from 'react-moment';
 import Spinner from '../common/Spinner';
 
-import { getSortedOrders } from '../../actions/adminActions';
+import { getSortedOrders } from '../../actions/subadminActions';
 
-import AdmSortedOrders from './AdmSortedOrders';
+import SubadmSortedOrders from './SubadmSortedOrders';
 
-class Admin extends Component {
+class Subadmin extends Component {
   state = {
     date: new Date()
   }
@@ -31,12 +31,12 @@ class Admin extends Component {
   };
 
   render() {
-    const { loadingSortedOrders } = this.props.admin;
+    const { loadingSortedOrders } = this.props.subadmin;
 
     return (
       <div className="container-fluid mt-1">
         <div className="row">
-          <h2 className="m-auto">Страница Админа {this.props.auth.user.name}</h2>
+          <h2 className="m-auto">Страница СубАдмина {this.props.auth.user.name}</h2>
         </div>
 
         <div className="row">
@@ -51,7 +51,7 @@ class Admin extends Component {
           <div className="col-lg-9">
             <h1 className="text-center">Заявки на <Moment format="DD/MM/YYYY">{this.state.date}</Moment></h1>
             {loadingSortedOrders ? <Spinner /> : (
-              <AdmSortedOrders date={this.state.date} />
+              <SubadmSortedOrders date={this.state.date} />
             )}
           </div>
         </div>
@@ -63,7 +63,8 @@ class Admin extends Component {
 const mapStateToProps = (state) => ({
   auth: state.auth,
   admin: state.admin,
+  subadmin: state.subadmin,
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getSortedOrders })(withRouter(Admin));
+export default connect(mapStateToProps, { getSortedOrders })(withRouter(Subadmin));

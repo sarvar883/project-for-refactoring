@@ -52,6 +52,7 @@ class Register extends Component {
     const occupationOptions = [
       { label: '-- Выберите должность пользователя --', value: 0 },
       { label: 'Админ', value: 'admin' },
+      { label: 'Субадмин', value: 'subadmin' },
       { label: 'Оператор', value: 'operator' },
       { label: 'Дезинфектор', value: 'disinfector' },
       { label: 'Маркетолог', value: 'marketer' },

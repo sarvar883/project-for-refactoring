@@ -9,6 +9,7 @@ const orderRoutes = require('./routes/order');
 const chatRoutes = require('./routes/chat');
 const operatorRoutes = require('./routes/operator');
 const adminRoutes = require('./routes/admin');
+const subadminRoutes = require('./routes/subadmin');
 const statsRoutes = require('./routes/stats');
 
 const app = express();
@@ -39,6 +40,7 @@ app.use('/chat', chatRoutes);
 app.use('/operator', operatorRoutes);
 app.use('/stats', statsRoutes);
 app.use('/admin', adminRoutes);
+app.use('/subadmin', subadminRoutes);
 
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {

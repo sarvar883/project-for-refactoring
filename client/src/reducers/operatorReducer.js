@@ -48,7 +48,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         sortedOrders: action.payload,
-        date: action.date,
+        // date: action.date,
         loadingSortedOrders: false
       };
 

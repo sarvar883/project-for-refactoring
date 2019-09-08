@@ -4,7 +4,35 @@ const Chat = require('../models/chat');
 const Anons = require('../models/anons');
 const Order = require('../models/order');
 const AddMaterial = require('../models/addMaterial');
+const ComingMaterial = require('../models/comingMaterial');
+const CurrentMaterial = require('../models/currentMaterial');
 const io = require('../socket');
+
+const materials = require('../client/src/components/common/materials');
+
+
+exports.getSortedOrders = (req, res) => {
+  const date = new Date(req.body.date);
+  const day = date.getDate();
+  const month = date.getMonth();
+  const year = date.getFullYear();
+
+  Order.find()
+    .populate('disinfectorId userCreated')
+    .exec()
+    .then(orders => {
+      let sortedOrders = orders.filter(item =>
+        new Date(item.dateFrom).getDate() === day &&
+        new Date(item.dateFrom).getMonth() === month &&
+        new Date(item.dateFrom).getFullYear() === year
+      );
+      return res.json(sortedOrders);
+    })
+    .catch(err => {
+      console.log('getSortedOrders ADMIN ERROR', err);
+      return res.status(400).json(err);
+    });
+};
 
 
 exports.getOrderQueriesForAdmin = (req, res) => {
@@ -114,6 +142,106 @@ exports.addMatEventsWeek = (req, res) => {
     })
     .catch(err => {
       console.log('addMatEventsWeek ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.getCurMat = (req, res) => {
+  // let emptyArray = [];
+  // materials.forEach(item => {
+  //   emptyArray.push({
+  //     material: item.material,
+  //     amount: 0,
+  //     unit: 'гр'
+  //   });
+  // });
+
+  // const cur = new CurrentMaterial({
+  //   materials: emptyArray,
+  //   lastUpdated: new Date()
+  // });
+  // cur.save();
+
+  CurrentMaterial.findOne()
+    .then(curMat => res.json(curMat))
+    .catch(err => {
+      console.log('getCurMat ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.addMatComing = (req, res) => {
+  const { object } = req.body;
+
+  const newObject = new ComingMaterial({
+    admin: object.admin,
+    materials: object.materials,
+    createdAt: new Date()
+  });
+
+  newObject.save();
+
+  CurrentMaterial.findOne()
+    .then(curMat => {
+      let array = curMat.materials;
+
+      object.materials.forEach(item => {
+        array.forEach(element => {
+          if (item.material === element.material && item.unit === element.unit) {
+            element.amount += item.amount;
+          }
+        });
+      });
+      curMat.materials = array;
+      curMat.lastUpdated = new Date();
+      curMat.save();
+      return res.json(curMat);
+    })
+    .catch(err => {
+      console.log('addMatComing ERROR', err);
+      res.status(400).json(err);
+    });
+};
+
+
+exports.matComingMonth = (req, res) => {
+  const month = Number(req.body.month);
+  const year = Number(req.body.year);
+
+  ComingMaterial.find()
+    .populate('admin')
+    .exec()
+    .then(comings => {
+      comings = comings.filter(item =>
+        new Date(item.createdAt).getMonth() === month &&
+        new Date(item.createdAt).getFullYear() === year
+      );
+      return res.json(comings);
+    })
+    .catch(err => {
+      console.log('matComingMonth ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.matComingWeek = (req, res) => {
+  const days = req.body.days;
+
+  ComingMaterial.find()
+    .populate('admin')
+    .exec()
+    .then(comings => {
+      comings = comings.filter(item =>
+        new Date(item.createdAt) >= new Date(days[0]) &&
+        new Date(item.createdAt).setHours(0, 0, 0, 0) <= new Date(days[6])
+      );
+      return res.json(comings);
+    })
+    .catch(err => {
+      console.log('matComingWeek ERROR', err);
       res.status(404).json(err);
     });
 };

@@ -58,6 +58,12 @@ ul.navbar-nav li.nav-item .logout button {
   transition: 0.5s;
   color: white;
 }
+@media (min-width: 992px) {
+  .navbar .dropdown {
+    display: inline-block !important;
+  }
+}
+
 @media (max-width: 991px) {
   ul.navbar-nav li.nav-item {
     background: none;

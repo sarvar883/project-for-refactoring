@@ -65,7 +65,7 @@ class ShowAddMatEvents extends Component {
     });
 
     let renderTotal = totalAddedMat.map((item, index) =>
-      <li key={index}>{item.material} : {item.amount.toLocaleString()} {item.unit}</li>
+      <li key={index}>{item.material}: {item.amount.toLocaleString()} {item.unit}</li>
     );
 
     let renderDisinfectors = disinfArray.map((person, index) => {
@@ -76,7 +76,7 @@ class ShowAddMatEvents extends Component {
       let renderDisinfEvents = person.events.map((event, iteration) => {
 
         let renderEventsInDisinfArray = event.materials.map((item, number) =>
-          <li key={number}>{item.material} : {item.amount.toLocaleString()} {item.unit}</li>
+          <li key={number}>{item.material}: {item.amount.toLocaleString()} {item.unit}</li>
         );
 
         return (
@@ -128,7 +128,7 @@ class ShowAddMatEvents extends Component {
           <div className="col-lg-4 col-md-6">
             <div className="card order mt-2">
               <div className="card-body p-0">
-                <h3 className="text-center">Общая Раздача Материалов за этот период:</h3>
+                <h4 className="text-center">Общая Раздача Материалов за этот период:</h4>
                 <ul className="font-bold mb-0 pl-3">
                   {renderTotal}
                 </ul>
@@ -155,4 +155,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, {})(withRouter(ShowAddMatEvents));
+export default connect(mapStateToProps)(withRouter(ShowAddMatEvents));

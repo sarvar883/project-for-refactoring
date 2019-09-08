@@ -11,6 +11,7 @@ import store from './store';
 // import routes
 import PrivateRoute from './components/common/PrivateRoute';
 import AdminRoute from './components/common/AdminRoute';
+import SubadminRoute from './components/common/SubadminRoute'
 import OperatorRoute from './components/common/OperatorRoute';
 import AccountantRoute from './components/common/AccountantRoute';
 import DisinfectorRoute from './components/common/DisinfectorRoute';
@@ -24,7 +25,11 @@ import AdminStats from './components/admin/AdminStats';
 import DisStats from './components/admin/DisStats';
 import AdminQueries from './components/admin/AdminQueries';
 import AdminMaterials from './components/admin/AdminMaterials';
+import MatComing from './components/admin/MatComing';
+import MatComHistory from './components/admin/MatComHistory';
 import MaterialHistory from './components/admin/MaterialHistory';
+
+import Subadmin from './components/subadmin/Subadmin';
 
 import Disinfector from './components/disinfector/Disinfector';
 import DisinfQueries from './components/disinfector/DisinfQueries';
@@ -110,7 +115,19 @@ class App extends Component {
               <AdminRoute exact path="/admin/materials" component={AdminMaterials} />
             </Switch>
             <Switch>
+              <AdminRoute exact path="/admin/material-coming" component={MatComing} />
+            </Switch>
+            <Switch>
+              <AdminRoute exact path="/admin/material-coming-history" component={MatComHistory} />
+            </Switch>
+            <Switch>
               <AdminRoute exact path="/admin/material-history" component={MaterialHistory} />
+            </Switch>
+
+
+            {/* Subadmin Routes */}
+            <Switch>
+              <SubadminRoute exact path="/subadmin" component={Subadmin} />
             </Switch>
 
 

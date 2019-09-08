@@ -1,10 +1,15 @@
 import axios from 'axios';
 import {
   GET_ERRORS,
+
   SET_LOADING_ORDER_QUERIES_FOR_ADMIN,
   SET_LOADING_ADMIN_STATS,
   SET_LOADING_DISINFECTORS,
   SET_LOADING_ADD_MATERIAL_EVENTS,
+  LOADING_SORTED_ORDERS_ADMIN,
+  LOADING_CUR_MAT,
+
+  GET_SORTED_ORDERS_ADMIN,
   GET_ORDER_QUERIES_FOR_ADMIN,
   GET_ADMIN_MONTH_STATS,
   GET_ADMIN_WEEK_STATS,
@@ -13,8 +18,31 @@ import {
   GET_ADD_MAT_EVENTS_WEEK,
   DISINF_STATS_MONTH_ADMIN,
   DISINF_STATS_MONTH_WEEK,
-  ADD_MAT_DISINFECTOR
+  ADD_MAT_DISINFECTOR,
+  GET_CURR_MAT_ADMIN,
+  UPDATE_MAT_COMING,
+  MAT_COMING_MONTH,
+  MAT_COMING_WEEK
 } from './types';
+
+
+export const getSortedOrders = (date) => (dispatch) => {
+  dispatch(setLoadingSortedOrders());
+  axios.post('/admin/get-sorted-orders', { date: date })
+    .then(res =>
+      dispatch({
+        type: GET_SORTED_ORDERS_ADMIN,
+        payload: res.data,
+        date: date
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
 
 
 export const getQueriesForAdmin = () => (dispatch) => {
@@ -191,6 +219,89 @@ export const getDisinfStatsWeekForAdmin = (id, days) => (dispatch) => {
 };
 
 
+export const getCurrentMaterials = () => (dispatch) => {
+  dispatch(loadingCurMat());
+  axios.post('/admin/get-current-materials')
+    .then(res =>
+      dispatch({
+        type: GET_CURR_MAT_ADMIN,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    )
+};
+
+
+// add material coming
+export const addMatComing = (object, history) => (dispatch) => {
+  axios.post('/admin/add-mat-coming', { object: object })
+    .then(res => {
+      dispatch({
+        type: UPDATE_MAT_COMING,
+        payload: res.data
+      });
+      history.push('/admin');
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    )
+};
+
+
+// get material coming events in month
+export const getMatComMonth = (month, year) => (dispatch) => {
+  dispatch(loadingStats());
+  axios.post('/admin/get-mat-coming-month', { month: month, year: year })
+    .then(res =>
+      dispatch({
+        type: MAT_COMING_MONTH,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    )
+};
+
+
+// get material coming events in week
+export const getMatComWeek = (days) => (dispatch) => {
+  dispatch(loadingStats());
+  axios.post('/admin/get-mat-coming-week', { days: days })
+    .then(res =>
+      dispatch({
+        type: MAT_COMING_WEEK,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    )
+};
+
+
+// Loading sorted orders
+export const setLoadingSortedOrders = () => {
+  return {
+    type: LOADING_SORTED_ORDERS_ADMIN
+  };
+};
+
+
 // Loading order queries for admin
 export const setLoadingQueriesForAdmin = () => {
   return {
@@ -219,5 +330,13 @@ export const loadingDisinfectors = () => {
 export const loadingAddMatEvents = () => {
   return {
     type: SET_LOADING_ADD_MATERIAL_EVENTS
+  };
+}
+
+
+// loading current materials
+export const loadingCurMat = () => {
+  return {
+    type: LOADING_CUR_MAT
   };
 }

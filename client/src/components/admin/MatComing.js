@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import Spinner from '../common/Spinner';
 import Moment from 'react-moment';
 
+import { getCurrentMaterials, addMatComing } from '../../actions/adminActions';
+
 import materials from '../common/materials';
 
-import { getAllDisinfectors, getCurrentMaterials, addMaterialToDisinfector } from '../../actions/adminActions';
-
-class AdminMaterials extends Component {
+class MatComing extends Component {
   state = {
     array: [{}],
     currentMaterials: [],
@@ -18,14 +18,11 @@ class AdminMaterials extends Component {
         amount: 0,
         unit: ''
       }
-    ],
-    disinfector: ''
+    ]
   };
 
   componentDidMount() {
     this.props.getCurrentMaterials();
-    this.props.getAllDisinfectors();
-    window.scrollTo({ top: 0 });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -33,8 +30,6 @@ class AdminMaterials extends Component {
       currentMaterials: nextProps.admin.currentMaterials.materials
     });
   }
-
-  onChange = (e) => this.setState({ [e.target.name]: e.target.value });
 
   changeSelect = (e) => {
     const index = e.target.name.split('-')[1];
@@ -85,7 +80,7 @@ class AdminMaterials extends Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    let emptyFields = 0, notEnoughMaterials = 0, zeroValues = 0;
+    let emptyFields = 0, zeroValues = 0;
     this.state.materials.forEach(item => {
       if (item.material === '') {
         emptyFields++;
@@ -93,51 +88,21 @@ class AdminMaterials extends Component {
       if (item.amount <= 0) {
         zeroValues++;
       }
-      this.state.currentMaterials.forEach(element => {
-        if (item.material === element.material && item.unit === element.unit && item.amount > element.amount) {
-          notEnoughMaterials++;
-        }
-      });
     });
-
     if (emptyFields > 0) {
       alert('Заполните Поле "Выберите Материал и Количество"');
     } else if (zeroValues > 0) {
       alert('Количество Материала не может быть нулем или отрицательнам числом');
-    } else if (notEnoughMaterials > 0) {
-      alert('У вас недостаточно материалов');
     } else {
       const object = {
-        disinfector: this.state.disinfector,
         admin: this.props.auth.user.id,
         materials: this.state.materials
       };
-      this.props.addMaterialToDisinfector(object, this.props.history);
-      this.props.getAllDisinfectors();
+      this.props.addMatComing(object, this.props.history);
     }
   }
 
   render() {
-    let showDisinfectors = this.props.admin.disinfectors.map((item, index) => {
-      let disinfectorMaterials = item.materials.map((material, number) =>
-        <li key={number}>{material.material}: {material.amount} {material.unit}</li>
-      );
-
-      return (
-        <div className="col-lg-4 col-md-6" key={index}>
-          <div className="card order mt-2">
-            <div className="card-body p-0">
-              <ul className="font-bold mb-0 pl-3">
-                <li>Дезинфектор: {item.name}</li>
-                <p className="mb-0">Имеется в наличии материалов:</p>
-                {disinfectorMaterials}
-              </ul>
-            </div>
-          </div>
-        </div>
-      )
-    });
-
     let consumptionMaterials = [
       { label: '-- Выберите вещество --', value: "", unit: "" }
     ];
@@ -176,18 +141,9 @@ class AdminMaterials extends Component {
       </React.Fragment>
     );
 
-    let disinfectorOptions = [
-      { label: '-- Выберите дезинфектора --', value: "" }
-    ];
-
-    this.props.admin.disinfectors.forEach(worker => disinfectorOptions.push({
-      label: worker.name, value: worker._id
-    }));
-
     let renderCurMat = this.state.currentMaterials.map((item, index) =>
       <li key={index}>{item.material}: {item.amount} {item.unit}</li>
     );
-
 
     return (
       <div className="container-fluid">
@@ -207,43 +163,18 @@ class AdminMaterials extends Component {
           </div>
         }
 
-        <div className="row">
-          <div className="col-12">
-            <h1 className="text-center">Материалы у дезинфекторов</h1>
-          </div>
-        </div>
-
-        {this.props.admin.loadingDisinfectors ? <Spinner /> :
-          <div className="row mt-2">
-            {showDisinfectors}
-          </div>
-        }
-
         <div className="row mt-3">
           <div className="col-lg-6 col-md-8 mx-auto">
             <div className="card mt-2">
               <div className="card-body">
-                <h2 className="text-center">Добавить Материалы Дeзинфектору</h2>
+                <h2 className="text-center">Приход Материалов</h2>
                 <form onSubmit={this.onSubmit}>
-                  <div className="form-group">
-                    <label htmlFor="disinfector">Выберите Дизинфектора:</label>
-                    {this.props.admin.loadingDisinfectors ? (
-                      <p>Дезинфекторы загружаются...</p>
-                    ) : (
-                        <select value={this.state.disinfector} name="disinfector" className="form-control" onChange={this.onChange} required>
-                          {disinfectorOptions.map((item, index) =>
-                            <option value={item.value} key={index}>{item.label}</option>
-                          )}
-                        </select>
-                      )}
-                  </div>
-
                   <label htmlFor="consumption">Выберите Материал и Количество:</label>
                   {renderMaterials}
                   {this.state.array.length < materials.length ? <button className="btn btn-primary mr-2" onClick={this.addMaterial}>Добавить Материал</button> : ''}
                   {this.state.array.length === 1 ? '' : <button className="btn btn-danger" onClick={this.deleteMaterial}>Удалить последний материал</button>}
                   <hr /><hr />
-                  <button type="submit" className="btn btn-success">Добавить Дизинфектору</button>
+                  <button type="submit" className="btn btn-success">Добавить приход материалов</button>
                 </form>
               </div>
             </div>
@@ -260,4 +191,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getAllDisinfectors, getCurrentMaterials, addMaterialToDisinfector })(withRouter(AdminMaterials));
+export default connect(mapStateToProps, { getCurrentMaterials, addMatComing })(withRouter(MatComing));

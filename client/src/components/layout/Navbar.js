@@ -18,7 +18,7 @@ class Navbar extends Component {
 
     const authLinks = (
       <div className="authLinks">
-        <div className="dropdown d-inline-block">
+        <div className="dropdown">
           <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Чат</button>
           <div className="dropdown-menu">
             <li className="nav-item">
@@ -29,17 +29,6 @@ class Navbar extends Component {
             </li>
           </div>
         </div>
-
-        {/* <li className="nav-item mr-2 list-inline-item">
-          <Link to="/chat" className="nav-link">
-            Чат
-          </Link>
-        </li>
-        <li className="nav-item mr-2 list-inline-item">
-          <Link to="/anons" className="nav-link">
-            Анонсы
-          </Link>
-        </li> */}
 
         <li className="nav-item list-inline-item">
           <Link to="/login" onClick={this.onLogoutClick} className="nav-link logout">
@@ -62,7 +51,7 @@ class Navbar extends Component {
     const disinfectorLinks = (
       <div className="disinfectorLinks">
 
-        <div className="dropdown d-inline-block">
+        <div className="dropdown">
           <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Функции</button>
           <div className="dropdown-menu">
             <li className="nav-item">
@@ -93,7 +82,7 @@ class Navbar extends Component {
 
     const adminLinks = (
       <div className="adminLinks">
-        <div className="dropdown d-inline-block">
+        <div className="dropdown">
           <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Функции</button>
           <div className="dropdown-menu">
             <li className="nav-item">
@@ -105,20 +94,32 @@ class Navbar extends Component {
             <li className="nav-item">
               <Link className="nav-link" to="/admin/order-queries">Запросы</Link>
             </li>
+          </div>
+        </div>
+
+        <div className="dropdown">
+          <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Материалы</button>
+          <div className="dropdown-menu">
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/material-history">Раздачи Материалов</Link>
+              <Link className="nav-link" to="/admin/material-coming-history">История Приходов Материалов</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/admin/material-history">История Раздач Материалов</Link>
             </li>
           </div>
         </div>
 
-        <div className="dropdown d-inline-block">
+        <div className="dropdown">
           <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Добавить</button>
           <div className="dropdown-menu">
             <li className="nav-item">
-              <Link className="nav-link" to="/register">Пользователь</Link>
+              <Link className="nav-link" to="/admin/material-coming">Приход Материалов</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/admin/materials">Материалы Дизинфектору</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/register">Новый Пользователь</Link>
             </li>
           </div>
         </div>

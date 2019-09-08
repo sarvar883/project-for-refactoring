@@ -4,13 +4,12 @@ import { connect } from 'react-redux';
 import Spinner from '../common/Spinner';
 import Moment from 'react-moment';
 import moment from 'moment';
-
-import { getAddMaterialEventsMonth, getAddMaterialEventsWeek, getAllDisinfectors } from '../../actions/adminActions';
-
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 
-import ShowAddMatEvents from './ShowAddMatEvents';
+import ShowMatComingHistory from './ShowMatComingHistory';
+
+import { getMatComMonth, getMatComWeek, getAllDisinfectors } from '../../actions/adminActions';
 
 
 
@@ -39,8 +38,7 @@ function getWeekRange(date) {
 
 
 
-
-class MaterialHistory extends Component {
+class MatComHistory extends Component {
   state = {
     month: '',
     year: '',
@@ -56,7 +54,7 @@ class MaterialHistory extends Component {
   componentDidMount() {
     const thisMonth = new Date().getMonth();
     const thisYear = new Date().getFullYear();
-    this.props.getAddMaterialEventsMonth(thisMonth, thisYear);
+    this.props.getMatComMonth(thisMonth, thisYear);
     this.props.getAllDisinfectors();
     this.setState({
       headingMonth: thisMonth,
@@ -68,7 +66,7 @@ class MaterialHistory extends Component {
 
   getMonthStats = (e) => {
     e.preventDefault();
-    this.props.getAddMaterialEventsMonth(this.state.month, this.state.year);
+    this.props.getMatComMonth(this.state.month, this.state.year);
     this.setState({
       headingMonth: this.state.month,
       headingYear: this.state.year
@@ -79,7 +77,7 @@ class MaterialHistory extends Component {
 
   // weekly calendar
   handleDayChange = date => {
-    this.props.getAddMaterialEventsWeek(getWeekDays(getWeekRange(date).from));
+    this.props.getMatComWeek(getWeekDays(getWeekRange(date).from));
     this.setState({
       selectedDays: getWeekDays(getWeekRange(date).from)
     });
@@ -98,7 +96,7 @@ class MaterialHistory extends Component {
   };
 
   handleWeekClick = (weekNumber, days, e) => {
-    this.props.getAddMaterialEventsWeek(getWeekDays(getWeekRange(days[0]).from));
+    this.props.getMatComWeek(getWeekDays(getWeekRange(days[0]).from));
     this.setState({
       selectedDays: getWeekDays(getWeekRange(days[0]).from)
     });
@@ -144,6 +142,7 @@ class MaterialHistory extends Component {
     );
 
 
+
     // weekly calender
     const { hoverRange, selectedDays } = this.state;
 
@@ -168,7 +167,7 @@ class MaterialHistory extends Component {
       <div className="container-fluid" >
         <div className="row">
           <div className="col-lg-4 col-md-6">
-            <h2 className="text-center">Раздача Материалов по месяцам</h2>
+            <h2 className="text-center">Приход Материалов по месяцам</h2>
             <form onSubmit={this.getMonthStats}>
               <div className="form-group">
                 <label htmlFor="year"><strong>Выберите Год:</strong></label>
@@ -188,7 +187,7 @@ class MaterialHistory extends Component {
 
           <div className="col-lg-4 col-md-6 ml-auto weekly-stats">
             <div className="SelectedWeekExample">
-              <h2 className="text-center">Раздача Материалов по неделям</h2>
+              <h2 className="text-center">Приход Материалов по неделям</h2>
               <DayPicker
                 selectedDays={selectedDays}
                 showWeekNumbers
@@ -207,15 +206,15 @@ class MaterialHistory extends Component {
         <div className="row mt-2">
           <div className="col-12">
             {this.props.admin.addMatEventsMethod === 'week' ?
-              <h2 className="text-center pl-3 pr-3">Недельная Раздача Материалов за <Moment format="DD/MM/YYYY">{this.state.selectedDays[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDays[6]}</Moment></h2> :
-              <h2 className="text-center pl-3 pr-3">Месячная Раздача Материалов за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2>
+              <h2 className="text-center pl-3 pr-3">Недельный Приход Материалов за <Moment format="DD/MM/YYYY">{this.state.selectedDays[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDays[6]}</Moment></h2> :
+              <h2 className="text-center pl-3 pr-3">Месячный Приход Материалов за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2>
             }
           </div>
         </div>
 
         <div className="row">
           <div className="col-12">
-            {this.props.admin.loadingAddMatEvents ? <Spinner /> : <ShowAddMatEvents />}
+            {this.props.admin.loadingStats ? <Spinner /> : <ShowMatComingHistory />}
           </div>
         </div>
       </div>
@@ -229,4 +228,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getAddMaterialEventsMonth, getAddMaterialEventsWeek, getAllDisinfectors })(withRouter(MaterialHistory));
+export default connect(mapStateToProps, { getMatComMonth, getMatComWeek, getAllDisinfectors })(withRouter(MatComHistory));

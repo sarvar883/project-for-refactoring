@@ -2,6 +2,7 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const keys = require('../config/keys');
+const materials = require('../client/src/components/common/materials');
 
 // Load Input Validation
 const validateRegisterInput = require('../validation/register');
@@ -21,13 +22,23 @@ exports.registerUser = (req, res) => {
       errors.email = 'Email already exists';
       return res.status(400).json(errors);
     } else {
+      let emptyArray = [];
+      materials.forEach(item => {
+        emptyArray.push({
+          material: item.material,
+          amount: 0,
+          unit: 'гр'
+        });
+      });
+
       const newUser = new User({
         name: req.body.name,
         email: req.body.email,
         phone: req.body.phone,
         occupation: req.body.occupation,
         color: req.body.color,
-        password: req.body.password
+        password: req.body.password,
+        materials: emptyArray
       });
 
       bcrypt.genSalt(10, (err, salt) => {
