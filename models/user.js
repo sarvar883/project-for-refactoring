@@ -54,7 +54,6 @@ userSchema.methods.subtractConsumptionMaterials = function (consumptionArray) {
     });
   });
   return this.save();
-  // return this.materials;
 };
 
 module.exports = mongoose.model('User', userSchema);

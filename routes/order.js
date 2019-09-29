@@ -5,12 +5,19 @@ const router = express.Router();
 const orderController = require('../controllers/order');
 const isDisinfector = require('../middleware/isDisinfector');
 const isOperatorOrAdmin = require('../middleware/isOperatorOrAdmin');
+const isAdmin = require('../middleware/isAdmin');
 
 // get all disinfectors for Order component
 router.get('/get-all-disinfectors', passport.authenticate('jwt', { session: false }), orderController.getAllDisinfectors);
 
 // create order
 router.post('/create-order', passport.authenticate('jwt', { session: false }), isOperatorOrAdmin, orderController.createOrder);
+
+// edit order
+router.post('/edit', passport.authenticate('jwt', { session: false }), isAdmin, orderController.editOrder);
+
+// delete order
+router.post('/delete-order', passport.authenticate('jwt', { session: false }), isAdmin, orderController.deleteOrder);
 
 // get orders for logged in disinfector
 router.post('/get-my-orders', passport.authenticate('jwt', { session: false }), isDisinfector, orderController.getOrders);

@@ -27,7 +27,7 @@ class OrderDetails extends Component {
                     <li className="pb-2">Дезинфектор: {order.disinfectorId.name}</li>
                     <li className="pb-2">Клиент: {order.client}</li>
                     <li className="pb-2">Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
-                    <li className="pb-2">Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment> ПО <Moment format="HH:mm">{order.dateTo}</Moment></li>
+                    <li className="pb-2">Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment></li>
                     <li className="pb-2">Адрес: {order.address}</li>
                     <li className="pb-2">Тип услуги: {order.typeOfService}</li>
                     <li className="pb-2">Комментарии Оператора: {order.comment ? order.comment : 'Нет комментариев'}</li>

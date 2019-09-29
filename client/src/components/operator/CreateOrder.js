@@ -52,26 +52,41 @@ class CreateOrder extends Component {
     const date = this.state.date.split('-');
     const dateStringFrom = new Date(`${date[1]}-${date[2]}-${date[0]} ${this.state.timeFrom}`);
 
-    const newOrder = {
-      disinfectorId: this.state.disinfectorId,
-      client: this.state.client,
-      address: this.state.address,
-      date: this.state.date,
-      dateFrom: dateStringFrom,
-      timeFrom: this.state.timeFrom,
-      phone: this.state.phone,
-      typeOfService: this.state.typeOfService,
-      comment: this.state.comment,
-      userCreated: this.props.auth.user.id
-    };
+    let numberCharacters = 0;
+    for (let i = 1; i <= 12; i++) {
+      if (this.state.phone[i] >= '0' && this.state.phone[i] <= '9') {
+        numberCharacters++;
+      }
+    }
 
-    this.props.createOrder(newOrder, this.props.history, this.props.auth.user.occupation);
+    if (this.state.phone.length !== 13) {
+      alert('Телефонный номер должен содержать 13 символов. Введите в формате +998XXXXXXXXX');
+    } else if (this.state.phone[0] !== '+') {
+      alert('Телефонный номер должен начинаться с "+". Введите в формате +998XXXXXXXXX');
+    } else if (numberCharacters !== 12) {
+      alert('Телефонный номер должен содержать "+" и 12 цифр');
+    } else {
+      const newOrder = {
+        disinfectorId: this.state.disinfectorId,
+        client: this.state.client,
+        address: this.state.address,
+        date: this.state.date,
+        dateFrom: dateStringFrom,
+        timeFrom: this.state.timeFrom,
+        phone: this.state.phone,
+        typeOfService: this.state.typeOfService,
+        comment: this.state.comment,
+        userCreated: this.props.auth.user.id
+      };
+
+      this.props.createOrder(newOrder, this.props.history, this.props.auth.user.occupation);
+    }
   };
 
   render() {
     const { errors } = this.state;
 
-    const disinfectors = this.props.order.disinfectors.data ? this.props.order.disinfectors.data : [];
+    const disinfectors = this.props.order.disinfectors ? this.props.order.disinfectors : [];
     const disinfectorOptions = [
       { label: '-- Выберите ответственного дезинфектора --', value: 0 }
     ];
@@ -182,7 +197,7 @@ CreateOrder.propTypes = {
   errors: PropTypes.object.isRequired
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   auth: state.auth,
   order: state.order,
   errors: state.errors

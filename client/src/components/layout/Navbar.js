@@ -89,7 +89,7 @@ class Navbar extends Component {
               <Link className="nav-link" to="/admin/stats">Общая Статистика</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/disinf-stats">Статистика Дизинфекторов</Link>
+              <Link className="nav-link" to="/admin/disinf-stats">Статистика Дезинфекторов</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/admin/order-queries">Запросы</Link>
@@ -116,7 +116,7 @@ class Navbar extends Component {
               <Link className="nav-link" to="/admin/material-coming">Приход Материалов</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/materials">Материалы Дизинфектору</Link>
+              <Link className="nav-link" to="/admin/materials">Материалы Дезинфектору</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/register">Новый Пользователь</Link>

@@ -15,10 +15,10 @@ export const getDisinfectors = () => dispatch => {
   dispatch(setLoading());
   axios
     .get('/order/get-all-disinfectors')
-    .then(disinfectors => {
+    .then(res => {
       dispatch({
         type: GET_DISINFECTORS,
-        payload: disinfectors
+        payload: res.data
       })
     })
     .catch(err =>
@@ -34,6 +34,51 @@ export const getDisinfectors = () => dispatch => {
 export const createOrder = (newOrder, history, occupation) => (dispatch) => {
   axios.post('/order/create-order', newOrder)
     .then(res => history.push(`/${occupation}`))
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+
+// edit order
+export const getOrderForEdit = (id) => (dispatch) => {
+  dispatch(setLoading());
+  axios.post('/order/get-order-by-id', { id: id })
+    .then(res =>
+      dispatch({
+        type: GET_ORDER_BY_ID,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+
+// edit order
+export const editOrder = (order, history, occupation) => (dispatch) => {
+  axios.post('/order/edit', { order: order })
+    .then(res => history.push(`/${occupation}`))
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+
+// delete order
+export const deleteOrder = (id, clientPhone, orderDateFrom, history, occupation) => (dispatch) => {
+  axios.post('/order/delete-order', { id: id, clientPhone: clientPhone, orderDateFrom: orderDateFrom, occupation: occupation })
+    .then(result => history.push(`/${occupation}`))
     .catch(err =>
       dispatch({
         type: GET_ERRORS,

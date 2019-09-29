@@ -3,6 +3,9 @@ import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Moment from 'react-moment';
 
+import { getSortedOrders } from '../../actions/adminActions';
+import { deleteOrder } from '../../actions/orderActions';
+
 // socket.io
 import openSocket from 'socket.io-client';
 
@@ -10,6 +13,7 @@ class AdmSortedOrders extends Component {
   _isMounted = false;
 
   state = {
+    date: new Date(),
     sortedOrders: this.props.admin.sortedOrders
   };
 
@@ -29,6 +33,28 @@ class AdmSortedOrders extends Component {
         this.addOrderToDOM(data.order);
       }
     });
+
+    socket.on('editOrder', data => {
+      // check if today
+      if (
+        new Date(data.order.dateFrom).getDate() === new Date(this.props.date).getDate() &&
+        new Date(data.order.dateFrom).getMonth() === new Date(this.props.date).getMonth() &&
+        new Date(data.order.dateFrom).getFullYear() === new Date(this.props.date).getFullYear()
+      ) {
+        this.editOrderOnDOM(data.order);
+      }
+    });
+
+    socket.on('deleteOrder', data => {
+      // check if today
+      if (
+        new Date(data.orderDateFrom).getDate() === new Date(this.props.date).getDate() &&
+        new Date(data.orderDateFrom).getMonth() === new Date(this.props.date).getMonth() &&
+        new Date(data.orderDateFrom).getFullYear() === new Date(this.props.date).getFullYear()
+      ) {
+        this.removeOrderFromDOM(data.id);
+      }
+    });
   }
 
   addOrderToDOM = (order) => {
@@ -39,6 +65,36 @@ class AdmSortedOrders extends Component {
         return {
           sortedOrders: updatedOrders
         };
+      });
+    }
+  }
+
+  editOrderOnDOM = (order) => {
+    if (this._isMounted) {
+      let ordersInState = [...this.state.sortedOrders];
+      for (let i = 0; i < ordersInState.length; i++) {
+        if (ordersInState[i]._id.toString() === order._id.toString()) {
+          ordersInState[i].disinfectorId = order.disinfectorId;
+          ordersInState[i].client = order.client;
+          ordersInState[i].address = order.address;
+          ordersInState[i].dateFrom = order.dateFrom;
+          ordersInState[i].phone = order.phone;
+          ordersInState[i].typeOfService = order.typeOfService;
+          ordersInState[i].comment = order.comment;
+        }
+      }
+      this.setState({
+        sortedOrders: ordersInState
+      });
+    }
+  }
+
+  removeOrderFromDOM = (id) => {
+    if (this._isMounted) {
+      let ordersInState = [...this.state.sortedOrders];
+      ordersInState = ordersInState.filter(item => item._id.toString() !== id);
+      this.setState({
+        sortedOrders: ordersInState
       });
     }
   }
@@ -70,6 +126,11 @@ class AdmSortedOrders extends Component {
     });
   };
 
+  deleteOrder = (id, clientPhone, orderDateFrom) => {
+    this.props.deleteOrder(id, clientPhone, orderDateFrom, this.props.history, this.props.auth.user.occupation);
+    this.props.getSortedOrders(this.state.date);
+  }
+
   componentWillUnmount() {
     this._isMounted = false;
   }
@@ -97,11 +158,20 @@ class AdmSortedOrders extends Component {
                 <li className="pb-2">Время: <Moment format="HH:mm">{element.dateFrom}</Moment></li>
                 <li className="pb-2">Дезинфектор: {element.disinfectorId.name}</li>
                 <li className="pb-2">Клиент: {element.client}</li>
+                <li className="pb-2">Тел клиента: {element.phone}</li>
                 <li className="pb-2">Адрес: {element.address}</li>
                 <li className="pb-2">Тип услуги: {element.typeOfService}</li>
                 <li className="pb-2">Заказ принял: {element.userCreated.name}</li>
               </ul>
-              <Link to={`/order-details/${element._id}`} className="btn btn-warning">Подробнее</Link>
+              <div className="btn-group">
+                <Link to={`/order-details/${element._id}`} className="btn btn-primary mr-1">Подробнее</Link>
+                <Link to={`/edit-order/${element._id}`} className="btn btn-warning mr-1">Редактировать</Link>
+                <button className="btn btn-danger" onClick={() => {
+                  if (window.confirm('Вы уверены?')) {
+                    this.deleteOrder(element._id, element.phone, element.dateFrom);
+                  }
+                }}>Удалить</button>
+              </div>
             </div>
           </div>
         </div>
@@ -132,4 +202,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps)(withRouter(AdmSortedOrders));
+export default connect(mapStateToProps, { getSortedOrders, deleteOrder })(withRouter(AdmSortedOrders));

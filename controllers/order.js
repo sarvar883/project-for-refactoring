@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('../models/user');
 const Order = require('../models/order');
+const Client = require('../models/client');
 const AddMaterial = require('../models/addMaterial');
 
 const validateOrderInput = require('../validation/order');
@@ -39,7 +40,31 @@ exports.createOrder = (req, res) => {
   });
 
   order.save()
-    .then(() => {
+    .then((savedOrder) => {
+
+      Client.findOne({ phone: req.body.phone })
+        .then(client => {
+          if (client) {
+            // if we have a client with this phone number
+            client.orders.push(savedOrder._id);
+            client.save();
+          } else {
+            let array = [];
+            array.push(savedOrder._id);
+
+            const newClient = new Client({
+              _id: mongoose.Types.ObjectId(),
+              name: req.body.client,
+              phone: req.body.phone,
+              address: req.body.address,
+              orders: array,
+              createdAt: new Date()
+            });
+            newClient.save();
+          }
+        });
+
+
       Order.findOne(order)
         .populate('disinfectorId userCreated')
         .exec()
@@ -54,6 +79,57 @@ exports.createOrder = (req, res) => {
     .catch(err => {
       console.log('createOrder ERROR', err);
       res.status(400).json(err);
+    });
+};
+
+
+exports.editOrder = (req, res) => {
+  const { order } = req.body;
+  Order.findById(order._id)
+    .then(orderForEdit => {
+      orderForEdit.disinfectorId = order.disinfectorId;
+      orderForEdit.client = order.client;
+      orderForEdit.address = order.address;
+      orderForEdit.dateFrom = order.dateFrom;
+      orderForEdit.phone = order.phone;
+      orderForEdit.typeOfService = order.typeOfService;
+      orderForEdit.comment = order.comment;
+
+      orderForEdit.save()
+        .then(editedOrder => {
+          editedOrder.populate('disinfectorId')
+            .execPopulate()
+            .then(item => {
+              io.getIO().emit('editOrder', {
+                order: item
+              });
+              return res.json(editedOrder);
+            });
+        });
+    })
+    .catch(err => {
+      console.log('editOrder ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.deleteOrder = (req, res) => {
+  Order.findByIdAndRemove(req.body.id)
+    .then(result => {
+      io.getIO().emit('deleteOrder', {
+        id: req.body.id,
+        orderDateFrom: req.body.orderDateFrom
+      });
+      Client.findOne({ phone: req.body.clientPhone })
+        .then(client => {
+          client.orders = client.orders.filter(item => item.toString() !== req.body.id);
+          return client.save();
+        });
+    })
+    .catch(err => {
+      console.log('deleteOrder ERROR', err);
+      res.status(404).json(err);
     });
 };
 

@@ -25,6 +25,7 @@ import AdminStats from './components/admin/AdminStats';
 import DisStats from './components/admin/DisStats';
 import AdminQueries from './components/admin/AdminQueries';
 import AdminMaterials from './components/admin/AdminMaterials';
+import EditOrder from './components/common/EditOrder';
 import MatComing from './components/admin/MatComing';
 import MatComHistory from './components/admin/MatComHistory';
 import MaterialHistory from './components/admin/MaterialHistory';
@@ -123,6 +124,9 @@ class App extends Component {
             <Switch>
               <AdminRoute exact path="/admin/material-history" component={MaterialHistory} />
             </Switch>
+            <Switch>
+              <AdminRoute exact path="/edit-order/:orderId" component={EditOrder} />
+            </Switch>
 
 
             {/* Subadmin Routes */}
@@ -174,7 +178,6 @@ class App extends Component {
             <Switch>
               <PrivateRoute exact path="/chat" component={Chat} />
             </Switch>
-
             <Switch>
               <PrivateRoute exact path="/chat/:chatId" component={ChatRoom} />
             </Switch>
