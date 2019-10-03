@@ -5,6 +5,7 @@ import {
   SET_LOADING_ORDER_QUERIES_FOR_ADMIN,
   SET_LOADING_ADMIN_STATS,
   SET_LOADING_DISINFECTORS,
+  SET_LOADING_OPERATORS,
   SET_LOADING_ADD_MATERIAL_EVENTS,
   LOADING_SORTED_ORDERS_ADMIN,
   LOADING_CUR_MAT,
@@ -13,7 +14,10 @@ import {
   GET_ORDER_QUERIES_FOR_ADMIN,
   GET_ADMIN_MONTH_STATS,
   GET_ADMIN_WEEK_STATS,
+  GET_ADV_STATS,
+  GET_OPERATOR_STATS,
   GET_ALL_DISINFECTORS_FOR_ADMIN,
+  GET_ALL_OPERATORS_FOR_ADMIN,
   GET_ADD_MAT_EVENTS_MONTH,
   GET_ADD_MAT_EVENTS_WEEK,
   DISINF_STATS_MONTH_ADMIN,
@@ -111,6 +115,44 @@ export const getWeekStatsForAdmin = (days) => (dispatch) => {
 };
 
 
+// advertising statistics
+export const getAdvStats = (object) => (dispatch) => {
+  dispatch(loadingStats());
+  axios.post('/stats/adv-stats', { object: object })
+    .then(res =>
+      dispatch({
+        type: GET_ADV_STATS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
+// get operator stats
+export const getOperatorStats = (object) => (dispatch) => {
+  dispatch(loadingStats());
+  axios.post('/stats/operator-stats', { object: object })
+    .then(res =>
+      dispatch({
+        type: GET_OPERATOR_STATS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
 export const getAllDisinfectors = () => (dispatch) => {
   dispatch(loadingDisinfectors());
   axios.post('/admin/get-all-disinfectors')
@@ -128,6 +170,23 @@ export const getAllDisinfectors = () => (dispatch) => {
     );
 };
 
+
+export const getAllOperators = () => (dispatch) => {
+  dispatch(loadingOperators());
+  axios.post('/admin/get-all-operators')
+    .then(res =>
+      dispatch({
+        type: GET_ALL_OPERATORS_FOR_ADMIN,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
 
 export const addMaterialToDisinfector = (object, history) => (dispatch) => {
   axios.post('/admin/add-materials-to-disinfector', { object: object })
@@ -294,6 +353,12 @@ export const getMatComWeek = (days) => (dispatch) => {
 };
 
 
+
+
+
+
+
+
 // Loading sorted orders
 export const setLoadingSortedOrders = () => {
   return {
@@ -322,6 +387,14 @@ export const loadingStats = () => {
 export const loadingDisinfectors = () => {
   return {
     type: SET_LOADING_DISINFECTORS
+  };
+}
+
+
+// Loading operators for admin
+export const loadingOperators = () => {
+  return {
+    type: SET_LOADING_OPERATORS
   };
 }
 

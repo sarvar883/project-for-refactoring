@@ -5,14 +5,13 @@ import Moment from 'react-moment';
 
 import materials from '../common/materials';
 
-class ShowDisStats extends Component {
+class ShowOperStats extends Component {
   state = {
     orders: this.props.admin.stats.orders
   };
 
   render() {
     const { orders } = this.state;
-
     let totalSum = 0,
       cash = 0,
       totalScore = 0,
@@ -21,10 +20,10 @@ class ShowDisStats extends Component {
       confirmedOrders = [],
       rejectedOders = [];
 
+
     orders.forEach(order => {
       if (order.completed) {
         completedOrders.push(order);
-        order.consumption.forEach(element => allConsumptions.push(element));
 
         if (order.operatorConfirmed && order.adminConfirmed) {
           confirmedOrders.push(order);
@@ -75,7 +74,6 @@ class ShowDisStats extends Component {
           <div className="card order mt-2">
             <div className="card-body p-0">
               <ul className="font-bold mb-0 list-unstyled">
-                <li>Оператор, получивший заказ: {item.userCreated.name}</li>
                 <li>Клиент: {item.client}</li>
                 <li>Телефон: {item.phone}</li>
                 <li>Адрес: {item.address}</li>
@@ -146,9 +144,9 @@ class ShowDisStats extends Component {
           <div className="col-lg-4 col-md-6">
             <div className="card order mt-2">
               <div className="card-body p-0">
-                <h2 className="text-center">Рейтинг:</h2>
+                <h4 className="text-center">На заказах Оператора расходовано материалов:</h4>
                 <ul className="font-bold mb-0 pl-3">
-                  <li>Средний балл: {(totalScore / confirmedOrders.length).toFixed(2)} (из 10)</li>
+                  {renderConsumption}
                 </ul>
               </div>
             </div>
@@ -157,9 +155,9 @@ class ShowDisStats extends Component {
           <div className="col-lg-4 col-md-6">
             <div className="card order mt-2">
               <div className="card-body p-0">
-                <h2 className="text-center">Расход Материалов:</h2>
+                <h2 className="text-center">Рейтинг:</h2>
                 <ul className="font-bold mb-0 pl-3">
-                  {renderConsumption}
+                  <li>Средний балл: {(totalScore / confirmedOrders.length).toFixed(2)} (из 10)</li>
                 </ul>
               </div>
             </div>
@@ -168,7 +166,7 @@ class ShowDisStats extends Component {
 
         <div className="row mt-2">
           <div className="col-12">
-            <h2 className="text-center pl-3 pr-3">Все Заказы Дизинфектора</h2>
+            <h2 className="text-center pl-3 pr-3">Все Заказы Оператора</h2>
           </div>
           {confirmedOrders.length > 0 ? (renderOrders) : <h2>Нет подтвержденных заказов</h2>}
         </div>
@@ -184,4 +182,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps)(withRouter(ShowDisStats));
+export default connect(mapStateToProps)(withRouter(ShowOperStats));

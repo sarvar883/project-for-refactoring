@@ -20,4 +20,8 @@ router.post('/for-admin-disinf-stats-month', passport.authenticate('jwt', { sess
 
 router.post('/for-admin-disinf-stats-week', passport.authenticate('jwt', { session: false }), isAdmin, statsController.disinfWeekStatsForAdmin);
 
+router.post('/adv-stats', passport.authenticate('jwt', { session: false }), isAdmin, statsController.getAdvStats);
+
+router.post('/operator-stats', passport.authenticate('jwt', { session: false }), isAdmin, statsController.getOperatorStats);
+
 module.exports = router;

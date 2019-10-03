@@ -21,6 +21,9 @@ const orderSchema = new Schema({
   typeOfService: {
     type: String
   },
+  advertising: {
+    type: String
+  },
   comment: {
     type: String
   },

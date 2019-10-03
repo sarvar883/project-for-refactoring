@@ -44,6 +44,7 @@ class ShowQueriesForAdmin extends Component {
                 <li>Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment> ПО <Moment format="HH:mm">{order.completedAt}</Moment></li>
                 <li>Адрес: {order.address}</li>
                 <li>Тип услуги: {order.typeOfService}</li>
+                <li>Откуда узнали: {order.advertising}</li>
                 <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{order.completedAt}</Moment></li>
                 <li>Сумма: {order.cost.toLocaleString()} UZS</li>
                 <li>Тип Платежа: {order.paymentMethod}</li>

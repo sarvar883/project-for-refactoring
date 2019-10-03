@@ -125,7 +125,16 @@ class DisStats extends Component {
 
   render() {
     const date = new Date();
+
     const monthsNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+    const months = [
+      { label: "-- Выберите месяц -- ", value: "" }
+    ];
+    monthsNames.forEach((month, i) => {
+      months.push({
+        label: month, value: i
+      });
+    });
 
     let years = [
       { label: "-- Выберите Год -- ", value: "" }
@@ -136,34 +145,12 @@ class DisStats extends Component {
       });
     }
 
-    const months = [
-      { label: "-- Выберите месяц -- ", value: "" },
-      { label: "Январь", value: 0 },
-      { label: "Февраль", value: 1 },
-      { label: "Март", value: 2 },
-      { label: "Апрель", value: 3 },
-      { label: "Май", value: 4 },
-      { label: "Июнь", value: 5 },
-      { label: "Июль", value: 6 },
-      { label: "Август", value: 7 },
-      { label: "Сентябрь", value: 8 },
-      { label: "Октябрь", value: 9 },
-      { label: "Ноябрь", value: 10 },
-      { label: "Декабрь", value: 11 }
-    ];
-
     const yearsOptions = years.map((year, index) =>
       <option value={year.value} key={index}>{year.label}</option>
     );
     const monthOptions = months.map((month, index) =>
       <option value={month.value} key={index}>{month.label}</option>
     );
-
-    for (let i = 2019; i <= date.getFullYear(); i++) {
-      years.push({
-        label: i, value: i
-      });
-    }
 
     let disinfectorOptions = [{
       label: "-- Выберите Дизинфектора -- ", value: ""
@@ -208,7 +195,7 @@ class DisStats extends Component {
             <h4 className="text-center">Статистика по месяцам</h4>
             <form onSubmit={this.getMonthStats}>
               <div className="form-group">
-                <label htmlFor="disinfectorIdMonth"><strong>Выберите Дизинфектора:</strong></label>
+                <label htmlFor="disinfectorIdMonth"><strong>Выберите Дезинфектора:</strong></label>
                 <select name="disinfectorIdMonth" className="form-control" onChange={this.onChange} required>
                   {renderDisinfectorOptions}
                 </select>
@@ -246,7 +233,7 @@ class DisStats extends Component {
             </div>
             <form onSubmit={this.getWeekStats}>
               <div className="form-group">
-                <label htmlFor="disinfectorIdWeek"><strong>Выберите Дизинфектора:</strong></label>
+                <label htmlFor="disinfectorIdWeek"><strong>Выберите Дезинфектора:</strong></label>
                 <select name="disinfectorIdWeek" className="form-control" onChange={this.onChange} required>
                   {renderDisinfectorOptions}
                 </select>
@@ -259,11 +246,11 @@ class DisStats extends Component {
         <div className="row mt-2">
           <div className="col-12">
             {this.props.admin.method === 'week' && this.state.disinfectorName && this.state.selectedDays ?
-              <h2 className="text-center pl-3 pr-3">Недельная статистика дизинфектора {this.state.disinfectorName} за <Moment format="DD/MM/YYYY">{this.state.selectedDaysAfterSubmit[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDaysAfterSubmit[6]}</Moment></h2> : ''
+              <h2 className="text-center pl-3 pr-3">Недельная статистика дезинфектора {this.state.disinfectorName} за <Moment format="DD/MM/YYYY">{this.state.selectedDaysAfterSubmit[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDaysAfterSubmit[6]}</Moment></h2> : ''
             }
 
             {this.props.admin.method === 'month' && this.state.disinfectorName && this.state.month && this.state.year ?
-              <h2 className="text-center pl-3 pr-3">Месячная Статистика дизинфектора {this.state.disinfectorName} за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2> : ''}
+              <h2 className="text-center pl-3 pr-3">Месячная Статистика дезинфектора {this.state.disinfectorName} за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2> : ''}
           </div>
         </div>
 

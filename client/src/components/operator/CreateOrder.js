@@ -6,6 +6,7 @@ import { getDisinfectors, createOrder } from '../../actions/orderActions';
 import TextFieldGroup from '../common/TextFieldGroup';
 import SelectListGroup from '../common/SelectListGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
+import advertisements from '../common/advertisements';
 
 class CreateOrder extends Component {
   constructor(props) {
@@ -29,6 +30,7 @@ class CreateOrder extends Component {
       timeFrom: hour,
       phone: '',
       typeOfService: '',
+      advertising: '',
       comment: '',
       errors: {}
     };
@@ -75,6 +77,7 @@ class CreateOrder extends Component {
         timeFrom: this.state.timeFrom,
         phone: this.state.phone,
         typeOfService: this.state.typeOfService,
+        advertising: this.state.advertising,
         comment: this.state.comment,
         userCreated: this.props.auth.user.id
       };
@@ -104,6 +107,17 @@ class CreateOrder extends Component {
       { label: 'MX', value: 'MX' },
       { label: 'KOMP', value: 'KOMP' }
     ];
+
+    const advOptions = [
+      { label: '-- Откуда узнали о нас? --', value: 0 }
+    ];
+
+    advertisements.forEach(item => {
+      advOptions.push({
+        label: item.label,
+        value: item.value
+      });
+    });
 
     return (
       <div className="container create-order mt-4" >
@@ -159,6 +173,13 @@ class CreateOrder extends Component {
                     onChange={this.onChange}
                     error={errors.typeOfService}
                     options={orderTypes}
+                  />
+                  <SelectListGroup
+                    name="advertising"
+                    value={this.state.advertising}
+                    onChange={this.onChange}
+                    error={errors.advertising}
+                    options={advOptions}
                   />
                   {this.props.order.loading ? (
                     <p>Дезинфекторы загружаются...</p>

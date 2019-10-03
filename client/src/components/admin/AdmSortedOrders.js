@@ -80,6 +80,7 @@ class AdmSortedOrders extends Component {
           ordersInState[i].dateFrom = order.dateFrom;
           ordersInState[i].phone = order.phone;
           ordersInState[i].typeOfService = order.typeOfService;
+          ordersInState[i].advertising = order.advertising;
           ordersInState[i].comment = order.comment;
         }
       }
@@ -101,7 +102,7 @@ class AdmSortedOrders extends Component {
 
   onClick = (hour, date) => {
     let defaultDateMonth, defaultDateDay, defaultHourString;
-    if (new Date(date).getMonth() < 10) {
+    if (new Date(date).getMonth() < 9) {
       defaultDateMonth = `0${new Date(date).getMonth() + 1}`;
     } else {
       defaultDateMonth = `${new Date(date).getMonth() + 1}`;
@@ -155,13 +156,14 @@ class AdmSortedOrders extends Component {
           <div className={`card mt-2 order order-bg-${element.disinfectorId.color}`}>
             <div className="card-body p-0">
               <ul className="font-bold mb-0">
-                <li className="pb-2">Время: <Moment format="HH:mm">{element.dateFrom}</Moment></li>
-                <li className="pb-2">Дезинфектор: {element.disinfectorId.name}</li>
-                <li className="pb-2">Клиент: {element.client}</li>
-                <li className="pb-2">Тел клиента: {element.phone}</li>
-                <li className="pb-2">Адрес: {element.address}</li>
-                <li className="pb-2">Тип услуги: {element.typeOfService}</li>
-                <li className="pb-2">Заказ принял: {element.userCreated.name}</li>
+                <li>Время: <Moment format="HH:mm">{element.dateFrom}</Moment></li>
+                <li>Дезинфектор: {element.disinfectorId.name}</li>
+                <li>Клиент: {element.client}</li>
+                <li>Тел клиента: {element.phone}</li>
+                <li>Адрес: {element.address}</li>
+                <li>Тип услуги: {element.typeOfService}</li>
+                <li>Откуда узнали: {element.advertising}</li>
+                <li>Заказ принял: {element.userCreated.name}</li>
               </ul>
               <div className="btn-group">
                 <Link to={`/order-details/${element._id}`} className="btn btn-primary mr-1">Подробнее</Link>

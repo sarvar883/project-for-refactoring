@@ -22,7 +22,9 @@ import Landing from './components/layout/Landing';
 
 import Admin from './components/admin/Admin';
 import AdminStats from './components/admin/AdminStats';
+import AdvStats from './components/admin/AdvStats';
 import DisStats from './components/admin/DisStats';
+import OperStats from './components/admin/OperStats';
 import AdminQueries from './components/admin/AdminQueries';
 import AdminMaterials from './components/admin/AdminMaterials';
 import EditOrder from './components/common/EditOrder';
@@ -107,7 +109,13 @@ class App extends Component {
               <AdminRoute exact path="/admin/stats" component={AdminStats} />
             </Switch>
             <Switch>
+              <AdminRoute exact path="/admin/adv-stats" component={AdvStats} />
+            </Switch>
+            <Switch>
               <AdminRoute exact path="/admin/disinf-stats" component={DisStats} />
+            </Switch>
+            <Switch>
+              <AdminRoute exact path="/admin/operator-stats" component={OperStats} />
             </Switch>
             <Switch>
               <AdminRoute exact path="/admin/order-queries" component={AdminQueries} />

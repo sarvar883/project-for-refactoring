@@ -13,6 +13,8 @@ router.post('/admin-confirms-order-query', passport.authenticate('jwt', { sessio
 
 router.post('/get-all-disinfectors', passport.authenticate('jwt', { session: false }), isAdmin, adminController.getDisinfectors);
 
+router.post('/get-all-operators', passport.authenticate('jwt', { session: false }), isAdmin, adminController.getOperators);
+
 router.post('/add-materials-to-disinfector', passport.authenticate('jwt', { session: false }), isAdmin, adminController.addMaterialToDisinfector);
 
 router.post('/get-add-material-events-month', passport.authenticate('jwt', { session: false }), isAdmin, adminController.addMatEventsMonth);

@@ -150,3 +150,59 @@ exports.disinfWeekStatsForAdmin = (req, res) => {
       res.status(404).json(err);
     });
 };
+
+
+exports.getAdvStats = (req, res) => {
+  Order.find()
+    .populate('userCreated')
+    .exec()
+    .then(orders => {
+      let sortedOrders = [];
+      if (req.body.object.type === 'month') {
+        sortedOrders = orders.filter(order =>
+          new Date(order.dateFrom).getMonth() === req.body.object.month &&
+          new Date(order.dateFrom).getFullYear() === req.body.object.year
+        );
+      } else if (req.body.object.type === 'year') {
+        sortedOrders = orders.filter(order =>
+          new Date(order.dateFrom).getFullYear() === req.body.object.year
+        );
+      } else if (req.body.object.type === 'allTime') {
+        sortedOrders = orders;
+      }
+      return res.json(sortedOrders);
+    })
+    .catch(err => {
+      console.log('getAdvStats ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.getOperatorStats = (req, res) => {
+  Order.find({ userCreated: req.body.object.operatorId })
+    .populate('disinfectorId')
+    .exec()
+    .then(orders => {
+      let sortedOrders = [];
+      if (req.body.object.type === 'month') {
+        sortedOrders = orders.filter(order =>
+          new Date(order.dateFrom).getMonth() === req.body.object.month &&
+          new Date(order.dateFrom).getFullYear() === req.body.object.year
+        );
+      } else if (req.body.object.type === 'week') {
+        sortedOrders = orders.filter(order =>
+          new Date(order.dateFrom) >= new Date(req.body.object.days[0]) &&
+          new Date(order.dateFrom).setHours(0, 0, 0, 0) <= new Date(req.body.object.days[6])
+        );
+      }
+      return res.json({
+        method: req.body.object.type,
+        sortedOrders: sortedOrders
+      });
+    })
+    .catch(err => {
+      console.log('getOperatorStats ERROR', err);
+      res.status(404).json(err);
+    });
+};

@@ -80,6 +80,8 @@ class ShowAdminStats extends Component {
                 <li>Клиент: {item.client}</li>
                 <li>Телефон: {item.phone}</li>
                 <li>Адрес: {item.address}</li>
+                <li>Тип услуги: {item.typeOfService}</li>
+                <li>Откуда узнали: {item.advertising}</li>
                 <li>Дата выполнения: <Moment format="DD/MM/YYYY">{item.dateFrom}</Moment></li>
                 <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
                 <li>Сумма: {item.cost.toLocaleString()} UZS</li>

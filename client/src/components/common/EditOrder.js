@@ -6,6 +6,7 @@ import TextFieldGroup from '../common/TextFieldGroup';
 import SelectListGroup from '../common/SelectListGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 import isEmpty from '../../validation/is-empty';
+import advertisements from '../common/advertisements';
 
 import { getDisinfectors, getOrderForEdit, editOrder } from '../../actions/orderActions';
 
@@ -19,13 +20,14 @@ class EditOrder extends Component {
     timeFrom: '',
     phone: '',
     typeOfService: '',
+    advertising: '',
     comment: '',
     errors: {}
   }
 
   componentDidMount() {
-    this.props.getDisinfectors();
     this.props.getOrderForEdit(this.props.match.params.orderId);
+    this.props.getDisinfectors();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -49,7 +51,7 @@ class EditOrder extends Component {
       const date = !isEmpty(orderForEdit.dateFrom) ? new Date(orderForEdit.dateFrom) : '';
 
       let defaultDateMonth, defaultDateDay, defaultHourString;
-      if (new Date(date).getMonth() < 10) {
+      if (new Date(date).getMonth() < 9) {
         defaultDateMonth = `0${new Date(date).getMonth() + 1}`;
       } else {
         defaultDateMonth = `${new Date(date).getMonth() + 1}`;
@@ -77,6 +79,7 @@ class EditOrder extends Component {
         timeFrom: defaultHourString,
         phone: orderForEdit.phone,
         typeOfService: orderForEdit.typeOfService,
+        advertising: orderForEdit.advertising,
         comment: orderForEdit.comment
       });
     }
@@ -114,6 +117,7 @@ class EditOrder extends Component {
         timeFrom: this.state.timeFrom,
         phone: this.state.phone,
         typeOfService: this.state.typeOfService,
+        advertising: this.state.advertising,
         comment: this.state.comment,
       };
       this.props.editOrder(order, this.props.history, this.props.auth.user.occupation);
@@ -140,6 +144,17 @@ class EditOrder extends Component {
       { label: 'MX', value: 'MX' },
       { label: 'KOMP', value: 'KOMP' }
     ];
+
+    const advOptions = [
+      { label: '-- Откуда узнали о нас? --', value: 0 }
+    ];
+
+    advertisements.forEach(item => {
+      advOptions.push({
+        label: item.label,
+        value: item.value
+      });
+    });
 
     return (
       <React.Fragment>
@@ -199,11 +214,18 @@ class EditOrder extends Component {
                         error={errors.typeOfService}
                         options={orderTypes}
                       />
+                      <SelectListGroup
+                        name="advertising"
+                        value={this.state.advertising}
+                        onChange={this.onChange}
+                        error={errors.advertising}
+                        options={advOptions}
+                      />
                       {this.props.order.loading ? (
                         <p>Дезинфекторы загружаются...</p>
                       ) : (
                           <div className="form-group">
-                            <label htmlFor="disinfectorId">Выберите Дизинфектора:</label>
+                            <label htmlFor="disinfectorId">Выберите Дезинфектора:</label>
                             <select className="form-control" value={this.state.disinfectorId} name="disinfectorId" onChange={this.onChange}>
                               {disinfectorOptions.map((item, index) =>
                                 <option key={index} value={item.value}>{item.label}</option>

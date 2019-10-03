@@ -2,6 +2,7 @@ import {
   SET_LOADING_ORDER_QUERIES_FOR_ADMIN,
   SET_LOADING_ADMIN_STATS,
   SET_LOADING_DISINFECTORS,
+  SET_LOADING_OPERATORS,
   SET_LOADING_ADD_MATERIAL_EVENTS,
   LOADING_SORTED_ORDERS_ADMIN,
   LOADING_CUR_MAT,
@@ -10,7 +11,10 @@ import {
   GET_ORDER_QUERIES_FOR_ADMIN,
   GET_ADMIN_MONTH_STATS,
   GET_ADMIN_WEEK_STATS,
+  GET_ADV_STATS,
+  GET_OPERATOR_STATS,
   GET_ALL_DISINFECTORS_FOR_ADMIN,
+  GET_ALL_OPERATORS_FOR_ADMIN,
   GET_ADD_MAT_EVENTS_MONTH,
   GET_ADD_MAT_EVENTS_WEEK,
   DISINF_STATS_MONTH_ADMIN,
@@ -25,6 +29,7 @@ import {
 const initialState = {
   orderQueries: [],
   disinfectors: [],
+  operators: [],
   sortedOrders: [],
   currentMaterials: {
     materials: []
@@ -40,6 +45,7 @@ const initialState = {
   loadingOrderQueries: false,
   loadingStats: false,
   loadingDisinfectors: false,
+  loadingOperators: false,
   loadingAddMatEvents: false,
   loadingCurMat: false
 };
@@ -68,6 +74,12 @@ export default function (state = initialState, action) {
       return {
         ...state,
         loadingDisinfectors: true
+      };
+
+    case SET_LOADING_OPERATORS:
+      return {
+        ...state,
+        loadingOperators: true
       };
 
     case SET_LOADING_ADD_MATERIAL_EVENTS:
@@ -141,11 +153,39 @@ export default function (state = initialState, action) {
         loadingStats: false
       };
 
+    case GET_ADV_STATS:
+      return {
+        ...state,
+        stats: {
+          ...state.stats,
+          orders: action.payload
+        },
+        loadingStats: false
+      };
+
+    case GET_OPERATOR_STATS:
+      return {
+        ...state,
+        method: action.payload.method,
+        stats: {
+          ...state.stats,
+          orders: action.payload.sortedOrders
+        },
+        loadingStats: false
+      };
+
     case GET_ALL_DISINFECTORS_FOR_ADMIN:
       return {
         ...state,
         disinfectors: action.payload,
         loadingDisinfectors: false
+      };
+
+    case GET_ALL_OPERATORS_FOR_ADMIN:
+      return {
+        ...state,
+        operators: action.payload,
+        loadingOperators: false
       };
 
     case GET_ADD_MAT_EVENTS_MONTH:

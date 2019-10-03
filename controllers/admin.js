@@ -76,6 +76,16 @@ exports.getDisinfectors = (req, res) => {
 };
 
 
+exports.getOperators = (req, res) => {
+  User.find({ occupation: 'operator' })
+    .then(operators => res.json(operators))
+    .catch(err => {
+      console.log('getOperators ERROR', err);
+      return res.status(404).json(err);
+    });
+};
+
+
 exports.addMaterialToDisinfector = (req, res) => {
   User.findById(req.body.object.disinfector)
     .then(user => {

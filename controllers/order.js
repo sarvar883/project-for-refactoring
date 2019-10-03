@@ -34,6 +34,7 @@ exports.createOrder = (req, res) => {
     dateFrom: req.body.dateFrom,
     phone: req.body.phone,
     typeOfService: req.body.typeOfService,
+    advertising: req.body.advertising,
     comment: req.body.comment,
     disinfectorComment: '',
     userCreated: req.body.userCreated
@@ -93,6 +94,7 @@ exports.editOrder = (req, res) => {
       orderForEdit.dateFrom = order.dateFrom;
       orderForEdit.phone = order.phone;
       orderForEdit.typeOfService = order.typeOfService;
+      orderForEdit.advertising = order.advertising;
       orderForEdit.comment = order.comment;
 
       orderForEdit.save()
