@@ -6,6 +6,7 @@ import {
   SET_LOADING_ADD_MATERIAL_EVENTS,
   LOADING_SORTED_ORDERS_ADMIN,
   LOADING_CUR_MAT,
+  LOADING_CLIENTS,
 
   GET_SORTED_ORDERS_ADMIN,
   GET_ORDER_QUERIES_FOR_ADMIN,
@@ -23,7 +24,8 @@ import {
   GET_CURR_MAT_ADMIN,
   UPDATE_MAT_COMING,
   MAT_COMING_MONTH,
-  MAT_COMING_WEEK
+  MAT_COMING_WEEK,
+  SEARCH_CLIENTS
 } from '../actions/types';
 
 const initialState = {
@@ -31,6 +33,7 @@ const initialState = {
   disinfectors: [],
   operators: [],
   sortedOrders: [],
+  clients: [],
   currentMaterials: {
     materials: []
   },
@@ -47,7 +50,8 @@ const initialState = {
   loadingDisinfectors: false,
   loadingOperators: false,
   loadingAddMatEvents: false,
-  loadingCurMat: false
+  loadingCurMat: false,
+  loadingClients: false
 };
 
 export default function (state = initialState, action) {
@@ -92,6 +96,12 @@ export default function (state = initialState, action) {
       return {
         ...state,
         loadingCurMat: true
+      };
+
+    case LOADING_CLIENTS:
+      return {
+        ...state,
+        loadingClients: true
       };
 
     case GET_SORTED_ORDERS_ADMIN:
@@ -247,6 +257,13 @@ export default function (state = initialState, action) {
         materialComing: action.payload,
         addMatEventsMethod: 'week',
         loadingStats: false
+      };
+
+    case SEARCH_CLIENTS:
+      return {
+        ...state,
+        clients: action.payload,
+        loadingClients: false
       };
 
     default:

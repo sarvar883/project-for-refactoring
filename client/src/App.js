@@ -31,6 +31,7 @@ import EditOrder from './components/common/EditOrder';
 import MatComing from './components/admin/MatComing';
 import MatComHistory from './components/admin/MatComHistory';
 import MaterialHistory from './components/admin/MaterialHistory';
+import AdmClients from './components/admin/AdmClients';
 
 import Subadmin from './components/subadmin/Subadmin';
 
@@ -134,6 +135,9 @@ class App extends Component {
             </Switch>
             <Switch>
               <AdminRoute exact path="/edit-order/:orderId" component={EditOrder} />
+            </Switch>
+            <Switch>
+              <AdminRoute exact path="/admin/clients" component={AdmClients} />
             </Switch>
 
 

@@ -3,9 +3,11 @@ const User = require('../models/user');
 const Chat = require('../models/chat');
 const Anons = require('../models/anons');
 const Order = require('../models/order');
+const Client = require('../models/client');
 const AddMaterial = require('../models/addMaterial');
 const ComingMaterial = require('../models/comingMaterial');
 const CurrentMaterial = require('../models/currentMaterial');
+const stringSimilarity = require('string-similarity');
 const io = require('../socket');
 
 const materials = require('../client/src/components/common/materials');
@@ -266,6 +268,27 @@ exports.matComingWeek = (req, res) => {
     })
     .catch(err => {
       console.log('matComingWeek ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.searchClients = (req, res) => {
+  Client.find()
+    .populate('orders')
+    .exec()
+    .then(clients => {
+      if (req.body.object.method === 'name') {
+        clients = clients.filter(item => stringSimilarity.compareTwoStrings(item.name.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.55);
+      } else if (req.body.object.method === 'phone') {
+        clients = clients.filter(item => stringSimilarity.compareTwoStrings(item.phone.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.80);
+      } else if (req.body.object.method === 'address') {
+        clients = clients.filter(item => stringSimilarity.compareTwoStrings(item.address.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.55);
+      }
+      return res.json(clients);
+    })
+    .catch(err => {
+      console.log('searchClients ERROR', err);
       res.status(404).json(err);
     });
 };

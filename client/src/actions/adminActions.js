@@ -9,6 +9,7 @@ import {
   SET_LOADING_ADD_MATERIAL_EVENTS,
   LOADING_SORTED_ORDERS_ADMIN,
   LOADING_CUR_MAT,
+  LOADING_CLIENTS,
 
   GET_SORTED_ORDERS_ADMIN,
   GET_ORDER_QUERIES_FOR_ADMIN,
@@ -26,7 +27,8 @@ import {
   GET_CURR_MAT_ADMIN,
   UPDATE_MAT_COMING,
   MAT_COMING_MONTH,
-  MAT_COMING_WEEK
+  MAT_COMING_WEEK,
+  SEARCH_CLIENTS
 } from './types';
 
 
@@ -353,6 +355,23 @@ export const getMatComWeek = (days) => (dispatch) => {
 };
 
 
+export const searchClients = (object) => (dispatch) => {
+  dispatch(loadingClients());
+  axios.post('/admin/search-clients', { object: object })
+    .then(res =>
+      dispatch({
+        type: SEARCH_CLIENTS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    )
+};
+
 
 
 
@@ -411,5 +430,11 @@ export const loadingAddMatEvents = () => {
 export const loadingCurMat = () => {
   return {
     type: LOADING_CUR_MAT
+  };
+}
+
+export const loadingClients = () => {
+  return {
+    type: LOADING_CLIENTS
   };
 }

@@ -278,3 +278,14 @@ button.edit-message, button.delete-message {
 .weekly-stats {
   border: 2px solid red;
 }
+
+
+
+.form-bg {
+  background-color: #d4e4f7;
+  border-radius: 10px;
+}
+
+.client-stats-order {
+  border-bottom: 4px solid red;
+}

@@ -19,15 +19,10 @@ class Admin extends Component {
   };
 
   onChange = (date) => {
-    let today = new Date().setHours(0, 0, 0, 0);
-    if (date < today) {
-      alert('Нельзя смотреть прошедшие дни');
-    } else {
-      this.setState({
-        date: date
-      });
-      this.props.getSortedOrders(date);
-    }
+    this.setState({
+      date: date
+    });
+    this.props.getSortedOrders(date);
   };
 
   render() {

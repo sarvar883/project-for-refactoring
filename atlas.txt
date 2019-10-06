@@ -36,3 +36,6 @@ https://fierce-scrubland-41952.herokuapp.com
 $ git add .
 $ git commit -am "make it better"
 $ git push heroku master
+
+turn into pwa
+https://medium.com/@toricpope/transform-a-react-app-into-a-progressive-web-app-pwa-dea336bd96e6
