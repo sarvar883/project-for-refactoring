@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 import store from './store';
 
 // import routes
+import StartPage from './components/common/StartPage';
 import PrivateRoute from './components/common/PrivateRoute';
 import AdminRoute from './components/common/AdminRoute';
 import SubadminRoute from './components/common/SubadminRoute'
@@ -18,7 +19,6 @@ import DisinfectorRoute from './components/common/DisinfectorRoute';
 
 // Components
 import Navbar from './components/layout/Navbar';
-import Landing from './components/layout/Landing';
 
 import Admin from './components/admin/Admin';
 import AdminStats from './components/admin/AdminStats';
@@ -91,7 +91,7 @@ class App extends Component {
             <Route exact path="/login" component={Login} />
 
             <Switch>
-              <PrivateRoute exact path="/" component={Landing} />
+              <StartPage exact path="/" />
             </Switch>
 
             <Switch>
