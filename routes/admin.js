@@ -29,6 +29,8 @@ router.post('/get-mat-coming-month', passport.authenticate('jwt', { session: fal
 
 router.post('/get-mat-coming-week', passport.authenticate('jwt', { session: false }), isAdmin, adminController.matComingWeek);
 
+router.post('/add-client', passport.authenticate('jwt', { session: false }), isAdmin, adminController.addClient);
+
 router.post('/search-clients', passport.authenticate('jwt', { session: false }), isAdmin, adminController.searchClients);
 
 module.exports = router;

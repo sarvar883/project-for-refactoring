@@ -355,6 +355,18 @@ export const getMatComWeek = (days) => (dispatch) => {
 };
 
 
+export const addClient = (object, history, occupation) => (dispatch) => {
+  axios.post('/admin/add-client', { object: object })
+    .then(res => history.push(`/${occupation}`))
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    )
+};
+
+
 export const searchClients = (object) => (dispatch) => {
   dispatch(loadingClients());
   axios.post('/admin/search-clients', { object: object })

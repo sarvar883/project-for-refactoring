@@ -34,7 +34,7 @@ class DisplayOrders extends Component {
       const updatedOrders = [...prevState.orders];
       updatedOrders.push(order);
       return {
-        orders: updatedOrders
+        orders: updatedOrders.sort((a, b) => new Date(a.dateFrom) - new Date(b.dateFrom))
       };
     });
   };
@@ -44,7 +44,7 @@ class DisplayOrders extends Component {
   }
 
   render() {
-    const { orders } = this.state
+    const orders = this.state.orders.sort((a, b) => new Date(a.dateFrom) - new Date(b.dateFrom));
     let output = null;
 
     if (orders) {

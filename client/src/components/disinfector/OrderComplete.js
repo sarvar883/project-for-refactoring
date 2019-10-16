@@ -17,18 +17,25 @@ class OrderComplete extends Component {
         unit: ''
       }
     ],
+    guarantee: '',
     paymentMethod: '',
     invoice: '',
     cost: '',
 
     // materials disinfector currently has
-    currentMaterials: this.props.auth.user.materials
+    currentMaterials: []
   };
 
   componentDidMount() {
     this.props.getOrderById(this.props.match.params.id);
     this.props.getDisinfectorMaterials(this.props.auth.user.id);
     window.scrollTo({ top: 0 });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      currentMaterials: nextProps.auth.user.materials
+    });
   }
 
   onChange = (e) => this.setState({ [e.target.name]: e.target.value });
@@ -81,8 +88,9 @@ class OrderComplete extends Component {
   }
 
   onSubmit = (e) => {
+    console.log(this.state);
     e.preventDefault();
-    let hasEmptyFields = false, notEnoughMaterials = false, zeroValues = false;
+    let hasEmptyFields = false, notEnoughMaterials = false, zeroValues = false, invalidGuarantee = false;
     this.state.consumption.forEach(item => {
       if (item.material === '') {
         hasEmptyFields = true;
@@ -90,6 +98,9 @@ class OrderComplete extends Component {
       if (item.amount <= 0) {
         zeroValues = true;
       }
+      // if (Number(this.state.guarantee) < 0 || !Number.isInteger(Number(this.state.guarantee))) {
+      //   invalidGuarantee = true;
+      // }
       this.state.currentMaterials.forEach(element => {
         if (element.material === item.material && element.unit === item.unit && element.amount < item.amount) {
           notEnoughMaterials = true;
@@ -107,6 +118,7 @@ class OrderComplete extends Component {
         disinfectorId: this.props.auth.user.id,
         orderId: this.props.match.params.id,
         consumption: this.state.consumption,
+        guarantee: Number(this.state.guarantee),
         paymentMethod: this.state.paymentMethod,
         invoice: this.state.invoice,
         cost: this.state.cost
@@ -208,6 +220,12 @@ class OrderComplete extends Component {
                   {this.state.array.length < materials.length ? <button className="btn btn-primary mr-2" onClick={this.addMaterial}>Добавить Материал</button> : ''}
                   {this.state.array.length === 1 ? '' : <button className="btn btn-danger" onClick={this.deleteMaterial}>Удалить последний материал</button>}
                   <hr />
+
+                  <div className="form-group">
+                    <label htmlFor="guarantee">Гарантийный срок (в месяцах):</label>
+                    <input type="number" min="0" step="1" className="form-control" name="guarantee" onChange={this.onChange} required />
+                  </div>
+
                   <div className="form-group">
                     <select name="paymentMethod" className="form-control" onChange={this.onChange} required>
                       <option value="">-- Выберите Тип Платежа --</option>

@@ -12,6 +12,7 @@ const io = require('../socket');
 
 const materials = require('../client/src/components/common/materials');
 
+const validateAddClient = require('../validation/addClient');
 
 exports.getSortedOrders = (req, res) => {
   const date = new Date(req.body.date);
@@ -269,6 +270,40 @@ exports.matComingWeek = (req, res) => {
     .catch(err => {
       console.log('matComingWeek ERROR', err);
       res.status(404).json(err);
+    });
+};
+
+
+exports.addClient = (req, res) => {
+  const { errors, isValid } = validateAddClient(req.body.object);
+
+  // Check Validation
+  if (!isValid) {
+    // Return any errors with 400 status
+    return res.status(400).json(errors);
+  }
+
+  Client.findOne({ phone: req.body.object.phone })
+    .then(client => {
+      if (client) {
+        errors.phone = 'Клиент с таким номером уже существует';
+        return res.status(400).json(errors);
+      } else {
+        const newClient = new Client({
+          _id: mongoose.Types.ObjectId(),
+          name: req.body.object.name,
+          phone: req.body.object.phone,
+          address: req.body.object.address,
+          orders: [],
+          createdAt: req.body.object.createdAt
+        });
+        return newClient.save();
+      }
+    })
+    .then(savedClient => res.json(savedClient))
+    .catch(err => {
+      console.log('addClient ERROR', err);
+      res.status(400).json(err);
     });
 };
 

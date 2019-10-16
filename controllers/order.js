@@ -191,6 +191,7 @@ exports.submitCompleteOrder = (req, res) => {
     .then(foundOrder => {
       foundOrder.completed = true;
       foundOrder.consumption = order.consumption;
+      foundOrder.guarantee = order.guarantee;
       foundOrder.paymentMethod = order.paymentMethod;
       if (order.paymentMethod === 'Безналичный') {
         foundOrder.invoice = order.invoice;

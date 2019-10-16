@@ -45,14 +45,14 @@ class OrderInfo extends Component {
         <div className="card order">
           <div className="card-body p-0">
             <ul className="font-bold">
-              <li className="pb-2">Дезинфектор: {orderObject.disinfectorId.name}</li>
-              <li className="pb-2">Клиент: {orderObject.client}</li>
-              <li className="pb-2">Дата и Время выполнения: <Moment format="DD/MM/YYYY HH:mm">{orderObject.dateFrom}</Moment></li>
-              <li className="pb-2">Адрес: {orderObject.address}</li>
-              <li className="pb-2">Тип услуги: {orderObject.typeOfService}</li>
-              <li className="pb-2">Комментарии Оператора: {orderObject.comment ? orderObject.comment : 'Нет комментариев'}</li>
-              <li className="pb-2">Комментарии Дезинфектора: {this.state.disinfectorComment ? this.state.disinfectorComment : 'Нет комментариев'}</li>
-              <li className="pb-2">Заказ Добавлен: {orderObject.userCreated.name} <Moment format="DD/MM/YYYY HH:mm">{orderObject.createdAt}</Moment></li>
+              <li>Дезинфектор: {orderObject.disinfectorId.name}</li>
+              <li>Клиент: {orderObject.client}</li>
+              <li>Дата и Время выполнения: <Moment format="DD/MM/YYYY HH:mm">{orderObject.dateFrom}</Moment></li>
+              <li>Адрес: {orderObject.address}</li>
+              <li>Тип услуги: {orderObject.typeOfService}</li>
+              <li>Комментарии Оператора: {orderObject.comment ? orderObject.comment : 'Нет комментариев'}</li>
+              <li>Комментарии Дезинфектора: {this.state.disinfectorComment ? this.state.disinfectorComment : 'Нет комментариев'}</li>
+              <li>Заказ Добавлен: {orderObject.userCreated.name} <Moment format="DD/MM/YYYY HH:mm">{orderObject.createdAt}</Moment></li>
             </ul>
             {this.state.addComment ? (
               <form onSubmit={this.onSubmit}>

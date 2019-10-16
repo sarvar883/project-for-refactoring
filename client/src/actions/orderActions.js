@@ -11,7 +11,7 @@ import {
 
 
 // get all disinfectors
-export const getDisinfectors = () => dispatch => {
+export const getDisinfectors = () => (dispatch) => {
   dispatch(setLoading());
   axios
     .get('/order/get-all-disinfectors')

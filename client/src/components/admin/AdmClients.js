@@ -193,9 +193,7 @@ class AdmClients extends Component {
             </div>
           </div>
 
-          <div className="row m-0">
-            {clientDetails}
-          </div>
+          {clientDetails}
 
           <div className="row mt-2 pb-1 client-stats-order">
             {clientOrders}

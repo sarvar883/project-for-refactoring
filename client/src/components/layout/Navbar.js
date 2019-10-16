@@ -128,6 +128,9 @@ class Navbar extends Component {
               <Link className="nav-link" to="/admin/materials">Материалы Дезинфектору</Link>
             </li>
             <li className="nav-item">
+              <Link className="nav-link" to="/admin/add-client">Клиента</Link>
+            </li>
+            <li className="nav-item">
               <Link className="nav-link" to="/register">Новый Пользователь</Link>
             </li>
           </div>
