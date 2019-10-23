@@ -111,7 +111,6 @@ class SortedOrders extends Component {
       defaultDateDay = new Date(date).getDate();
     }
     const defaultDateString = `${new Date(date).getFullYear()}-${defaultDateMonth}-${defaultDateDay}`;
-
     if (hour < 10) {
       defaultHourString = `0${hour}:00`;
     } else {

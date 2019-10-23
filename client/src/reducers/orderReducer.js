@@ -1,9 +1,11 @@
 import {
   GET_DISINFECTORS,
   SET_LOADING,
+  SET_LOADING_REPEAT_ORDER,
   GET_ALL_ORDERS,
   ADD_ORDER,
   GET_ORDER_BY_ID,
+  GET_REPEAT_ORDER_FORM,
   GET_COMPLETE_ORDERS_IN_MONTH
 } from '../actions/types';
 
@@ -13,8 +15,14 @@ const initialState = {
   orderById: {
     disinfectorId: {}
   },
+  repeatOrder: {
+    disinfectorId: {},
+    previousOrder: {},
+    userCreated: {}
+  },
   completeOrdersInMonth: [],
-  loading: false
+  loading: false,
+  loadingRepeatOrder: false
 };
 
 export default function (state = initialState, action) {
@@ -23,6 +31,12 @@ export default function (state = initialState, action) {
       return {
         ...state,
         loading: true
+      };
+
+    case SET_LOADING_REPEAT_ORDER:
+      return {
+        ...state,
+        loadingRepeatOrder: true
       };
 
     case GET_DISINFECTORS:
@@ -50,6 +64,13 @@ export default function (state = initialState, action) {
         ...state,
         orderById: action.payload,
         loading: false
+      };
+
+    case GET_REPEAT_ORDER_FORM:
+      return {
+        ...state,
+        repeatOrder: action.payload,
+        loadingRepeatOrder: false
       };
 
     case GET_COMPLETE_ORDERS_IN_MONTH:

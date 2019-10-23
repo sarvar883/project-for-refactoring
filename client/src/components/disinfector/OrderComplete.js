@@ -88,9 +88,8 @@ class OrderComplete extends Component {
   }
 
   onSubmit = (e) => {
-    console.log(this.state);
     e.preventDefault();
-    let hasEmptyFields = false, notEnoughMaterials = false, zeroValues = false, invalidGuarantee = false;
+    let hasEmptyFields = false, notEnoughMaterials = false, zeroValues = false;
     this.state.consumption.forEach(item => {
       if (item.material === '') {
         hasEmptyFields = true;
@@ -98,9 +97,6 @@ class OrderComplete extends Component {
       if (item.amount <= 0) {
         zeroValues = true;
       }
-      // if (Number(this.state.guarantee) < 0 || !Number.isInteger(Number(this.state.guarantee))) {
-      //   invalidGuarantee = true;
-      // }
       this.state.currentMaterials.forEach(element => {
         if (element.material === item.material && element.unit === item.unit && element.amount < item.amount) {
           notEnoughMaterials = true;

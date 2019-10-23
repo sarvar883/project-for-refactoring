@@ -5,6 +5,7 @@ import {
   GET_COMPLETE_ORDERS,
   GET_COMPLETE_ORDER_BY_ID,
   GOT_STATS_FOR_OPERATOR,
+  GET_REPEAT_ORDERS,
   SET_LOADING_SORTED_ORDERS,
   SET_LOADING_COMPLETE_ORDERS,
   SET_LOADING_OPERATOR_STATS
@@ -87,6 +88,24 @@ export const getOperatorStats = (month, year) => (dispatch) => {
     .then(res =>
       dispatch({
         type: GOT_STATS_FOR_OPERATOR,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
+export const getRepeatOrders = (operatorId) => (dispatch) => {
+  dispatch(setLoadingSortedOrders());
+  axios.post('/operator/get-repeat-orders', { operatorId: operatorId })
+    .then(res =>
+      dispatch({
+        type: GET_REPEAT_ORDERS,
         payload: res.data
       })
     )

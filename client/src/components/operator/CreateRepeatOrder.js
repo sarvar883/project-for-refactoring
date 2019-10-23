@@ -5,117 +5,50 @@ import Spinner from '../common/Spinner';
 import TextFieldGroup from '../common/TextFieldGroup';
 import SelectListGroup from '../common/SelectListGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
-import isEmpty from '../../validation/is-empty';
 import advertisements from '../common/advertisements';
 
-import { getDisinfectors, getOrderForEdit, editOrder } from '../../actions/orderActions';
+import { getDisinfectors, getRepeatOrderForm, createRepeatOrder } from '../../actions/orderActions';
 
-class EditOrder extends Component {
+class CreateRepeatOrder extends Component {
   state = {
-    _id: '',
     disinfectorId: '',
     client: '',
     address: '',
     date: '',
     timeFrom: '',
     phone: '',
-    hasSecondPhone: false,
-    phone2: '',
     typeOfService: '',
     advertising: '',
     comment: '',
     errors: {}
-  }
+  };
 
   componentDidMount() {
-    this.props.getOrderForEdit(this.props.match.params.orderId);
+    this.props.getRepeatOrderForm(this.props.match.params.orderId);
     this.props.getDisinfectors();
+    window.scrollTo({ top: 0 });
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.errors) {
-      this.setState({
-        order: nextProps.order,
-        errors: nextProps.errors
-      });
+      this.setState({ errors: nextProps.errors });
     }
 
-    if (nextProps.order.orderById) {
-      let orderForEdit = nextProps.order.orderById;
-
-      orderForEdit.disinfectorId = !isEmpty(orderForEdit.disinfectorId) ? orderForEdit.disinfectorId : '';
-      orderForEdit.client = !isEmpty(orderForEdit.client) ? orderForEdit.client : '';
-      orderForEdit.address = !isEmpty(orderForEdit.address) ? orderForEdit.address : '';
-      orderForEdit.phone = !isEmpty(orderForEdit.phone) ? orderForEdit.phone : '';
-
-      if (isEmpty(orderForEdit.phone2)) {
-        this.setState({
-          hasSecondPhone: false
-        });
-        orderForEdit.phone2 = '';
-      } else {
-        this.setState({
-          hasSecondPhone: true
-        });
-      }
-
-      orderForEdit.typeOfService = !isEmpty(orderForEdit.typeOfService) ? orderForEdit.typeOfService : '';
-      orderForEdit.comment = !isEmpty(orderForEdit.comment) ? orderForEdit.comment : '';
-
-      const date = !isEmpty(orderForEdit.dateFrom) ? new Date(orderForEdit.dateFrom) : '';
-
-      let defaultDateMonth, defaultDateDay, defaultHourString;
-      if (new Date(date).getMonth() < 9) {
-        defaultDateMonth = `0${new Date(date).getMonth() + 1}`;
-      } else {
-        defaultDateMonth = `${new Date(date).getMonth() + 1}`;
-      }
-
-      if (new Date(date).getDate() < 10) {
-        defaultDateDay = `0${new Date(date).getDate()}`;
-      } else {
-        defaultDateDay = new Date(date).getDate();
-      }
-      const defaultDateString = `${new Date(date).getFullYear()}-${defaultDateMonth}-${defaultDateDay}`;
-
-      if (new Date(date).getHours() < 10) {
-        defaultHourString = `0${new Date(date).getHours()}:00`;
-      } else {
-        defaultHourString = `${new Date(date).getHours()}:00`;
-      }
+    if (nextProps.order.repeatOrder) {
+      let newOrder = nextProps.order.repeatOrder;
 
       this.setState({
-        _id: orderForEdit._id,
-        disinfectorId: orderForEdit.disinfectorId._id,
-        client: orderForEdit.client,
-        address: orderForEdit.address,
-        date: defaultDateString,
-        timeFrom: defaultHourString,
-        phone: orderForEdit.phone,
-        phone2: orderForEdit.phone2,
-        typeOfService: orderForEdit.typeOfService,
-        advertising: orderForEdit.advertising,
-        comment: orderForEdit.comment
+        disinfectorId: newOrder.disinfectorId._id ? newOrder.disinfectorId._id : '',
+        client: newOrder.client ? newOrder.client : '',
+        address: newOrder.address ? newOrder.address : '',
+        phone: newOrder.phone ? newOrder.phone : '',
+        typeOfService: newOrder.typeOfService ? newOrder.typeOfService : '',
+        advertising: newOrder.advertising ? newOrder.advertising : ''
       });
     }
   }
 
   onChange = (e) => this.setState({ [e.target.name]: e.target.value });
-
-  toggleSecondPhone = (e) => {
-    e.preventDefault();
-    this.setState({
-      hasSecondPhone: !this.state.hasSecondPhone
-    });
-  }
-
-  deleteSecondPhone = (e) => {
-    e.preventDefault();
-    this.setState({
-      hasSecondPhone: false,
-      phone2: ''
-    });
-  }
 
   onSubmit = (e) => {
     e.preventDefault();
@@ -123,25 +56,22 @@ class EditOrder extends Component {
     const date = this.state.date.split('-');
     const dateStringFrom = new Date(`${date[1]}-${date[2]}-${date[0]} ${this.state.timeFrom}`);
 
-    let numberCharacters = 0, phone2Characters = 0;
+    let numberCharacters = 0;
     for (let i = 1; i <= 12; i++) {
       if (this.state.phone[i] >= '0' && this.state.phone[i] <= '9') {
         numberCharacters++;
       }
-      if (this.state.phone2[i] >= '0' && this.state.phone2[i] <= '9') {
-        phone2Characters++;
-      }
     }
 
-    if (this.state.phone.length !== 13 || (this.state.hasSecondPhone && this.state.phone2.length !== 13)) {
+    if (this.state.phone.length !== 13) {
       alert('Телефонный номер должен содержать 13 символов. Введите в формате +998XXXXXXXXX');
-    } else if (this.state.phone[0] !== '+' || (this.state.hasSecondPhone && this.state.phone2[0] !== '+')) {
+    } else if (this.state.phone[0] !== '+') {
       alert('Телефонный номер должен начинаться с "+". Введите в формате +998XXXXXXXXX');
-    } else if (numberCharacters !== 12 || (this.state.hasSecondPhone && phone2Characters !== 12)) {
+    } else if (numberCharacters !== 12) {
       alert('Телефонный номер должен содержать "+" и 12 цифр');
     } else {
-      const order = {
-        _id: this.state._id,
+      const newOrder = {
+        id: this.props.match.params.orderId,
         disinfectorId: this.state.disinfectorId,
         client: this.state.client,
         address: this.state.address,
@@ -149,12 +79,13 @@ class EditOrder extends Component {
         dateFrom: dateStringFrom,
         timeFrom: this.state.timeFrom,
         phone: this.state.phone,
-        phone2: this.state.phone2,
         typeOfService: this.state.typeOfService,
         advertising: this.state.advertising,
         comment: this.state.comment,
+        userCreated: this.props.auth.user.id
       };
-      this.props.editOrder(order, this.props.history, this.props.auth.user.occupation);
+      console.log('newOrder', newOrder);
+      this.props.createRepeatOrder(newOrder, this.props.history, this.props.auth.user.occupation);
     }
   }
 
@@ -192,13 +123,13 @@ class EditOrder extends Component {
 
     return (
       <React.Fragment>
-        {this.props.order.loading ? <Spinner /> : (
-          <div className="container edit-order mt-4">
+        {this.props.order.loadingRepeatOrder ? <Spinner /> : (
+          <div className="container mt-4">
             <div className="row">
               <div className="col-md-8 m-auto">
                 <div className="card">
                   <div className="card-body">
-                    <h1 className="display-5 text-center">Редактировать Заказ</h1>
+                    <h1 className="display-5 text-center">Создать Повторный Заказ</h1>
                     <form noValidate onSubmit={this.onSubmit}>
                       <TextFieldGroup
                         label="Введите Имя Клиента"
@@ -220,7 +151,6 @@ class EditOrder extends Component {
                         label="Дата выполнения заказа"
                         name="date"
                         type="date"
-                        value={this.state.date}
                         onChange={this.onChange}
                         error={errors.date}
                       />
@@ -228,7 +158,6 @@ class EditOrder extends Component {
                         label="Время (часы:минуты:AM/PM) C"
                         name="timeFrom"
                         type="time"
-                        value={this.state.timeFrom}
                         onChange={this.onChange}
                         error={errors.timeFrom}
                       />
@@ -240,22 +169,7 @@ class EditOrder extends Component {
                         onChange={this.onChange}
                         error={errors.phone}
                       />
-                      {this.state.hasSecondPhone ? (
-                        <React.Fragment>
-                          <TextFieldGroup
-                            label="Другой Номер Телефона"
-                            placeholder="Введите запасной номер телефона"
-                            type="phone"
-                            name="phone2"
-                            value={this.state.phone2}
-                            onChange={this.onChange}
-                          />
-                          <button className="btn btn-danger mb-2" onClick={this.deleteSecondPhone}>Убрать запасной номер телефона</button>
-                        </React.Fragment>
-                      ) : (
-                          <button className="btn btn-success mb-3" onClick={this.toggleSecondPhone}>Добавить другой номер</button>
-                        )}
-                      <label htmlFor="typeOfService" className="d-block">Выберите тип заказа</label>
+                      <label htmlFor="typeOfService">Выберите тип заказа</label>
                       <SelectListGroup
                         name="typeOfService"
                         value={this.state.typeOfService}
@@ -289,7 +203,7 @@ class EditOrder extends Component {
                         onChange={this.onChange}
                         error={errors.comment}
                       />
-                      <button type="submit" className="btn btn-primary">Редактировать</button>
+                      <button type="submit" className="btn btn-primary">Создать Повторный Заказ</button>
                     </form>
                   </div>
                 </div>
@@ -304,9 +218,9 @@ class EditOrder extends Component {
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  admin: state.admin,
+  operator: state.operator,
   order: state.order,
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getDisinfectors, getOrderForEdit, editOrder })(withRouter(EditOrder));
+export default connect(mapStateToProps, { getDisinfectors, getRepeatOrderForm, createRepeatOrder })(withRouter(CreateRepeatOrder));

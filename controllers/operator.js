@@ -20,9 +20,6 @@ exports.getSortedOrders = (req, res) => {
         new Date(item.dateFrom).getMonth() === month &&
         new Date(item.dateFrom).getFullYear() === year
       );
-      // sortedOrders.sort(function (a, b) {
-      //   return a.dateFrom.getTime() - b.dateFrom.getTime();
-      // });
       return res.json(sortedOrders);
     })
     .catch(err => {
@@ -84,6 +81,33 @@ exports.confirmCompleteOrder = (req, res) => {
     .then(confirmedOrder => res.json(confirmedOrder))
     .catch(err => {
       console.log('confirmCompleteOrder ERROR', err);
+      return res.status(400).json(err);
+    });
+};
+
+
+exports.getRepeatOrders = (req, res) => {
+  Order.find({ repeatedOrder: true, userCreated: req.body.operatorId, repeatedOrderDecided: false })
+    .populate('previousOrder disinfectorId')
+    .exec()
+    .then(orders => {
+      orders = orders.sort((a, b) => new Date(a.timeOfRepeat) - new Date(b.timeOfRepeat));
+      return res.json(orders);
+    })
+    .catch(err => {
+      console.log('getRepeatOrders ERROR', err);
+      return res.status(400).json(err);
+    });
+};
+
+
+exports.repeatOrderForm = (req, res) => {
+  Order.findById(req.body.id)
+    .populate('disinfectorId previousOrder userCreated')
+    .exec()
+    .then(order => res.json(order))
+    .catch(err => {
+      console.log('repeatOrderForm ERROR', err);
       return res.status(400).json(err);
     });
 };

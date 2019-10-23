@@ -13,4 +13,8 @@ router.post('/get-complete-order-by-id/:id', passport.authenticate('jwt', { sess
 
 router.post('/confirm-complete-order', passport.authenticate('jwt', { session: false }), isOperatorOrAdmin, operatorController.confirmCompleteOrder);
 
+router.post('/get-repeat-orders', passport.authenticate('jwt', { session: false }), isOperatorOrAdmin, operatorController.getRepeatOrders);
+
+router.post('/repeat-order-form', passport.authenticate('jwt', { session: false }), isOperatorOrAdmin, operatorController.repeatOrderForm);
+
 module.exports = router;

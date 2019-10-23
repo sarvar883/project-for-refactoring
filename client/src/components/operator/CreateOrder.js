@@ -29,6 +29,8 @@ class CreateOrder extends Component {
       date: date,
       timeFrom: hour,
       phone: '',
+      hasSecondPhone: false,
+      phone2: '',
       typeOfService: '',
       advertising: '',
       comment: '',
@@ -38,6 +40,7 @@ class CreateOrder extends Component {
 
   componentDidMount() {
     this.props.getDisinfectors();
+    window.scrollTo({ top: 0 });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -48,24 +51,42 @@ class CreateOrder extends Component {
 
   onChange = (e) => this.setState({ [e.target.name]: e.target.value });
 
+  toggleSecondPhone = (e) => {
+    e.preventDefault();
+    this.setState({
+      hasSecondPhone: !this.state.hasSecondPhone
+    });
+  }
+
+  deleteSecondPhone = (e) => {
+    e.preventDefault();
+    this.setState({
+      hasSecondPhone: false,
+      phone2: ''
+    });
+  }
+
   onSubmit = (e) => {
     e.preventDefault();
 
     const date = this.state.date.split('-');
     const dateStringFrom = new Date(`${date[1]}-${date[2]}-${date[0]} ${this.state.timeFrom}`);
 
-    let numberCharacters = 0;
+    let numberCharacters = 0, phone2Characters = 0;
     for (let i = 1; i <= 12; i++) {
       if (this.state.phone[i] >= '0' && this.state.phone[i] <= '9') {
         numberCharacters++;
       }
+      if (this.state.phone2[i] >= '0' && this.state.phone2[i] <= '9') {
+        phone2Characters++;
+      }
     }
 
-    if (this.state.phone.length !== 13) {
+    if (this.state.phone.length !== 13 || (this.state.hasSecondPhone && this.state.phone2.length !== 13)) {
       alert('Телефонный номер должен содержать 13 символов. Введите в формате +998XXXXXXXXX');
-    } else if (this.state.phone[0] !== '+') {
+    } else if (this.state.phone[0] !== '+' || (this.state.hasSecondPhone && this.state.phone2[0] !== '+')) {
       alert('Телефонный номер должен начинаться с "+". Введите в формате +998XXXXXXXXX');
-    } else if (numberCharacters !== 12) {
+    } else if (numberCharacters !== 12 || (this.state.hasSecondPhone && phone2Characters !== 12)) {
       alert('Телефонный номер должен содержать "+" и 12 цифр');
     } else {
       const newOrder = {
@@ -76,6 +97,7 @@ class CreateOrder extends Component {
         dateFrom: dateStringFrom,
         timeFrom: this.state.timeFrom,
         phone: this.state.phone,
+        phone2: this.state.phone2,
         typeOfService: this.state.typeOfService,
         advertising: this.state.advertising,
         comment: this.state.comment,
@@ -167,6 +189,21 @@ class CreateOrder extends Component {
                     onChange={this.onChange}
                     error={errors.phone}
                   />
+                  {this.state.hasSecondPhone ? (
+                    <React.Fragment>
+                      <TextFieldGroup
+                        label="Запасной Номер Телефона"
+                        placeholder="Введите запасной номер телефона"
+                        type="phone"
+                        name="phone2"
+                        value={this.state.phone2}
+                        onChange={this.onChange}
+                      />
+                      <button className="btn btn-danger mb-2" onClick={this.deleteSecondPhone}>Убрать запасной номер телефона</button>
+                    </React.Fragment>
+                  ) : (
+                      <button className="btn btn-success mb-3" onClick={this.toggleSecondPhone}>Добавить другой номер</button>
+                    )}
                   <SelectListGroup
                     name="typeOfService"
                     value={this.state.typeOfService}

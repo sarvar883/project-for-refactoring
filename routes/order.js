@@ -19,6 +19,8 @@ router.post('/edit', passport.authenticate('jwt', { session: false }), isAdmin, 
 // delete order
 router.post('/delete-order', passport.authenticate('jwt', { session: false }), isAdmin, orderController.deleteOrder);
 
+router.post('/create-repeat-order', passport.authenticate('jwt', { session: false }), isOperatorOrAdmin, orderController.createRepeatOrder);
+
 // get orders for logged in disinfector
 router.post('/get-my-orders', passport.authenticate('jwt', { session: false }), isDisinfector, orderController.getOrders);
 

@@ -5,8 +5,6 @@ const Client = require('../models/client');
 const AddMaterial = require('../models/addMaterial');
 
 const validateOrderInput = require('../validation/order');
-const validateDisinfectorCommentInput = require('../validation/disinfectorComment');
-const validateCompleteOrder = require('../validation/completeOrder');
 const io = require('../socket');
 
 
@@ -33,11 +31,13 @@ exports.createOrder = (req, res) => {
     address: req.body.address,
     dateFrom: req.body.dateFrom,
     phone: req.body.phone,
+    phone2: req.body.phone2,
     typeOfService: req.body.typeOfService,
     advertising: req.body.advertising,
     comment: req.body.comment,
     disinfectorComment: '',
-    userCreated: req.body.userCreated
+    userCreated: req.body.userCreated,
+    repeatedOrder: false
   });
 
   order.save()
@@ -75,7 +75,7 @@ exports.createOrder = (req, res) => {
             order: savedOrder
           });
           return res.json(savedOrder);
-        })
+        });
     })
     .catch(err => {
       console.log('createOrder ERROR', err);
@@ -93,6 +93,7 @@ exports.editOrder = (req, res) => {
       orderForEdit.address = order.address;
       orderForEdit.dateFrom = order.dateFrom;
       orderForEdit.phone = order.phone;
+      orderForEdit.phone2 = order.phone2;
       orderForEdit.typeOfService = order.typeOfService;
       orderForEdit.advertising = order.advertising;
       orderForEdit.comment = order.comment;
@@ -131,6 +132,72 @@ exports.deleteOrder = (req, res) => {
     })
     .catch(err => {
       console.log('deleteOrder ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.createRepeatOrder = (req, res) => {
+  const { errors, isValid } = validateOrderInput(req.body.order);
+
+  // Check Validation
+  if (!isValid) {
+    // Return any errors with 400 status
+    return res.status(400).json(errors);
+  }
+
+  Order.findById(req.body.order.id)
+    .then(order => {
+      order.disinfectorId = req.body.order.disinfectorId;
+      order.client = req.body.order.client;
+      order.address = req.body.order.address;
+      order.dateFrom = req.body.order.dateFrom;
+      order.phone = req.body.order.phone;
+      order.typeOfService = req.body.order.typeOfService;
+      order.advertising = req.body.order.advertising;
+      order.comment = req.body.order.comment;
+      order.phone = req.body.order.phone;
+      order.repeatedOrderDecided = true;
+      order.repeatedOrderNeeded = true;
+
+      order.save()
+        .then((savedOrder) => {
+          Client.findOne({ phone: req.body.order.phone })
+            .then(client => {
+              if (client) {
+                // if we have a client with this phone number
+                client.orders.push(savedOrder._id);
+                client.save();
+              } else {
+                let array = [];
+                array.push(savedOrder._id);
+
+                const newClient = new Client({
+                  _id: mongoose.Types.ObjectId(),
+                  name: req.body.order.client,
+                  phone: req.body.order.phone,
+                  address: req.body.order.address,
+                  orders: array,
+                  createdAt: new Date()
+                });
+                newClient.save();
+              }
+            });
+
+          Order.findOne(order)
+            .populate('disinfectorId userCreated')
+            .exec()
+            .then(savedOrder => {
+              io.getIO().emit('createOrder', {
+                disinfectorId: req.body.disinfectorId,
+                order: savedOrder
+              });
+              return res.json(savedOrder);
+            });
+        })
+    })
+    .catch(err => {
+      console.log('createRepeatOrder ERROR', err);
       res.status(404).json(err);
     });
 };
@@ -203,6 +270,23 @@ exports.submitCompleteOrder = (req, res) => {
       return foundOrder.save();
     })
     .then(newCompleteOrder => {
+      let date = new Date(newCompleteOrder.dateFrom);
+
+      const repeatOrder = new Order({
+        disinfectorId: newCompleteOrder.disinfectorId,
+        client: newCompleteOrder.client,
+        address: newCompleteOrder.address,
+        phone: newCompleteOrder.phone,
+        typeOfService: newCompleteOrder.typeOfService,
+        advertising: newCompleteOrder.advertising,
+        userCreated: newCompleteOrder.userCreated,
+        repeatedOrder: true,
+        // add several months to date
+        timeOfRepeat: new Date(date.setMonth(date.getMonth() + newCompleteOrder.guarantee)),
+        previousOrder: newCompleteOrder._id
+      });
+      repeatOrder.save();
+
       io.getIO().emit('submitCompleteOrder', {
         completeOrder: newCompleteOrder
       });

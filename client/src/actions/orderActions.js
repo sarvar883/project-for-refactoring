@@ -2,9 +2,11 @@ import axios from 'axios';
 import {
   GET_DISINFECTORS,
   SET_LOADING,
+  SET_LOADING_REPEAT_ORDER,
   GET_ERRORS,
   GET_ALL_ORDERS,
   GET_ORDER_BY_ID,
+  GET_REPEAT_ORDER_FORM,
   GET_COMPLETE_ORDERS_IN_MONTH
   // ADD_ORDER
 } from './types';
@@ -34,6 +36,36 @@ export const getDisinfectors = () => (dispatch) => {
 export const createOrder = (newOrder, history, occupation) => (dispatch) => {
   axios.post('/order/create-order', newOrder)
     .then(res => history.push(`/${occupation}`))
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+
+// get order to create repeated order
+export const getRepeatOrderForm = (id) => (dispatch) => {
+  dispatch(setLoadingRepeatOrder());
+  axios.post('/operator/repeat-order-form', { id: id })
+    .then(res =>
+      dispatch({
+        type: GET_REPEAT_ORDER_FORM,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+export const createRepeatOrder = (order, history, occupation) => (dispatch) => {
+  axios.post('/order/create-repeat-order', { order: order })
+    .then(() => history.push(`/${occupation}`))
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
@@ -182,3 +214,9 @@ export const setLoading = () => {
     type: SET_LOADING
   };
 };
+
+export const setLoadingRepeatOrder = () => {
+  return {
+    type: SET_LOADING_REPEAT_ORDER
+  };
+}

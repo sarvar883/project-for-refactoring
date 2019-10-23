@@ -46,7 +46,9 @@ class ShowQueriesForAdmin extends Component {
                 <li>Тип услуги: {order.typeOfService}</li>
                 <li>Откуда узнали: {order.advertising}</li>
                 <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{order.completedAt}</Moment></li>
+                <li>Срок гарантии (в месяцах): {order.guarantee}</li>
                 <li>Сумма: {order.cost.toLocaleString()} UZS</li>
+
                 <li>Тип Платежа: {order.paymentMethod}</li>
 
                 {order.paymentMethod === 'Безналичный' ? <li>Счет-Фактура: {order.invoice}</li> : ''}

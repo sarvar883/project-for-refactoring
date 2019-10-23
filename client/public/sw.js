@@ -21,24 +21,3 @@ self.addEventListener('install', function (event) {
 self.addEventListener('activate', function (event) {
   return self.clients.claim();
 });
-
-
-// self.addEventListener('fetch', function (event) {
-//   event.respondWith(
-//     caches.match(event.request)
-//       .then(response => {
-//         if (response) {
-//           return response;
-//         } else {
-//           return fetch(event.request)
-//             .then(res => {
-//               return caches.open('dynamic')
-//                 .then(cache => {
-//                   cache.put(event.request.url, res.clone());
-//                   return res;
-//                 })
-//             });
-//         }
-//       })
-//   );
-// });

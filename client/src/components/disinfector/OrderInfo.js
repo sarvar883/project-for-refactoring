@@ -47,6 +47,8 @@ class OrderInfo extends Component {
             <ul className="font-bold">
               <li>Дезинфектор: {orderObject.disinfectorId.name}</li>
               <li>Клиент: {orderObject.client}</li>
+              <li>Телефонный номер клиента: {orderObject.phone}</li>
+              {orderObject.phone2 !== '' ? (<li>Запасной номер: {orderObject.phone2}</li>) : ''}
               <li>Дата и Время выполнения: <Moment format="DD/MM/YYYY HH:mm">{orderObject.dateFrom}</Moment></li>
               <li>Адрес: {orderObject.address}</li>
               <li>Тип услуги: {orderObject.typeOfService}</li>

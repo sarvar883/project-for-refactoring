@@ -64,24 +64,26 @@ class ConfirmOrder extends Component {
               <div className="card order mt-2">
                 <div className="card-body p-0">
                   <ul className="font-bold mb-0">
-                    <li className="pb-2">Дезинфектор: {completeOrder.disinfectorId.name}</li>
-                    <li className="pb-2">Клиент: {completeOrder.client}</li>
-                    <li className="pb-2">Дата: <Moment format="DD/MM/YYYY">{completeOrder.dateFrom}</Moment></li>
-                    <li className="pb-2">Время выполнения: С <Moment format="HH:mm">{completeOrder.dateFrom}</Moment> ПО <Moment format="HH:mm">{completeOrder.completedAt}</Moment></li>
-                    <li className="pb-2">Адрес: {completeOrder.address}</li>
-                    <li className="pb-2">Тип услуги: {completeOrder.typeOfService}</li>
-                    <li className="pb-2">Комментарии Оператора: {completeOrder.comment ? completeOrder.comment : 'Нет комментариев'}</li>
-                    <li className="pb-2">Комментарии Дезинфектора: {completeOrder.disinfectorComment ? completeOrder.disinfectorComment : 'Нет комментариев'}</li>
+                    <li>Дезинфектор: {completeOrder.disinfectorId.name}</li>
+                    <li>Клиент: {completeOrder.client}</li>
+                    <li>Телефон клиента: {completeOrder.phone}</li>
+                    {completeOrder.phone2 !== '' ? <li>Запасной номер: {completeOrder.phone2}</li> : ''}
+                    <li>Дата: <Moment format="DD/MM/YYYY">{completeOrder.dateFrom}</Moment></li>
+                    <li>Время выполнения: С <Moment format="HH:mm">{completeOrder.dateFrom}</Moment> ПО <Moment format="HH:mm">{completeOrder.completedAt}</Moment></li>
+                    <li>Адрес: {completeOrder.address}</li>
+                    <li>Тип услуги: {completeOrder.typeOfService}</li>
+                    <li>Комментарии Оператора: {completeOrder.comment ? completeOrder.comment : 'Нет комментариев'}</li>
+                    <li>Комментарии Дезинфектора: {completeOrder.disinfectorComment ? completeOrder.disinfectorComment : 'Нет комментариев'}</li>
                     <li>Расход Материалов:</li>
                     <ul className="font-bold mb-0">
                       {consumptionRender}
                     </ul>
-                    <li className="pb-2">Тип Платежа: {completeOrder.paymentMethod}</li>
+                    <li>Тип Платежа: {completeOrder.paymentMethod}</li>
 
-                    {completeOrder.paymentMethod === 'Безналичный' ? <li className="pb-2">Счет-Фактура: {completeOrder.invoice}</li> : ''}
+                    {completeOrder.paymentMethod === 'Безналичный' ? <li>Счет-Фактура: {completeOrder.invoice}</li> : ''}
 
-                    <li className="pb-2">Общая Сумма: {completeOrder.cost ? completeOrder.cost.toLocaleString() : ''} UZS</li>
-                    <li className="pb-2">Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{completeOrder.completedAt}</Moment></li>
+                    <li>Общая Сумма: {completeOrder.cost ? completeOrder.cost.toLocaleString() : ''} UZS</li>
+                    <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{completeOrder.completedAt}</Moment></li>
                   </ul>
                   <button className="btn btn-danger" onClick={this.reject}>Отменить Выполнение Заказа</button>
                 </div>

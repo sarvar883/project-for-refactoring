@@ -46,6 +46,8 @@ import CreateOrder from './components/operator/CreateOrder';
 import OrderDetails from './components/operator/OrderDetails';
 import OrderQueries from './components/operator/OrderQueries';
 import ConfirmOrder from './components/operator/ConfirmOrder';
+import RepeatOrders from './components/operator/RepeatOrders';
+import CreateRepeatOrder from './components/operator/CreateRepeatOrder';
 
 import Accountant from './components/accountant/Accountant';
 
@@ -182,7 +184,12 @@ class App extends Component {
             <Switch>
               <OperatorRoute exact path="/order-confirm/:id" component={ConfirmOrder} />
             </Switch>
-
+            <Switch>
+              <OperatorRoute exact path="/operator/repeat-orders" component={RepeatOrders} />
+            </Switch>
+            <Switch>
+              <OperatorRoute exact path="/create-repeat-order-form/:orderId" component={CreateRepeatOrder} />
+            </Switch>
 
             {/* Accountant Routes */}
             <Switch>

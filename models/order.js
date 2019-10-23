@@ -15,6 +15,9 @@ const orderSchema = new Schema({
   phone: {
     type: String
   },
+  phone2: {
+    type: String
+  },
   dateFrom: {
     type: Date
   },
@@ -34,7 +37,25 @@ const orderSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
-
+  // repeat order
+  repeatedOrder: {
+    type: Boolean,
+    default: false
+  },
+  timeOfRepeat: {
+    type: Date // приблизительное время повторного заказа
+  },
+  previousOrder: {
+    type: Schema.Types.ObjectId,
+    ref: 'Order'
+  },
+  repeatedOrderDecided: {
+    type: Boolean,
+    default: false
+  },
+  repeatedOrderNeeded: {
+    type: Boolean
+  },
 
   // disinfector completes the order
   completed: {

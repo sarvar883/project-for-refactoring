@@ -16,6 +16,7 @@ class Navbar extends Component {
   render() {
     const { isAuthenticated, user } = this.props.auth;
 
+
     const authLinks = (
       <div className="authLinks">
         <div className="dropdown">
@@ -38,6 +39,7 @@ class Navbar extends Component {
       </div>
     );
 
+
     const guestLinks = (
       <div className="guestLinks">
         <li className="nav-item list-inline-item">
@@ -47,6 +49,7 @@ class Navbar extends Component {
         </li>
       </div>
     );
+
 
     const disinfectorLinks = (
       <div className="disinfectorLinks">
@@ -65,11 +68,17 @@ class Navbar extends Component {
       </div>
     );
 
+
     const operatorLinks = (
       <div className="operatorLinks">
         <li className="nav-item mr-2 list-inline-item">
           <Link className="nav-link" to="/create-order">
             Создать заказ
+          </Link>
+        </li>
+        <li className="nav-item mr-2 list-inline-item">
+          <Link className="nav-link" to="/operator/repeat-orders">
+            Повторные заказы
           </Link>
         </li>
         <li className="nav-item mr-2 list-inline-item">
@@ -79,6 +88,45 @@ class Navbar extends Component {
         </li>
       </div>
     );
+
+
+    const subadminLinks = (
+      <div className="subadminLinks">
+        <div className="dropdown">
+          <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Функции</button>
+          <div className="dropdown-menu">
+            <li className="nav-item">
+              <Link className="nav-link" to="/subadmin/stats">Статистика</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/subadmin/queries">Запросы</Link>
+            </li>
+          </div>
+        </div>
+
+        <div className="dropdown">
+          <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Материалы</button>
+          <div className="dropdown-menu">
+            <li className="nav-item">
+              <Link className="nav-link" to="/subadmin/material-coming-history">История Приходов Материалов</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/subadmin/material-history">История Раздач Материалов</Link>
+            </li>
+          </div>
+        </div>
+
+        <div className="dropdown">
+          <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Добавить</button>
+          <div className="dropdown-menu">
+            <li className="nav-item">
+              <Link className="nav-link" to="/subadmin/materials">Материалы Дезинфектору</Link>
+            </li>
+          </div>
+        </div>
+      </div>
+    );
+
 
     const adminLinks = (
       <div className="adminLinks">
@@ -152,8 +200,9 @@ class Navbar extends Component {
           <div className="collapse navbar-collapse" id="navbarCollapse">
             <ul className="navbar-nav ml-auto list-inline">
               {user.occupation === 'admin' ? adminLinks : ('')}
-              {user.occupation === 'disinfector' ? disinfectorLinks : ('')}
+              {user.occupation === 'subadmin' ? subadminLinks : ('')}
               {user.occupation === 'operator' ? operatorLinks : ('')}
+              {user.occupation === 'disinfector' ? disinfectorLinks : ('')}
               {isAuthenticated ? authLinks : guestLinks}
             </ul>
           </div>
