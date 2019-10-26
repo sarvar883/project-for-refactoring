@@ -47,6 +47,8 @@ class EditOrder extends Component {
       orderForEdit.client = !isEmpty(orderForEdit.client) ? orderForEdit.client : '';
       orderForEdit.address = !isEmpty(orderForEdit.address) ? orderForEdit.address : '';
       orderForEdit.phone = !isEmpty(orderForEdit.phone) ? orderForEdit.phone : '';
+      orderForEdit.typeOfService = !isEmpty(orderForEdit.typeOfService) ? orderForEdit.typeOfService : '';
+      orderForEdit.comment = !isEmpty(orderForEdit.comment) ? orderForEdit.comment : '';
 
       if (isEmpty(orderForEdit.phone2)) {
         this.setState({
@@ -58,9 +60,6 @@ class EditOrder extends Component {
           hasSecondPhone: true
         });
       }
-
-      orderForEdit.typeOfService = !isEmpty(orderForEdit.typeOfService) ? orderForEdit.typeOfService : '';
-      orderForEdit.comment = !isEmpty(orderForEdit.comment) ? orderForEdit.comment : '';
 
       const date = !isEmpty(orderForEdit.dateFrom) ? new Date(orderForEdit.dateFrom) : '';
 

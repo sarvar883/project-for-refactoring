@@ -116,7 +116,7 @@ class CreateOrder extends Component {
       { label: '-- Выберите ответственного дезинфектора --', value: 0 }
     ];
     disinfectors.forEach(worker => disinfectorOptions.push({
-      label: worker.name, value: worker._id
+      label: `${worker.name}, ${worker.occupation}`, value: worker._id
     }));
 
     const orderTypes = [

@@ -71,6 +71,18 @@ class Navbar extends Component {
 
     const operatorLinks = (
       <div className="operatorLinks">
+        <div className="dropdown">
+          <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Функции</button>
+          <div className="dropdown-menu">
+            <li className="nav-item">
+              <Link className="nav-link" to="/operator/order-queries">Запросы</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/search-orders">Поиск заказов</Link>
+            </li>
+          </div>
+        </div>
+
         <li className="nav-item mr-2 list-inline-item">
           <Link className="nav-link" to="/create-order">
             Создать заказ
@@ -79,11 +91,6 @@ class Navbar extends Component {
         <li className="nav-item mr-2 list-inline-item">
           <Link className="nav-link" to="/operator/repeat-orders">
             Повторные заказы
-          </Link>
-        </li>
-        <li className="nav-item mr-2 list-inline-item">
-          <Link className="nav-link" to="/operator/order-queries">
-            Запросы
           </Link>
         </li>
       </div>
@@ -100,6 +107,9 @@ class Navbar extends Component {
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/subadmin/queries">Запросы</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/search-orders">Поиск заказов</Link>
             </li>
           </div>
         </div>
@@ -150,6 +160,9 @@ class Navbar extends Component {
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/admin/clients">Клиенты</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/search-orders">Поиск заказов</Link>
             </li>
           </div>
         </div>

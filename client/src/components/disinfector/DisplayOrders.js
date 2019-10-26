@@ -30,13 +30,15 @@ class DisplayOrders extends Component {
   }
 
   addOrder = (order) => {
-    this.setState(prevState => {
-      const updatedOrders = [...prevState.orders];
-      updatedOrders.push(order);
-      return {
-        orders: updatedOrders.sort((a, b) => new Date(a.dateFrom) - new Date(b.dateFrom))
-      };
-    });
+    if (this._isMounted) {
+      this.setState(prevState => {
+        const updatedOrders = [...prevState.orders];
+        updatedOrders.push(order);
+        return {
+          orders: updatedOrders.sort((a, b) => new Date(a.dateFrom) - new Date(b.dateFrom))
+        };
+      });
+    }
   };
 
   componentWillUnmount() {

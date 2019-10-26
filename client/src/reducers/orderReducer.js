@@ -5,6 +5,7 @@ import {
   GET_ALL_ORDERS,
   ADD_ORDER,
   GET_ORDER_BY_ID,
+  SEARCH_ORDERS,
   GET_REPEAT_ORDER_FORM,
   GET_COMPLETE_ORDERS_IN_MONTH
 } from '../actions/types';
@@ -63,6 +64,13 @@ export default function (state = initialState, action) {
       return {
         ...state,
         orderById: action.payload,
+        loading: false
+      };
+
+    case SEARCH_ORDERS:
+      return {
+        ...state,
+        orders: action.payload,
         loading: false
       };
 

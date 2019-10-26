@@ -118,6 +118,18 @@ export const getRepeatOrders = (operatorId) => (dispatch) => {
 };
 
 
+export const repeatOrderNotNeeded = (id, history, occupation) => (dispatch) => {
+  axios.post('/operator/repeat-order-not-needed', { id: id })
+    .then(() => history.push(`/${occupation}`))
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
 // Loading sorted orders
 export const setLoadingSortedOrders = () => {
   return {

@@ -180,6 +180,8 @@ class OrderComplete extends Component {
                   <ul className="font-bold">
                     <li>Дезинфектор: {order.disinfectorId.name}</li>
                     <li>Клиент: {order.client}</li>
+                    <li>Телефон Клиента: {order.phone}</li>
+                    {order.phone2 !== '' ? <li>Запасной Телефон Клиента: {order.phone2}</li> : ''}
                     <li>Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
                     <li>Время выполнения: <Moment format="HH:mm">{order.dateFrom}</Moment></li>
                     <li>Адрес: {order.address}</li>

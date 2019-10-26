@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Spinner from '../common/Spinner';
 import Moment from 'react-moment';
 
-import { getRepeatOrders } from '../../actions/operatorActions';
+import { getRepeatOrders, repeatOrderNotNeeded } from '../../actions/operatorActions';
 
 class RepeatOrders extends Component {
   state = {
@@ -21,9 +21,8 @@ class RepeatOrders extends Component {
     });
   }
 
-  needRepeat = (id) => {
-    console.log('need');
-    console.log('id', id);
+  noNeed = (id) => {
+    this.props.repeatOrderNotNeeded(id, this.props.history, this.props.auth.user.occupation);
   }
 
   render() {
@@ -44,6 +43,7 @@ class RepeatOrders extends Component {
                   <li>Дезинфектор: {item.disinfectorId.name}</li>
                   <li>Клиент: {item.client}</li>
                   <li>Телефон: {item.phone}</li>
+                  {item.phone2 && item.phone2 !== '' ? <li>Запасной номер: {item.phone2}</li> : ''}
                   <li>Адрес: {item.address}</li>
                   <li>Тип услуги: {item.typeOfService}</li>
                   <li>Дата предыдущего заказа: <Moment format="DD/MM/YYYY">{item.previousOrder.dateFrom}</Moment></li>
@@ -52,6 +52,7 @@ class RepeatOrders extends Component {
                 </ul>
                 <button type="button" className="btn btn-primary mt-2" data-toggle="modal" data-target={`#info${index}`}>Полная информация о предыдущем заказе</button>
                 <Link to={`/create-repeat-order-form/${item._id}`} className="btn btn-success mt-2">Повторная работа нужна</Link>
+                <button className="btn btn-danger mt-2" onClick={() => { if (window.confirm('Вы  уверены?')) return this.noNeed(item._id) }}>Повторная работа не нужна</button>
               </div>
             </div>
           </div>
@@ -64,6 +65,7 @@ class RepeatOrders extends Component {
                     <li>Дезинфектор: {item.disinfectorId.name}</li>
                     <li>Клиент: {item.client}</li>
                     <li>Телефон: {item.phone}</li>
+                    {item.phone2 && item.phone2 !== '' ? <li>Запасной номер: {item.phone2}</li> : ''}
                     <li>Адрес: {item.address}</li>
                     <li>Откуда узнали: {item.advertising}</li>
                     <li>Тип услуги: {item.typeOfService}</li>
@@ -133,4 +135,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getRepeatOrders })(withRouter(RepeatOrders));
+export default connect(mapStateToProps, { getRepeatOrders, repeatOrderNotNeeded })(withRouter(RepeatOrders));

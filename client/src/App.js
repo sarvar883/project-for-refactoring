@@ -51,6 +51,7 @@ import CreateRepeatOrder from './components/operator/CreateRepeatOrder';
 
 import Accountant from './components/accountant/Accountant';
 
+import SearchOrders from './components/operator/SearchOrders';
 import Chat from './components/chat/Chat';
 import ChatRoom from './components/chat/ChatRoom';
 import Anons from './components/chat/Anons';
@@ -190,7 +191,9 @@ class App extends Component {
             <Switch>
               <OperatorRoute exact path="/create-repeat-order-form/:orderId" component={CreateRepeatOrder} />
             </Switch>
-
+            <Switch>
+              <PrivateRoute exact path="/search-orders" component={SearchOrders} />
+            </Switch>
             {/* Accountant Routes */}
             <Switch>
               <AccountantRoute exact path="/accountant" component={Accountant} />

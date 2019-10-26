@@ -30,6 +30,8 @@ router.post('/addDisinfectorComment', passport.authenticate('jwt', { session: fa
 // get order by id to fill out order completion form
 router.post('/get-order-by-id', passport.authenticate('jwt', { session: false }), orderController.getOrderById);
 
+router.post('/search-orders', passport.authenticate('jwt', { session: false }), orderController.searchOrders);
+
 // order completion form is submitted
 router.post('/submit-complete-order', passport.authenticate('jwt', { session: false }), isDisinfector, orderController.submitCompleteOrder);
 

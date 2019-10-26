@@ -17,4 +17,6 @@ router.post('/get-repeat-orders', passport.authenticate('jwt', { session: false 
 
 router.post('/repeat-order-form', passport.authenticate('jwt', { session: false }), isOperatorOrAdmin, operatorController.repeatOrderForm);
 
+router.post('/repeat-order-not-needed', passport.authenticate('jwt', { session: false }), isOperatorOrAdmin, operatorController.repeatOrderNotNeeded);
+
 module.exports = router;

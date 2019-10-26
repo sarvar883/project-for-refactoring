@@ -111,3 +111,18 @@ exports.repeatOrderForm = (req, res) => {
       return res.status(400).json(err);
     });
 };
+
+
+exports.repeatOrderNotNeeded = (req, res) => {
+  Order.findById(req.body.id)
+    .then(order => {
+      order.repeatedOrderDecided = true;
+      order.repeatedOrderNeeded = false;
+      return order.save();
+    })
+    .then(savedOrder => res.json(savedOrder))
+    .catch(err => {
+      console.log('repeatOrderNotNeeded ERROR', err);
+      return res.status(400).json(err);
+    });
+};

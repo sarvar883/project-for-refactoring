@@ -6,6 +6,7 @@ import {
   GET_ERRORS,
   GET_ALL_ORDERS,
   GET_ORDER_BY_ID,
+  SEARCH_ORDERS,
   GET_REPEAT_ORDER_FORM,
   GET_COMPLETE_ORDERS_IN_MONTH
   // ADD_ORDER
@@ -159,6 +160,25 @@ export const getOrderById = (id) => (dispatch) => {
     .then(res =>
       dispatch({
         type: GET_ORDER_BY_ID,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
+// search orders
+export const searchOrders = (object) => (dispatch) => {
+  dispatch(setLoading());
+  axios.post('/order/search-orders', { object: object })
+    .then(res =>
+      dispatch({
+        type: SEARCH_ORDERS,
         payload: res.data
       })
     )

@@ -4,13 +4,16 @@ const Order = require('../models/order');
 const Client = require('../models/client');
 const AddMaterial = require('../models/addMaterial');
 
+const stringSimilarity = require('string-similarity');
 const validateOrderInput = require('../validation/order');
 const io = require('../socket');
 
 
+// get disinfectors and subadmins
 exports.getAllDisinfectors = (req, res) => {
-  User.find({ occupation: 'disinfector' })
-    .then(disinfectors => res.json(disinfectors))
+  User.find()
+    .or([{ occupation: 'disinfector' }, { occupation: 'subadmin' }])
+    .then(users => res.json(users))
     .catch(err => console.log('getAllDisinfectors ERROR', err));
 };
 
@@ -153,6 +156,7 @@ exports.createRepeatOrder = (req, res) => {
       order.address = req.body.order.address;
       order.dateFrom = req.body.order.dateFrom;
       order.phone = req.body.order.phone;
+      order.phone2 = req.body.order.phone2;
       order.typeOfService = req.body.order.typeOfService;
       order.advertising = req.body.order.advertising;
       order.comment = req.body.order.comment;
@@ -206,12 +210,14 @@ exports.createRepeatOrder = (req, res) => {
 // get orders for logged in disinfector (only not completed orders)
 exports.getOrders = (req, res) => {
   Order.find({
-    disinfectorId: req.body.userId,
-    completed: false
+    disinfectorId: req.body.userId
   })
     .populate('disinfectorId userCreated')
     .exec()
-    .then(orders => res.json(orders))
+    .then(orders => {
+      orders = orders.filter(item => (!item.repeatedOrder && !item.completed) || (!item.completed && item.repeatedOrder && item.repeatedOrderDecided && item.repeatedOrderNeeded));
+      return res.json(orders);
+    })
     .catch(err => {
       console.log('getOrders ERROR', err);
       res.status(404).json(err);
@@ -241,6 +247,25 @@ exports.getOrderById = (req, res) => {
     .then(order => res.json(order))
     .catch(err => {
       console.log('getOrderById ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.searchOrders = (req, res) => {
+  Order.find()
+    .populate('disinfectorId userCreated')
+    .exec()
+    .then(orders => {
+      if (req.body.object.method === 'address') {
+        orders = orders.filter(item => stringSimilarity.compareTwoStrings(item.address.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.55);
+      } else if (req.body.object.method === 'phone') {
+        orders = orders.filter(item => stringSimilarity.compareTwoStrings(item.phone.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.80);
+      }
+      return res.json(orders);
+    })
+    .catch(err => {
+      console.log('searchOrders ERROR', err);
       res.status(404).json(err);
     });
 };
