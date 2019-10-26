@@ -6,7 +6,7 @@ import Moment from 'react-moment';
 
 import materials from '../common/materials';
 
-import { getAllDisinfectors, getCurrentMaterials, addMaterialToDisinfector } from '../../actions/adminActions';
+import { getAllDisinfectorsAndSubadmins, getCurrentMaterials, addMaterialToDisinfector } from '../../actions/adminActions';
 
 class AdminMaterials extends Component {
   state = {
@@ -24,7 +24,7 @@ class AdminMaterials extends Component {
 
   componentDidMount() {
     this.props.getCurrentMaterials();
-    this.props.getAllDisinfectors();
+    this.props.getAllDisinfectorsAndSubadmins();
     window.scrollTo({ top: 0 });
   }
 
@@ -114,7 +114,7 @@ class AdminMaterials extends Component {
         materials: this.state.materials
       };
       this.props.addMaterialToDisinfector(object, this.props.history);
-      this.props.getAllDisinfectors();
+      this.props.getAllDisinfectorsAndSubadmins();
     }
   }
 
@@ -129,7 +129,7 @@ class AdminMaterials extends Component {
           <div className="card order mt-2">
             <div className="card-body p-0">
               <ul className="font-bold mb-0 pl-3">
-                <li>Дезинфектор: {item.name}</li>
+                <li>{item.occupation}: {item.name}</li>
                 <p className="mb-0">Имеется в наличии материалов:</p>
                 {disinfectorMaterials}
               </ul>
@@ -178,11 +178,11 @@ class AdminMaterials extends Component {
     );
 
     let disinfectorOptions = [
-      { label: '-- Выберите дезинфектора --', value: "" }
+      { label: '-- Выберите пользователя --', value: "" }
     ];
 
     this.props.admin.disinfectors.forEach(worker => disinfectorOptions.push({
-      label: worker.name, value: worker._id
+      label: `${worker.occupation} ${worker.name}`, value: worker._id
     }));
 
     let renderCurMat = this.state.currentMaterials.map((item, index) =>
@@ -210,7 +210,7 @@ class AdminMaterials extends Component {
 
         <div className="row">
           <div className="col-12">
-            <h1 className="text-center">Материалы у дезинфекторов</h1>
+            <h1 className="text-center">Материалы у пользователей</h1>
           </div>
         </div>
 
@@ -224,10 +224,10 @@ class AdminMaterials extends Component {
           <div className="col-lg-6 col-md-8 mx-auto">
             <div className="card mt-2">
               <div className="card-body">
-                <h2 className="text-center">Добавить Материалы Дeзинфектору</h2>
+                <h2 className="text-center">Добавить Материалы Пользователю</h2>
                 <form onSubmit={this.onSubmit}>
                   <div className="form-group">
-                    <label htmlFor="disinfector">Выберите Дизинфектора:</label>
+                    <label htmlFor="disinfector">Выберите Пользователя:</label>
                     {this.props.admin.loadingDisinfectors ? (
                       <p>Дезинфекторы загружаются...</p>
                     ) : (
@@ -244,7 +244,7 @@ class AdminMaterials extends Component {
                   {this.state.array.length < materials.length ? <button className="btn btn-primary mr-2" onClick={this.addMaterial}>Добавить Материал</button> : ''}
                   {this.state.array.length === 1 ? '' : <button className="btn btn-danger" onClick={this.deleteMaterial}>Удалить последний материал</button>}
                   <hr /><hr />
-                  <button type="submit" className="btn btn-success">Добавить Дизинфектору</button>
+                  <button type="submit" className="btn btn-success">Добавить Пользователю</button>
                 </form>
               </div>
             </div>
@@ -261,4 +261,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getAllDisinfectors, getCurrentMaterials, addMaterialToDisinfector })(withRouter(AdminMaterials));
+export default connect(mapStateToProps, { getAllDisinfectorsAndSubadmins, getCurrentMaterials, addMaterialToDisinfector })(withRouter(AdminMaterials));

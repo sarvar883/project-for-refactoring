@@ -25,6 +25,11 @@ export const getSortedOrders = (date) => (dispatch) => {
 };
 
 
+export const getAllDisinfectors = () => (dispatch) => {
+
+};
+
+
 // Loading sorted orders
 export const setLoadingSortedOrders = () => {
   return {

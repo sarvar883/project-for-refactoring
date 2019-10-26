@@ -168,7 +168,7 @@ class ShowDisStats extends Component {
 
         <div className="row mt-2">
           <div className="col-12">
-            <h2 className="text-center pl-3 pr-3">Все Заказы Дизинфектора</h2>
+            <h2 className="text-center pl-3 pr-3">Все Заказы Пользователя</h2>
           </div>
           {confirmedOrders.length > 0 ? (renderOrders) : <h2>Нет подтвержденных заказов</h2>}
         </div>

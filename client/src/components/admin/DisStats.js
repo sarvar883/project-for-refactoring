@@ -6,7 +6,7 @@ import Moment from 'react-moment';
 import moment from 'moment';
 
 import ShowDisStats from './ShowDisStats';
-import { getAllDisinfectors, getDisinfStatsWeekForAdmin, getDisinfStatsMonthForAdmin } from '../../actions/adminActions';
+import { getAllDisinfectorsAndSubadmins, getDisinfStatsWeekForAdmin, getDisinfStatsMonthForAdmin } from '../../actions/adminActions';
 
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
@@ -53,11 +53,12 @@ class DisStats extends Component {
 
     disinfectorIdMonth: '',
     disinfectorIdWeek: '',
-    disinfectorName: ''
+    disinfectorName: '',
+    occupation: ''
   };
 
   componentDidMount() {
-    this.props.getAllDisinfectors();
+    this.props.getAllDisinfectorsAndSubadmins();
   }
 
   onChange = (e) => this.setState({ [e.target.name]: e.target.value });
@@ -69,7 +70,8 @@ class DisStats extends Component {
         this.setState({
           headingMonth: this.state.month,
           headingYear: this.state.year,
-          disinfectorName: person.name
+          disinfectorName: person.name,
+          occupation: person.occupation
         });
       }
     });
@@ -85,7 +87,8 @@ class DisStats extends Component {
         if (person._id.toString() === this.state.disinfectorIdWeek.toString()) {
           this.setState({
             selectedDaysAfterSubmit: this.state.selectedDays,
-            disinfectorName: person.name
+            disinfectorName: person.name,
+            occupation: person.occupation
           });
         }
       });
@@ -153,12 +156,12 @@ class DisStats extends Component {
     );
 
     let disinfectorOptions = [{
-      label: "-- Выберите Дизинфектора -- ", value: ""
+      label: "-- Выберите Пользователя -- ", value: ""
     }];
 
     this.props.admin.disinfectors.forEach(person => {
       disinfectorOptions.push({
-        label: person.name, value: person._id
+        label: `${person.occupation} ${person.name}`, value: person._id
       });
     });
 
@@ -195,7 +198,7 @@ class DisStats extends Component {
             <h4 className="text-center">Статистика по месяцам</h4>
             <form onSubmit={this.getMonthStats}>
               <div className="form-group">
-                <label htmlFor="disinfectorIdMonth"><strong>Выберите Дезинфектора:</strong></label>
+                <label htmlFor="disinfectorIdMonth"><strong>Выберите Пользователя:</strong></label>
                 <select name="disinfectorIdMonth" className="form-control" onChange={this.onChange} required>
                   {renderDisinfectorOptions}
                 </select>
@@ -233,7 +236,7 @@ class DisStats extends Component {
             </div>
             <form onSubmit={this.getWeekStats}>
               <div className="form-group">
-                <label htmlFor="disinfectorIdWeek"><strong>Выберите Дезинфектора:</strong></label>
+                <label htmlFor="disinfectorIdWeek"><strong>Выберите Пользователя:</strong></label>
                 <select name="disinfectorIdWeek" className="form-control" onChange={this.onChange} required>
                   {renderDisinfectorOptions}
                 </select>
@@ -246,11 +249,11 @@ class DisStats extends Component {
         <div className="row mt-2">
           <div className="col-12">
             {this.props.admin.method === 'week' && this.state.disinfectorName && this.state.selectedDays ?
-              <h2 className="text-center pl-3 pr-3">Недельная статистика дезинфектора {this.state.disinfectorName} за <Moment format="DD/MM/YYYY">{this.state.selectedDaysAfterSubmit[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDaysAfterSubmit[6]}</Moment></h2> : ''
+              <h2 className="text-center pl-3 pr-3">Недельная статистика {this.state.occupation} {this.state.disinfectorName} за <Moment format="DD/MM/YYYY">{this.state.selectedDaysAfterSubmit[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDaysAfterSubmit[6]}</Moment></h2> : ''
             }
 
             {this.props.admin.method === 'month' && this.state.disinfectorName && this.state.month && this.state.year ?
-              <h2 className="text-center pl-3 pr-3">Месячная Статистика дезинфектора {this.state.disinfectorName} за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2> : ''}
+              <h2 className="text-center pl-3 pr-3">Месячная Статистика {this.state.occupation}  {this.state.disinfectorName} за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2> : ''}
           </div>
         </div>
 
@@ -270,4 +273,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getAllDisinfectors, getDisinfStatsWeekForAdmin, getDisinfStatsMonthForAdmin })(withRouter(DisStats));
+export default connect(mapStateToProps, { getAllDisinfectorsAndSubadmins, getDisinfStatsWeekForAdmin, getDisinfStatsMonthForAdmin })(withRouter(DisStats));

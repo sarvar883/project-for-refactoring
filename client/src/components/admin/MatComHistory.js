@@ -9,7 +9,7 @@ import 'react-day-picker/lib/style.css';
 
 import ShowMatComingHistory from './ShowMatComingHistory';
 
-import { getMatComMonth, getMatComWeek, getAllDisinfectors } from '../../actions/adminActions';
+import { getMatComMonth, getMatComWeek, getAllDisinfectorsAndSubadmins } from '../../actions/adminActions';
 
 
 
@@ -55,7 +55,7 @@ class MatComHistory extends Component {
     const thisMonth = new Date().getMonth();
     const thisYear = new Date().getFullYear();
     this.props.getMatComMonth(thisMonth, thisYear);
-    this.props.getAllDisinfectors();
+    this.props.getAllDisinfectorsAndSubadmins();
     this.setState({
       headingMonth: thisMonth,
       headingYear: thisYear
@@ -228,4 +228,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getMatComMonth, getMatComWeek, getAllDisinfectors })(withRouter(MatComHistory));
+export default connect(mapStateToProps, { getMatComMonth, getMatComWeek, getAllDisinfectorsAndSubadmins })(withRouter(MatComHistory));

@@ -155,9 +155,9 @@ export const getOperatorStats = (object) => (dispatch) => {
 };
 
 
-export const getAllDisinfectors = () => (dispatch) => {
+export const getAllDisinfectorsAndSubadmins = () => (dispatch) => {
   dispatch(loadingDisinfectors());
-  axios.post('/admin/get-all-disinfectors')
+  axios.post('/admin/get-all-disinfectors-and-subadmins')
     .then(res =>
       dispatch({
         type: GET_ALL_DISINFECTORS_FOR_ADMIN,

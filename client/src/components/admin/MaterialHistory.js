@@ -5,7 +5,7 @@ import Spinner from '../common/Spinner';
 import Moment from 'react-moment';
 import moment from 'moment';
 
-import { getAddMaterialEventsMonth, getAddMaterialEventsWeek, getAllDisinfectors } from '../../actions/adminActions';
+import { getAddMaterialEventsMonth, getAddMaterialEventsWeek, getAllDisinfectorsAndSubadmins } from '../../actions/adminActions';
 
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
@@ -57,7 +57,7 @@ class MaterialHistory extends Component {
     const thisMonth = new Date().getMonth();
     const thisYear = new Date().getFullYear();
     this.props.getAddMaterialEventsMonth(thisMonth, thisYear);
-    this.props.getAllDisinfectors();
+    this.props.getAllDisinfectorsAndSubadmins();
     this.setState({
       headingMonth: thisMonth,
       headingYear: thisYear
@@ -229,4 +229,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getAddMaterialEventsMonth, getAddMaterialEventsWeek, getAllDisinfectors })(withRouter(MaterialHistory));
+export default connect(mapStateToProps, { getAddMaterialEventsMonth, getAddMaterialEventsWeek, getAllDisinfectorsAndSubadmins })(withRouter(MaterialHistory));

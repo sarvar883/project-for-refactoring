@@ -11,7 +11,7 @@ router.post('/get-order-queries-for-admin', passport.authenticate('jwt', { sessi
 
 router.post('/admin-confirms-order-query', passport.authenticate('jwt', { session: false }), isAdmin, adminController.confirmOrderQuery);
 
-router.post('/get-all-disinfectors', passport.authenticate('jwt', { session: false }), isAdmin, adminController.getDisinfectors);
+router.post('/get-all-disinfectors-and-subadmins', passport.authenticate('jwt', { session: false }), isAdmin, adminController.getDisinfectorsAndSubadmins);
 
 router.post('/get-all-operators', passport.authenticate('jwt', { session: false }), isAdmin, adminController.getOperators);
 

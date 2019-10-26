@@ -69,8 +69,9 @@ exports.confirmOrderQuery = (req, res) => {
 };
 
 
-exports.getDisinfectors = (req, res) => {
-  User.find({ occupation: 'disinfector' })
+exports.getDisinfectorsAndSubadmins = (req, res) => {
+  User.find()
+    .or([{ occupation: 'disinfector' }, { occupation: 'subadmin' }])
     .then(disinfectors => res.json(disinfectors))
     .catch(err => {
       console.log('getDisinfectors ERROR', err);

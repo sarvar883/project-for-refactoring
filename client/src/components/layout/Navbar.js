@@ -78,6 +78,9 @@ class Navbar extends Component {
               <Link className="nav-link" to="/operator/order-queries">Запросы</Link>
             </li>
             <li className="nav-item">
+              <Link className="nav-link" to="/operator/repeat-orders">Повторные заказы</Link>
+            </li>
+            <li className="nav-item">
               <Link className="nav-link" to="/search-orders">Поиск заказов</Link>
             </li>
           </div>
@@ -86,11 +89,6 @@ class Navbar extends Component {
         <li className="nav-item mr-2 list-inline-item">
           <Link className="nav-link" to="/create-order">
             Создать заказ
-          </Link>
-        </li>
-        <li className="nav-item mr-2 list-inline-item">
-          <Link className="nav-link" to="/operator/repeat-orders">
-            Повторные заказы
           </Link>
         </li>
       </div>
@@ -186,7 +184,7 @@ class Navbar extends Component {
               <Link className="nav-link" to="/admin/material-coming">Приход Материалов</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/materials">Материалы Дезинфектору</Link>
+              <Link className="nav-link" to="/admin/materials">Материалы Пользователю</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/admin/add-client">Клиента</Link>

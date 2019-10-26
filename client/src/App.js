@@ -194,6 +194,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute exact path="/search-orders" component={SearchOrders} />
             </Switch>
+
             {/* Accountant Routes */}
             <Switch>
               <AccountantRoute exact path="/accountant" component={Accountant} />

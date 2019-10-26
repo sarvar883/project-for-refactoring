@@ -28,6 +28,7 @@ class ShowAddMatEvents extends Component {
     disinfectors.forEach(person => disinfArray.push({
       _id: person._id,
       name: person.name,
+      occupation: person.occupation,
       events: [],
       received: materials.map(item => {
         return {
@@ -100,7 +101,7 @@ class ShowAddMatEvents extends Component {
       return (
         <React.Fragment key={index}>
           <div className="border-between-disinfectors"></div>
-          <h3 className="text-center mt-3">{person.name}</h3>
+          <h3 className="text-center mt-3">{person.occupation} {person.name}</h3>
           <div className="row mt-3">
             <div className="col-lg-4 col-md-6">
               <div className="card order mt-2">
@@ -139,7 +140,7 @@ class ShowAddMatEvents extends Component {
 
         <div className="row mt-3">
           <div className="col-12">
-            <h2 className="text-center pl-3 pr-3">Раздача Материалов Дизинфекторам</h2>
+            <h2 className="text-center pl-3 pr-3">Раздача Материалов Пользователям</h2>
             {renderDisinfectors}
           </div>
         </div>
