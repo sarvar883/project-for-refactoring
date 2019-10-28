@@ -2,6 +2,7 @@ import isEmpty from '../validation/is-empty';
 import {
   SET_CURRENT_USER,
   GET_DISINFECTOR_MATERIALS,
+  SUBADMIN_MATERIALS,
   LOADING_CURRENT_DISINFECTOR
 } from '../actions/types';
 
@@ -36,6 +37,15 @@ export default function (state = initialState, action) {
           materials: action.payload
         },
         loadingUser: false
+      };
+
+    case SUBADMIN_MATERIALS:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          materials: action.payload.materials
+        }
       };
 
     default:

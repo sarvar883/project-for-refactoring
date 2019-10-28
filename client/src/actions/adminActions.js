@@ -190,14 +190,14 @@ export const getAllOperators = () => (dispatch) => {
     );
 };
 
-export const addMaterialToDisinfector = (object, history) => (dispatch) => {
+export const addMaterialToDisinfector = (object, occupation, history) => (dispatch) => {
   axios.post('/admin/add-materials-to-disinfector', { object: object })
     .then(res => {
       dispatch({
         type: ADD_MAT_DISINFECTOR,
         payload: res.data
       });
-      return history.push('/admin');
+      return history.push(`/${occupation}`);
     })
     .catch(err =>
       dispatch({

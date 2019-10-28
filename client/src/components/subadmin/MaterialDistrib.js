@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Spinner from '../common/Spinner';
-import Moment from 'react-moment';
 
 import materials from '../common/materials';
 
-import { getAllDisinfectorsAndSubadmins, getCurrentMaterials, addMaterialToDisinfector } from '../../actions/adminActions';
+import { getAllDisinfectors, getSubadminMaterials, addMaterialToDisinfector } from '../../actions/subadminActions';
 
-class AdminMaterials extends Component {
+class MaterialDistrib extends Component {
   state = {
     array: [{}],
     currentMaterials: [],
@@ -23,14 +22,14 @@ class AdminMaterials extends Component {
   };
 
   componentDidMount() {
-    this.props.getCurrentMaterials();
-    this.props.getAllDisinfectorsAndSubadmins();
+    this.props.getAllDisinfectors();
+    this.props.getSubadminMaterials(this.props.auth.user.id);
     window.scrollTo({ top: 0 });
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      currentMaterials: nextProps.admin.currentMaterials.materials
+      currentMaterials: nextProps.auth.user.materials
     });
   }
 
@@ -100,7 +99,6 @@ class AdminMaterials extends Component {
         }
       });
     });
-
     if (emptyFields > 0) {
       alert('Заполните Поле "Выберите Материал и Количество"');
     } else if (zeroValues > 0) {
@@ -110,16 +108,20 @@ class AdminMaterials extends Component {
     } else {
       const object = {
         disinfector: this.state.disinfector,
-        admin: this.props.auth.user.id,
+        subadmin: this.props.auth.user.id,
         materials: this.state.materials
       };
-      this.props.addMaterialToDisinfector(object, this.props.auth.user.occupation, this.props.history);
-      this.props.getAllDisinfectorsAndSubadmins();
+      this.props.addMaterialToDisinfector(object, this.props.history);
+      this.props.getAllDisinfectors();
     }
   }
 
   render() {
-    let showDisinfectors = this.props.admin.disinfectors.map((item, index) => {
+    let renderSubadminMaterials = this.state.currentMaterials.map((item, index) =>
+      <li key={index}>{item.material}: {item.amount} {item.unit}</li>
+    );
+
+    let showDisinfectors = this.props.subadmin.disinfectors.map((item, index) => {
       let disinfectorMaterials = item.materials.map((material, number) =>
         <li key={number}>{material.material}: {material.amount} {material.unit}</li>
       );
@@ -181,32 +183,24 @@ class AdminMaterials extends Component {
       { label: '-- Выберите пользователя --', value: "" }
     ];
 
-    this.props.admin.disinfectors.forEach(worker => disinfectorOptions.push({
+    this.props.subadmin.disinfectors.forEach(worker => disinfectorOptions.push({
       label: `${worker.occupation} ${worker.name}`, value: worker._id
     }));
 
-    let renderCurMat = this.state.currentMaterials.map((item, index) =>
-      <li key={index}>{item.material}: {item.amount} {item.unit}</li>
-    );
-
-
     return (
       <div className="container-fluid">
-        {this.props.admin.loadingCurMat ? <Spinner /> :
-          <div className="row mt-2">
-            <div className="col-lg-6 col-md-8 m-auto">
-              <div className="card order mt-2">
-                <div className="card-body p-0">
-                  <h3 className="text-center">Сейчас имеется материалов на складе</h3>
-                  <ul className="font-bold mb-0 pl-3">
-                    {renderCurMat}
-                    <li>Последнее обновление: <Moment format="DD/MM/YYYY HH:mm">{this.props.admin.currentMaterials.lastUpdated}</Moment></li>
-                  </ul>
-                </div>
+        <div className="row mt-3">
+          <div className="col-lg-6 col-md-8 mx-auto">
+            <div className="card order mt-2">
+              <div className="card-body p-0">
+                <h2 className="text-center">У вас имеется материалов</h2>
+                <ul className="font-bold mb-0 pl-3">
+                  {renderSubadminMaterials}
+                </ul>
               </div>
             </div>
           </div>
-        }
+        </div>
 
         <div className="row">
           <div className="col-12">
@@ -214,7 +208,7 @@ class AdminMaterials extends Component {
           </div>
         </div>
 
-        {this.props.admin.loadingDisinfectors ? <Spinner /> :
+        {this.props.subadmin.loading ? <Spinner /> :
           <div className="row mt-2">
             {showDisinfectors}
           </div>
@@ -228,7 +222,7 @@ class AdminMaterials extends Component {
                 <form onSubmit={this.onSubmit}>
                   <div className="form-group">
                     <label htmlFor="disinfector">Выберите Пользователя:</label>
-                    {this.props.admin.loadingDisinfectors ? (
+                    {this.props.subadmin.loading ? (
                       <p>Дезинфекторы загружаются...</p>
                     ) : (
                         <select value={this.state.disinfector} name="disinfector" className="form-control" onChange={this.onChange} required>
@@ -257,8 +251,8 @@ class AdminMaterials extends Component {
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  admin: state.admin,
+  subadmin: state.subadmin,
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getAllDisinfectorsAndSubadmins, getCurrentMaterials, addMaterialToDisinfector })(withRouter(AdminMaterials));
+export default connect(mapStateToProps, { getAllDisinfectors, getSubadminMaterials, addMaterialToDisinfector })(withRouter(MaterialDistrib));

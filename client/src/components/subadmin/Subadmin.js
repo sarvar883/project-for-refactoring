@@ -50,6 +50,7 @@ class Subadmin extends Component {
           </div>
           <div className="col-lg-9">
             <h1 className="text-center">Заявки на <Moment format="DD/MM/YYYY">{this.state.date}</Moment></h1>
+
             {loadingSortedOrders ? <Spinner /> : (
               <SubadmSortedOrders date={this.state.date} />
             )}

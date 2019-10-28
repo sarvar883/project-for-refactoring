@@ -2,7 +2,11 @@ import axios from 'axios';
 import {
   GET_ERRORS,
   GET_SORTED_ORDERS_SUBADMIN,
-  LOADING_SORTED_ORDERS_SUBADMIN
+  ALL_DISINFECTORS,
+  SUBADMIN_MATERIALS,
+  SUBADMIN_ADDS_MATERIAL,
+  LOADING_SORTED_ORDERS_SUBADMIN,
+  SUBADMIN_LOADING
 } from './types';
 
 
@@ -26,7 +30,56 @@ export const getSortedOrders = (date) => (dispatch) => {
 
 
 export const getAllDisinfectors = () => (dispatch) => {
+  dispatch(setSubadminLoading());
+  axios.post('/subadmin/get-all-disinfectors')
+    .then(res =>
+      dispatch({
+        type: ALL_DISINFECTORS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
 
+
+export const getSubadminMaterials = (id) => (dispatch) => {
+  axios.post('/subadmin/get-subadmin-materials', { id: id })
+    .then(res =>
+      dispatch({
+        type: SUBADMIN_MATERIALS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
+// subadmin adds material to disinfector
+export const addMaterialToDisinfector = (object, history) => (dispatch) => {
+  axios.post('/subadmin/add-material-to-disinfector', { object: object })
+    .then(res => {
+      dispatch({
+        type: SUBADMIN_ADDS_MATERIAL,
+        payload: res.data
+      });
+      return history.push('/subadmin');
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
 };
 
 
@@ -36,3 +89,11 @@ export const setLoadingSortedOrders = () => {
     type: LOADING_SORTED_ORDERS_SUBADMIN
   };
 };
+
+
+// 
+export const setSubadminLoading = () => {
+  return {
+    type: SUBADMIN_LOADING
+  };
+}

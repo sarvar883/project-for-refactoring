@@ -35,6 +35,7 @@ import AddClient from './components/admin/AddClient';
 import AdmClients from './components/admin/AdmClients';
 
 import Subadmin from './components/subadmin/Subadmin';
+import MaterialDistrib from './components/subadmin/MaterialDistrib';
 
 import Disinfector from './components/disinfector/Disinfector';
 import DisinfQueries from './components/disinfector/DisinfQueries';
@@ -151,6 +152,9 @@ class App extends Component {
             {/* Subadmin Routes */}
             <Switch>
               <SubadminRoute exact path="/subadmin" component={Subadmin} />
+            </Switch>
+            <Switch>
+              <SubadminRoute exact path="/subadmin/materials" component={MaterialDistrib} />
             </Switch>
 
 

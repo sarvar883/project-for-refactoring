@@ -4,6 +4,7 @@ const router = express.Router();
 
 const adminController = require('../controllers/admin');
 const isAdmin = require('../middleware/isAdmin');
+const isAdminOrSubadmin = require('../middleware/isAdminOrSubadmin');
 
 router.post('/get-sorted-orders', passport.authenticate('jwt', { session: false }), isAdmin, adminController.getSortedOrders);
 
@@ -15,7 +16,7 @@ router.post('/get-all-disinfectors-and-subadmins', passport.authenticate('jwt', 
 
 router.post('/get-all-operators', passport.authenticate('jwt', { session: false }), isAdmin, adminController.getOperators);
 
-router.post('/add-materials-to-disinfector', passport.authenticate('jwt', { session: false }), isAdmin, adminController.addMaterialToDisinfector);
+router.post('/add-materials-to-disinfector', passport.authenticate('jwt', { session: false }), isAdminOrSubadmin, adminController.addMaterialToDisinfector);
 
 router.post('/get-add-material-events-month', passport.authenticate('jwt', { session: false }), isAdmin, adminController.addMatEventsMonth);
 
