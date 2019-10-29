@@ -116,10 +116,10 @@ class Navbar extends Component {
           <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Материалы</button>
           <div className="dropdown-menu">
             <li className="nav-item">
-              <Link className="nav-link" to="/subadmin/material-coming-history">История Приходов Материалов</Link>
+              <Link className="nav-link" to="/subadmin/material-coming-history">Приходы</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/subadmin/material-history">История Раздач Материалов</Link>
+              <Link className="nav-link" to="/subadmin/material-distrib-history">Раздачи</Link>
             </li>
           </div>
         </div>

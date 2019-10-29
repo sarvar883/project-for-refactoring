@@ -93,3 +93,61 @@ exports.addMaterialToDisinfector = (req, res) => {
       return res.status(400).json(err);
     });
 };
+
+
+exports.getMatComHistory = (req, res) => {
+  AddMaterial.find({ disinfector: req.body.object.subadmin })
+    .populate('admin disinfector')
+    .exec()
+    .then(events => {
+      let finalArray = [];
+      if (req.body.object.type === 'month') {
+        finalArray = events.filter(item =>
+          new Date(item.createdAt).getMonth() === req.body.object.month &&
+          new Date(item.createdAt).getFullYear() === req.body.object.year
+        );
+      } else if (req.body.object.type === 'week') {
+        finalArray = events.filter(item =>
+          new Date(item.createdAt) >= new Date(req.body.object.days[0]) &&
+          new Date(item.createdAt).setHours(0, 0, 0, 0) <= new Date(req.body.object.days[6])
+        );
+      }
+      return res.json({
+        method: req.body.object.type,
+        events: finalArray
+      });
+    })
+    .catch(err => {
+      console.log('getMatComHistory SUBADMIN ERROR', err);
+      return res.status(400).json(err);
+    });
+};
+
+
+exports.getMatDistribHistory = (req, res) => {
+  AddMaterial.find({ admin: req.body.object.subadmin })
+    .populate('admin disinfector')
+    .exec()
+    .then(events => {
+      let finalArray = [];
+      if (req.body.object.type === 'month') {
+        finalArray = events.filter(item =>
+          new Date(item.createdAt).getMonth() === req.body.object.month &&
+          new Date(item.createdAt).getFullYear() === req.body.object.year
+        );
+      } else if (req.body.object.type === 'week') {
+        finalArray = events.filter(item =>
+          new Date(item.createdAt) >= new Date(req.body.object.days[0]) &&
+          new Date(item.createdAt).setHours(0, 0, 0, 0) <= new Date(req.body.object.days[6])
+        );
+      }
+      return res.json({
+        method: req.body.object.type,
+        events: finalArray
+      });
+    })
+    .catch(err => {
+      console.log('getMatDistribHistory SUBADMIN ERROR', err);
+      return res.status(400).json(err);
+    });
+};

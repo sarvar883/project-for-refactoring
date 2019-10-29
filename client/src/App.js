@@ -36,6 +36,8 @@ import AdmClients from './components/admin/AdmClients';
 
 import Subadmin from './components/subadmin/Subadmin';
 import MaterialDistrib from './components/subadmin/MaterialDistrib';
+import SubMatComHist from './components/subadmin/SubMatComHist';
+import MatDistribHistory from './components/subadmin/MatDistribHistory';
 
 import Disinfector from './components/disinfector/Disinfector';
 import DisinfQueries from './components/disinfector/DisinfQueries';
@@ -155,6 +157,12 @@ class App extends Component {
             </Switch>
             <Switch>
               <SubadminRoute exact path="/subadmin/materials" component={MaterialDistrib} />
+            </Switch>
+            <Switch>
+              <SubadminRoute exact path="/subadmin/material-coming-history" component={SubMatComHist} />
+            </Switch>
+            <Switch>
+              <SubadminRoute exact path="/subadmin/material-distrib-history" component={MatDistribHistory} />
             </Switch>
 
 

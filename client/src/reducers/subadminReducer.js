@@ -2,8 +2,11 @@ import {
   GET_SORTED_ORDERS_SUBADMIN,
   ALL_DISINFECTORS,
   SUBADMIN_ADDS_MATERIAL,
+  SUBADMIN_MAT_COM_HISTORY,
+  SUBADMIN_MAT_DISTRIB_HISTORY,
   LOADING_SORTED_ORDERS_SUBADMIN,
-  SUBADMIN_LOADING
+  SUBADMIN_LOADING,
+  SUBADMIN_LOADING_STATS
 } from '../actions/types';
 
 const initialState = {
@@ -18,6 +21,10 @@ const initialState = {
     orders: [],
     completeOrders: []
   },
+  method: '',
+  materialComing: [],
+  addMatEvents: [],
+
   loadingSortedOrders: false,
   loadingCompleteOrders: false,
   loadingStats: false,
@@ -37,6 +44,13 @@ export default function (state = initialState, action) {
         ...state,
         loading: true
       };
+
+    case SUBADMIN_LOADING_STATS:
+      return {
+        ...state,
+        loadingStats: true
+      };
+
 
     case ALL_DISINFECTORS:
       return {
@@ -67,6 +81,22 @@ export default function (state = initialState, action) {
         sortedOrders: action.payload,
         date: action.date,
         loadingSortedOrders: false
+      };
+
+    case SUBADMIN_MAT_COM_HISTORY:
+      return {
+        ...state,
+        loadingStats: false,
+        method: action.payload.method,
+        materialComing: action.payload.events
+      };
+
+    case SUBADMIN_MAT_DISTRIB_HISTORY:
+      return {
+        ...state,
+        loadingStats: false,
+        method: action.payload.method,
+        addMatEvents: action.payload.events
       };
 
     default:

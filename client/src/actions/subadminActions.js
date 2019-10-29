@@ -5,8 +5,11 @@ import {
   ALL_DISINFECTORS,
   SUBADMIN_MATERIALS,
   SUBADMIN_ADDS_MATERIAL,
+  SUBADMIN_MAT_COM_HISTORY,
+  SUBADMIN_MAT_DISTRIB_HISTORY,
   LOADING_SORTED_ORDERS_SUBADMIN,
-  SUBADMIN_LOADING
+  SUBADMIN_LOADING,
+  SUBADMIN_LOADING_STATS
 } from './types';
 
 
@@ -83,6 +86,44 @@ export const addMaterialToDisinfector = (object, history) => (dispatch) => {
 };
 
 
+// subadmin sees how much material he received from admin
+export const getMatComHistory = (object) => (dispatch) => {
+  dispatch(loadingStats());
+  axios.post('/subadmin/get-material-coming-history', { object: object })
+    .then(res =>
+      dispatch({
+        type: SUBADMIN_MAT_COM_HISTORY,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
+// subadmin sees materials he distributed to disinfectors
+export const getSubMatDistrib = (object) => (dispatch) => {
+  dispatch(loadingStats());
+  axios.post('/subadmin/get-material-distrib-history', { object: object })
+    .then(res =>
+      dispatch({
+        type: SUBADMIN_MAT_DISTRIB_HISTORY,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
 // Loading sorted orders
 export const setLoadingSortedOrders = () => {
   return {
@@ -95,5 +136,12 @@ export const setLoadingSortedOrders = () => {
 export const setSubadminLoading = () => {
   return {
     type: SUBADMIN_LOADING
+  };
+}
+
+
+export const loadingStats = () => {
+  return {
+    type: SUBADMIN_LOADING_STATS
   };
 }

@@ -17,4 +17,8 @@ router.post('/get-subadmin-materials', passport.authenticate('jwt', { session: f
 // subadmin adds material to disinfector
 router.post('/add-material-to-disinfector', passport.authenticate('jwt', { session: false }), isAdminOrSubadmin, subadminController.addMaterialToDisinfector);
 
+router.post('/get-material-coming-history', passport.authenticate('jwt', { session: false }), isAdminOrSubadmin, subadminController.getMatComHistory);
+
+router.post('/get-material-distrib-history', passport.authenticate('jwt', { session: false }), isAdminOrSubadmin, subadminController.getMatDistribHistory);
+
 module.exports = router;
