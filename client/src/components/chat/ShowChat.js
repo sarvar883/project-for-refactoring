@@ -27,8 +27,8 @@ class ShowChat extends Component {
     window.scrollTo(0, document.getElementById('row-with-messages').scrollHeight);
     document.getElementById('navbar').classList.add('fixed-top');
 
-    const socket = openSocket('http://localhost:5000');
-    // const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
+    // const socket = openSocket('http://localhost:5000');
+    const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
     // const socket = openSocket(window.location.origin);
 
     socket.on(`createMessageInChat${this.props.match.params.chatId}`, data => {

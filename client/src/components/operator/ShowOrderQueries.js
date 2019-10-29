@@ -16,8 +16,8 @@ class ShowOrderQueries extends Component {
   componentDidMount() {
     this._isMounted = true;
 
-    const socket = openSocket('http://localhost:5000');
-    // const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
+    // const socket = openSocket('http://localhost:5000');
+    const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
 
     socket.on('submitCompleteOrder', data => {
       this.addOrderToDOM(data.completeOrder);
