@@ -12,6 +12,7 @@ class SubadmSortedOrders extends Component {
   _isMounted = false;
 
   state = {
+    date: new Date(),
     sortedOrders: this.props.subadmin.sortedOrders
   };
 
@@ -47,7 +48,7 @@ class SubadmSortedOrders extends Component {
 
   onClick = (hour, date) => {
     let defaultDateMonth, defaultDateDay, defaultHourString;
-    if (new Date(date).getMonth() < 10) {
+    if (new Date(date).getMonth() < 9) {
       defaultDateMonth = `0${new Date(date).getMonth() + 1}`;
     } else {
       defaultDateMonth = `${new Date(date).getMonth() + 1}`;
