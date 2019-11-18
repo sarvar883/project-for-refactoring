@@ -5,7 +5,10 @@ module.exports = function validateOrderInput(data) {
   let errors = {};
 
   data.disinfectorId = !isEmpty(data.disinfectorId) ? data.disinfectorId : '';
+  data.userAcceptedOrder = !isEmpty(data.userAcceptedOrder) ? data.userAcceptedOrder : '';
   data.client = !isEmpty(data.client) ? data.client : '';
+  data.clientType = !isEmpty(data.clientType) ? data.clientType : '';
+  data.clientId = !isEmpty(data.clientId) ? data.clientId : '';
   data.address = !isEmpty(data.address) ? data.address : '';
   data.date = !isEmpty(data.date) ? data.date : '';
   data.timeFrom = !isEmpty(data.timeFrom) ? data.timeFrom : '';
@@ -17,8 +20,20 @@ module.exports = function validateOrderInput(data) {
     errors.disinfectorId = 'Это поле обязательное';
   }
 
+  if (Validator.isEmpty(data.userAcceptedOrder)) {
+    errors.userAcceptedOrder = 'Это поле обязательное';
+  }
+
   if (Validator.isEmpty(data.client)) {
     errors.client = 'Это поле обязательное';
+  }
+
+  if (Validator.isEmpty(data.clientType)) {
+    errors.clientType = 'Выберите тип клиента';
+  }
+
+  if (data.clientType === 'corporate' && Validator.isEmpty(data.clientId)) {
+    errors.clientId = 'Выберите корпоративного клиента';
   }
 
   if (Validator.isEmpty(data.address)) {

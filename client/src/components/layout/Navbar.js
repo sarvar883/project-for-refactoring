@@ -95,6 +95,23 @@ class Navbar extends Component {
     );
 
 
+    const accountantLinks = (
+      <div className="accountantLinks">
+        <div className="dropdown">
+          <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Функции</button>
+          <div className="dropdown-menu">
+            <li className="nav-item">
+              <Link className="nav-link" to="/accountant/stats">Статистика</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/accountant/queries">Запросы</Link>
+            </li>
+          </div>
+        </div>
+      </div>
+    );
+
+
     const subadminLinks = (
       <div className="subadminLinks">
         <div className="dropdown">
@@ -212,6 +229,7 @@ class Navbar extends Component {
             <ul className="navbar-nav ml-auto list-inline">
               {user.occupation === 'admin' ? adminLinks : ('')}
               {user.occupation === 'subadmin' ? subadminLinks : ('')}
+              {user.occupation === 'accountant' ? accountantLinks : ('')}
               {user.occupation === 'operator' ? operatorLinks : ('')}
               {user.occupation === 'disinfector' ? disinfectorLinks : ('')}
               {isAuthenticated ? authLinks : guestLinks}

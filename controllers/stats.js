@@ -17,14 +17,28 @@ exports.monthStatsForDisinfector = async (req, res) => {
     new Date(item.createdAt).getFullYear() === year
   );
 
-  Order.find({ disinfectorId: id })
-    .populate('userCreated')
+  Order.find()
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(orders => {
+
+      orders = orders.filter(item => {
+        let amongDisinfectors = 0;
+        item.disinfectors.forEach(element => {
+          if (element.user._id.toString() === id) amongDisinfectors++;
+        });
+        if (item.disinfectorId._id.toString() === id || amongDisinfectors > 0) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
       orders = orders.filter(order =>
         new Date(order.dateFrom).getMonth() === month &&
         new Date(order.dateFrom).getFullYear() === year
       );
+
       return res.json({
         orders: orders,
         addedMaterials: addedMaterials
@@ -48,10 +62,23 @@ exports.weekStatsForDisinfector = async (req, res) => {
     new Date(item.createdAt).setHours(0, 0, 0, 0) <= new Date(days[6])
   );
 
-  Order.find({ disinfectorId: id })
-    .populate('userCreated')
+  Order.find()
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(orders => {
+
+      orders = orders.filter(item => {
+        let amongDisinfectors = 0;
+        item.disinfectors.forEach(element => {
+          if (element.user._id.toString() === id) amongDisinfectors++;
+        });
+        if (item.disinfectorId._id.toString() === id || amongDisinfectors > 0) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
       orders = orders.filter(order =>
         new Date(order.dateFrom) >= new Date(days[0]) &&
         new Date(order.dateFrom).setHours(0, 0, 0, 0) <= new Date(days[6])

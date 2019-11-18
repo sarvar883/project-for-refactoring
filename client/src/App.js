@@ -53,6 +53,8 @@ import RepeatOrders from './components/operator/RepeatOrders';
 import CreateRepeatOrder from './components/operator/CreateRepeatOrder';
 
 import Accountant from './components/accountant/Accountant';
+import Queries from './components/accountant/Queries';
+import ConfirmQueryForm from './components/accountant/ConfirmQueryForm';
 
 import SearchOrders from './components/operator/SearchOrders';
 import Chat from './components/chat/Chat';
@@ -211,7 +213,12 @@ class App extends Component {
             <Switch>
               <AccountantRoute exact path="/accountant" component={Accountant} />
             </Switch>
-
+            <Switch>
+              <AccountantRoute exact path="/accountant/queries" component={Queries} />
+            </Switch>
+            <Switch>
+              <AccountantRoute exact path="/accountant/order-confirm/:id" component={ConfirmQueryForm} />
+            </Switch>
 
             {/* Chat Routes */}
             <Switch>

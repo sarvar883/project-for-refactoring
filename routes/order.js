@@ -7,6 +7,12 @@ const isDisinfector = require('../middleware/isDisinfector');
 const isOperatorOrAdmin = require('../middleware/isOperatorOrAdmin');
 const isAdmin = require('../middleware/isAdmin');
 
+// get all corporate clients
+router.post('/get-corporate-clients', passport.authenticate('jwt', { session: false }), orderController.getCorporateClients);
+
+//  get all users
+router.post('/get-all-users', passport.authenticate('jwt', { session: false }), orderController.getAllUsers);
+
 // get all disinfectors for Order component
 router.get('/get-all-disinfectors', passport.authenticate('jwt', { session: false }), orderController.getAllDisinfectors);
 

@@ -1,4 +1,6 @@
 import {
+  CORPORATE_CLIENTS,
+  GET_ALL_USERS,
   GET_DISINFECTORS,
   SET_LOADING,
   SET_LOADING_REPEAT_ORDER,
@@ -11,10 +13,15 @@ import {
 } from '../actions/types';
 
 const initialState = {
+  corporateClients: [],
+  allUsers: [],
   disinfectors: [],
   orders: [],
   orderById: {
-    disinfectorId: {}
+    disinfectorId: {},
+    clientId: {},
+    userCreated: {},
+    userAcceptedOrder: {}
   },
   repeatOrder: {
     disinfectorId: {},
@@ -38,6 +45,19 @@ export default function (state = initialState, action) {
       return {
         ...state,
         loadingRepeatOrder: true
+      };
+
+    case CORPORATE_CLIENTS:
+      return {
+        ...state,
+        corporateClients: action.payload
+      };
+
+    case GET_ALL_USERS:
+      return {
+        ...state,
+        allUsers: action.payload,
+        loading: false
       };
 
     case GET_DISINFECTORS:

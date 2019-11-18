@@ -30,16 +30,35 @@ class ShowQueriesForAdmin extends Component {
 
   render() {
     let orderQueries = this.state.orderQueries.map((order, index) => {
-      let renderConsumptionOfOrder = order.consumption.map((material, index) =>
-        <li key={index}>{material.material} : {material.amount} {material.unit}</li>
-      );
+
+      let consumptionArray = [];
+      order.disinfectors.forEach(item => {
+        consumptionArray.push({
+          user: item.user,
+          consumption: item.consumption
+        });
+      });
+
+      let renderConsumptionOfOrder = consumptionArray.map((item, index) => {
+        return (
+          <li key={index}>
+            <p className="mb-0">Пользователь: {item.user.occupation} {item.user.name}</p>
+            {item.consumption.map((element, number) =>
+              <p key={number} className="mb-0">{element.material}: {element.amount.toLocaleString()} {element.unit}</p>
+            )}
+          </li>
+        );
+      });
+
       return (
         <div className="col-lg-4 col-md-6" key={index}>
           <div className="card order mt-2">
             <div className="card-body p-0">
               <ul className="font-bold mb-0 pl-3">
-                <li>Дезинфектор: {order.disinfectorId.name}</li>
-                <li>Клиент: {order.client}</li>
+                <li>Ответственный: {order.disinfectorId.occupation} {order.disinfectorId.name}</li>
+
+                <li>Физический Клиент: {order.client}</li>
+
                 <li>Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
                 <li>Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment> ПО <Moment format="HH:mm">{order.completedAt}</Moment></li>
                 <li>Адрес: {order.address}</li>
@@ -47,19 +66,31 @@ class ShowQueriesForAdmin extends Component {
                 <li>Откуда узнали: {order.advertising}</li>
                 <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{order.completedAt}</Moment></li>
                 <li>Срок гарантии (в месяцах): {order.guarantee}</li>
-                <li>Сумма: {order.cost.toLocaleString()} UZS</li>
 
-                <li>Тип Платежа: {order.paymentMethod}</li>
-
-                {order.paymentMethod === 'Безналичный' ? <li>Счет-Фактура: {order.invoice}</li> : ''}
-
-                <li>Расход Материалов:</li>
+                <li>Расход Материалов (заказ выполнили {order.disinfectors.length} чел):</li>
                 <ul className="font-bold mb-0">
                   {renderConsumptionOfOrder}
                 </ul>
-                <li>Оператор: {order.userCreated.name}</li>
-                <li>Оператор Рассмотрел Заказ? {order.operatorDecided ? 'Да' : 'Еще Нет'}</li>
-                {order.operatorDecided ? <li className="pb-2">Оператор Подтвердил? {order.operatorConfirmed ? 'Да' : 'Нет'}</li> : ''}
+
+                {order.clientType === 'individual' ?
+                  <li>Общая Сумма: {order.cost.toLocaleString()} Сум (каждому по {(order.cost / order.disinfectors.length).toFixed(2).toLocaleString()} Сум)</li>
+                  : ''}
+
+                <li>Добавил Заказ: {order.userCreated.occupation} {order.userCreated.name}</li>
+                <li>Принял Заказ: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>
+
+                {order.operatorDecided ? (
+                  <React.Fragment>
+                    <li>Оператор рассмотрел заявку</li>
+                    {order.operatorConfirmed ? (
+                      <React.Fragment>
+                        <li className="text-success">Оператор Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{order.operatorCheckedAt}</Moment>)</li>
+                        <li>Балл (0-5): {order.score}</li>
+                        <li>Отзыв Клиента: {order.clientReview ? order.clientReview : 'Нет Отзыва'}</li>
+                      </React.Fragment>
+                    ) : <li className="text-danger">Оператор Отклонил (<Moment format="DD/MM/YYYY HH:mm">{order.operatorCheckedAt}</Moment>)</li>}
+                  </React.Fragment>
+                ) : <li>Оператор еще не рассмотрел заявку</li>}
               </ul>
 
               <div className="btn-group">

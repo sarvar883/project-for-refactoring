@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getOrders, addDisinfectorComment } from '../../actions/orderActions';
@@ -41,12 +40,20 @@ class OrderInfo extends Component {
     let currentTime = new Date();
 
     return (
-      <div className="col-lg-6 mt-3">
+      <div className="col-lg-4 col-md-6 mt-3">
         <div className="card order">
           <div className="card-body p-0">
             <ul className="font-bold">
               <li>Дезинфектор: {orderObject.disinfectorId.name}</li>
-              <li>Клиент: {orderObject.client}</li>
+              {orderObject.clientType === 'corporate' ?
+                <React.Fragment>
+                  <li>Корпоративный Клиент: {orderObject.clientId.name}</li>
+                  <li>Имя клиента: {orderObject.client}</li>
+                </React.Fragment>
+                : ''}
+              {orderObject.clientType === 'individual' ?
+                <li>Физический Клиент: {orderObject.client}</li> : ''
+              }
               <li>Телефонный номер клиента: {orderObject.phone}</li>
               {orderObject.phone2 !== '' ? (<li>Запасной номер: {orderObject.phone2}</li>) : ''}
               <li>Дата и Время выполнения: <Moment format="DD/MM/YYYY HH:mm">{orderObject.dateFrom}</Moment></li>
@@ -54,7 +61,8 @@ class OrderInfo extends Component {
               <li>Тип услуги: {orderObject.typeOfService}</li>
               <li>Комментарии Оператора: {orderObject.comment ? orderObject.comment : 'Нет комментариев'}</li>
               <li>Комментарии Дезинфектора: {this.state.disinfectorComment ? this.state.disinfectorComment : 'Нет комментариев'}</li>
-              <li>Заказ Добавлен: {orderObject.userCreated.name} <Moment format="DD/MM/YYYY HH:mm">{orderObject.createdAt}</Moment></li>
+              <li>Кто принял заказ: {orderObject.userAcceptedOrder.occupation} {orderObject.userAcceptedOrder.name}</li>
+              <li>Заказ Добавлен: {orderObject.userCreated.occupation} {orderObject.userCreated.name} <Moment format="DD/MM/YYYY HH:mm">{orderObject.createdAt}</Moment></li>
             </ul>
             {this.state.addComment ? (
               <form onSubmit={this.onSubmit}>
@@ -82,13 +90,6 @@ class OrderInfo extends Component {
     )
   }
 }
-
-OrderInfo.propTypes = {
-  getOrders: PropTypes.func.isRequired,
-  addDisinfectorComment: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired
-};
 
 const mapStateToProps = state => ({
   auth: state.auth,

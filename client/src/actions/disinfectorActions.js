@@ -1,11 +1,13 @@
 import axios from 'axios';
 import {
   GET_ERRORS,
+  GET_ALL_DISINFECTORS,
   GET_DISINFECTOR_MATERIALS,
   GET_DISINF_MONTH_STATS,
   GET_DISINF_WEEK_STATS,
   GET_ADD_MATERIAL_EVENTS,
   LOADING_DISINF_STATS,
+  SET_LOADING_DISINFECTORS,
   LOADING_CURRENT_DISINFECTOR,
   LOADING_ADD_MATERIAL_EVENTS
 } from './types';
@@ -38,6 +40,24 @@ export const getWeekStats = (id, days) => (dispatch) => {
     .then(res =>
       dispatch({
         type: GET_DISINF_WEEK_STATS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
+export const getAllDisinfectorsAndSubadmins = () => (dispatch) => {
+  dispatch(loadingDisinfectors());
+  axios.get('/order/get-all-disinfectors')
+    .then(res =>
+      dispatch({
+        type: GET_ALL_DISINFECTORS,
         payload: res.data
       })
     )
@@ -92,6 +112,11 @@ export const loadingDisinfStats = () => {
   };
 }
 
+export const loadingDisinfectors = () => {
+  return {
+    type: SET_LOADING_DISINFECTORS
+  };
+}
 
 export const loadingCurrentDisinfector = () => {
   return {

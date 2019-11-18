@@ -7,6 +7,7 @@ import operatorReducer from './operatorReducer';
 import disinfectorReducer from './disinfectorReducer';
 import adminReducer from './adminReducer';
 import subadminReducer from './subadminReducer';
+import accountantReducer from './accountantReducer';
 
 export default combineReducers({
   auth: authReducer,
@@ -16,5 +17,6 @@ export default combineReducers({
   disinfector: disinfectorReducer,
   operator: operatorReducer,
   admin: adminReducer,
-  subadmin: subadminReducer
+  subadmin: subadminReducer,
+  accountant: accountantReducer
 });

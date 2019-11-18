@@ -12,7 +12,7 @@ exports.getSortedOrders = (req, res) => {
   const year = date.getFullYear();
 
   Order.find()
-    .populate('disinfectorId userCreated')
+    .populate('disinfectorId userCreated clientId userAcceptedOrder')
     .exec()
     .then(orders => {
       let sortedOrders = orders.filter(item =>
@@ -33,11 +33,10 @@ exports.getCompleteOrders = (req, res) => {
   const operatorId = req.body.id;
 
   Order.find({
-    userCreated: operatorId,
     completed: true,
     operatorDecided: false
   })
-    .populate('disinfectorId userCreated')
+    .populate('disinfectorId userCreated clientId userAcceptedOrder')
     .exec()
     .then(completeOrders => res.json(completeOrders))
     .catch(err => {
@@ -49,7 +48,7 @@ exports.getCompleteOrders = (req, res) => {
 
 exports.getCompleteOrderById = (req, res) => {
   Order.findById(req.params.id)
-    .populate('disinfectorId')
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(order => res.json(order))
     .catch(err => {
@@ -72,10 +71,15 @@ exports.confirmCompleteOrder = (req, res) => {
     .findById(req.body.object.orderId)
     .then(foundOrder => {
       foundOrder.operatorDecided = true;
-      foundOrder.operatorConfirmed = true;
-      foundOrder.clientReview = req.body.object.clientReview;
-      foundOrder.score = req.body.object.score;
-      foundOrder.operatorCheckedAt = req.body.object.operatorCheckedAt;
+      foundOrder.operatorCheckedAt = new Date();
+
+      if (req.body.object.decision === 'confirm') {
+        foundOrder.operatorConfirmed = true;
+        foundOrder.clientReview = req.body.object.clientReview;
+        foundOrder.score = req.body.object.score;
+      } else if (req.body.object.decision === 'reject') {
+        foundOrder.operatorConfirmed = false;
+      }
       return foundOrder.save();
     })
     .then(confirmedOrder => res.json(confirmedOrder))
@@ -87,8 +91,8 @@ exports.confirmCompleteOrder = (req, res) => {
 
 
 exports.getRepeatOrders = (req, res) => {
-  Order.find({ repeatedOrder: true, userCreated: req.body.operatorId, repeatedOrderDecided: false })
-    .populate('previousOrder disinfectorId')
+  Order.find({ repeatedOrder: true, repeatedOrderDecided: false })
+    .populate('previousOrder disinfectorId clientId userCreated userAcceptedOrder')
     .exec()
     .then(orders => {
       orders = orders.sort((a, b) => new Date(a.timeOfRepeat) - new Date(b.timeOfRepeat));
@@ -103,7 +107,7 @@ exports.getRepeatOrders = (req, res) => {
 
 exports.repeatOrderForm = (req, res) => {
   Order.findById(req.body.id)
-    .populate('disinfectorId previousOrder userCreated')
+    .populate('previousOrder disinfectorId clientId userCreated userAcceptedOrder')
     .exec()
     .then(order => res.json(order))
     .catch(err => {

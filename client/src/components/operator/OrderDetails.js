@@ -24,15 +24,30 @@ class OrderDetails extends Component {
               <div className="card order mt-2">
                 <div className="card-body p-0">
                   <ul className="font-bold">
-                    <li className="pb-2">Дезинфектор: {order.disinfectorId.name}</li>
-                    <li className="pb-2">Клиент: {order.client}</li>
-                    <li className="pb-2">Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
-                    <li className="pb-2">Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment></li>
-                    <li className="pb-2">Адрес: {order.address}</li>
-                    <li className="pb-2">Тип услуги: {order.typeOfService}</li>
-                    <li className="pb-2">Комментарии Оператора: {order.comment ? order.comment : 'Нет комментариев'}</li>
-                    <li className="pb-2">Комментарии Дезинфектора: {order.disinfectorComment ? order.disinfectorComment : 'Нет комментариев'}</li>
-                    <li className="pb-2">Заказ Добавлен: <Moment format="DD/MM/YYYY HH:mm">{order.createdAt}</Moment></li>
+                    <li>Ответственный: {order.disinfectorId.occupation} {order.disinfectorId.name}</li>
+
+                    {order.clientType === 'corporate' ?
+                      <React.Fragment>
+                        <li>Корпоративный Клиент: {order.clientId.name}</li>
+                        <li>Имя клиента: {order.client}</li>
+                      </React.Fragment>
+                      : ''}
+
+                    {order.clientType === 'individual' ?
+                      <li>Физический Клиент: {order.client}</li>
+                      : ''}
+
+                    <li>Телефон клиента: {order.phone}</li>
+                    {order.phone2 !== '' ? (<li>Запасной номер: {order.phone2}</li>) : ''}
+                    <li>Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
+                    <li>Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment></li>
+                    <li>Адрес: {order.address}</li>
+                    <li>Тип услуги: {order.typeOfService}</li>
+                    <li>Комментарии Оператора: {order.comment ? order.comment : 'Нет комментариев'}</li>
+                    <li>Комментарии Дезинфектора: {order.disinfectorComment ? order.disinfectorComment : 'Нет комментариев'}</li>
+                    <li>Кто принял заказ: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>
+                    <li>Кто добавил заказ: {order.userCreated.occupation} {order.userCreated.name}</li>
+                    <li>Заказ Добавлен: <Moment format="DD/MM/YYYY HH:mm">{order.createdAt}</Moment></li>
                   </ul>
                 </div>
               </div>

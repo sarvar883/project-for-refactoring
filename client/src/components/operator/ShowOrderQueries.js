@@ -46,9 +46,19 @@ class ShowOrderQueries extends Component {
         <div className="card order mt-2">
           <div className="card-body p-0">
             <ul className="font-bold mb-0 pl-3">
-              <li>Дезинфектор: {order.disinfectorId.name}</li>
-              <li>Клиент: {order.client}</li>
-              <li>Тел клиента: {order.phone}</li>
+              <li>Ответственный: {order.disinfectorId.occupation} {order.disinfectorId.name}</li>
+              {order.clientType === 'corporate' ?
+                <React.Fragment>
+                  <li>Корпоративный Клиент: {order.clientId.name}</li>
+                  <li>Имя клиента: {order.client}</li>
+                </React.Fragment>
+                : ''}
+
+              {order.clientType === 'individual' ?
+                <li>Физический Клиент: {order.client}</li>
+                : ''}
+
+              <li>Телефон клиента: {order.phone}</li>
               {order.phone2 !== '' ? <li>Запасной номер: {order.phone2}</li> : ''}
               <li>Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
               <li>Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment> ПО <Moment format="HH:mm">{order.completedAt}</Moment></li>

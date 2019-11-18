@@ -3,9 +3,20 @@ const Schema = mongoose.Schema;
 
 const orderSchema = new Schema({
   disinfectorId: {
+    // кому давали заказ
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
+  clientType: {
+    type: String
+  },
+
+  // for corporate clients only
+  clientId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Client'
+  },
+
   client: {
     type: String
   },
@@ -34,9 +45,21 @@ const orderSchema = new Schema({
     type: String
   },
   userCreated: {
+    // who filled created-order form
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
+  userAcceptedOrder: {
+    // кто принял заказ
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  createdAt: {
+    // когда заказ добавлен
+    type: Date,
+    default: Date.now
+  },
+
   // repeat order
   repeatedOrder: {
     type: Boolean,
@@ -58,29 +81,33 @@ const orderSchema = new Schema({
   },
 
   // disinfector completes the order
+  disinfectors: [{
+    user: {
+      // дезинфекторы, которые выполняли заказ
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    consumption: [{
+      material: {
+        type: String
+      },
+      amount: {
+        type: Number
+      },
+      unit: {
+        type: String
+      }
+    }]
+  }],
   completed: {
     type: Boolean,
     default: false
   },
-  consumption: [{
-    material: {
-      type: String
-    },
-    amount: {
-      type: Number
-    },
-    unit: {
-      type: String
-    }
-  }],
   guarantee: {
     type: Number // in months
   },
-  paymentMethod: {
+  contractNumber: {
     type: String
-  },
-  invoice: {
-    type: Number
   },
   cost: {
     type: Number
@@ -110,6 +137,22 @@ const orderSchema = new Schema({
   },
 
 
+  // accountant confirms order (he also inputs cost)
+  accountantDecided: {
+    type: Boolean,
+    default: false
+  },
+  accountantConfirmed: {
+    type: Boolean,
+    default: false
+  },
+  invoice: {
+    type: String
+  },
+  accountantCheckedAt: {
+    type: Date
+  },
+
   // for admin
   adminCheckedAt: {
     type: Date
@@ -121,12 +164,6 @@ const orderSchema = new Schema({
   adminConfirmed: {
     type: Boolean,
     default: false
-  },
-
-
-  createdAt: {
-    type: Date,
-    default: Date.now
   }
 });
 

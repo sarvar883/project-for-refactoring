@@ -1,5 +1,7 @@
 import axios from 'axios';
 import {
+  CORPORATE_CLIENTS,
+  GET_ALL_USERS,
   GET_DISINFECTORS,
   SET_LOADING,
   SET_LOADING_REPEAT_ORDER,
@@ -11,6 +13,43 @@ import {
   GET_COMPLETE_ORDERS_IN_MONTH
   // ADD_ORDER
 } from './types';
+
+
+// get corporate clients
+export const getCorporateClients = () => (dispatch) => {
+  axios.post('/order/get-corporate-clients')
+    .then(res =>
+      dispatch({
+        type: CORPORATE_CLIENTS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
+// get all users
+export const getAllUsers = () => (dispatch) => {
+  dispatch(setLoading());
+  axios.post('/order/get-all-users')
+    .then(res =>
+      dispatch({
+        type: GET_ALL_USERS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+}
 
 
 // get all disinfectors

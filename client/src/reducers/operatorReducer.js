@@ -15,7 +15,11 @@ const initialState = {
   repeatOrders: [],
   orderToConfirm: {
     orderId: {},
-    disinfectorId: {}
+    disinfectorId: {},
+    userCreated: {},
+    userAcceptedOrder: {},
+    clientId: {},
+    disinfectors: []
   },
   stats: {
     orders: [],

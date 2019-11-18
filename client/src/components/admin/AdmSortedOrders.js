@@ -75,7 +75,11 @@ class AdmSortedOrders extends Component {
       for (let i = 0; i < ordersInState.length; i++) {
         if (ordersInState[i]._id.toString() === order._id.toString()) {
           ordersInState[i].disinfectorId = order.disinfectorId;
+          ordersInState[i].userCreated = order.userCreated;
+          ordersInState[i].userAcceptedOrder = order.userAcceptedOrder;
+          ordersInState[i].clientType = order.clientType;
           ordersInState[i].client = order.client;
+          ordersInState[i].clientId = order.clientId;
           ordersInState[i].address = order.address;
           ordersInState[i].dateFrom = order.dateFrom;
           ordersInState[i].phone = order.phone;
@@ -157,8 +161,18 @@ class AdmSortedOrders extends Component {
             <div className="card-body p-0">
               <ul className="font-bold mb-0">
                 <li>Время: <Moment format="HH:mm">{element.dateFrom}</Moment></li>
-                <li>Дезинфектор: {element.disinfectorId.name}</li>
-                <li>Клиент: {element.client}</li>
+                <li>Ответственный: {element.disinfectorId.occupation} {element.disinfectorId.name}</li>
+                {element.clientType === 'corporate' ?
+                  <React.Fragment>
+                    <li>Корпоративный Клиент: {element.clientId.name}</li>
+                    <li>Имя клиента: {element.client}</li>
+                  </React.Fragment>
+                  : ''}
+
+                {element.clientType === 'individual' ?
+                  <li>Физический Клиент: {element.client}</li>
+                  : ''}
+
                 <li>Тел клиента: {element.phone}</li>
                 <li>Адрес: {element.address}</li>
                 <li>Тип услуги: {element.typeOfService}</li>

@@ -8,13 +8,17 @@ import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 import isEmpty from '../../validation/is-empty';
 import advertisements from '../common/advertisements';
 
-import { getDisinfectors, getOrderForEdit, editOrder } from '../../actions/orderActions';
+import { getDisinfectors, getAllUsers, getCorporateClients, getOrderForEdit, editOrder } from '../../actions/orderActions';
 
 class EditOrder extends Component {
   state = {
     _id: '',
     disinfectorId: '',
+    userAcceptedOrder: '',
+    clientType: '',
     client: '',
+    clientId: '',
+
     address: '',
     date: '',
     timeFrom: '',
@@ -30,6 +34,8 @@ class EditOrder extends Component {
   componentDidMount() {
     this.props.getOrderForEdit(this.props.match.params.orderId);
     this.props.getDisinfectors();
+    this.props.getCorporateClients();
+    this.props.getAllUsers();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -44,10 +50,18 @@ class EditOrder extends Component {
       let orderForEdit = nextProps.order.orderById;
 
       orderForEdit.disinfectorId = !isEmpty(orderForEdit.disinfectorId) ? orderForEdit.disinfectorId : '';
+
+      orderForEdit.userAcceptedOrder = !isEmpty(orderForEdit.userAcceptedOrder) ? orderForEdit.userAcceptedOrder._id : '';
+
+      orderForEdit.clientType = !isEmpty(orderForEdit.clientType) ? orderForEdit.clientType : '';
+      orderForEdit.clientId = !isEmpty(orderForEdit.clientId) ? orderForEdit.clientId._id : '';
+
       orderForEdit.client = !isEmpty(orderForEdit.client) ? orderForEdit.client : '';
       orderForEdit.address = !isEmpty(orderForEdit.address) ? orderForEdit.address : '';
       orderForEdit.phone = !isEmpty(orderForEdit.phone) ? orderForEdit.phone : '';
       orderForEdit.typeOfService = !isEmpty(orderForEdit.typeOfService) ? orderForEdit.typeOfService : '';
+      orderForEdit.advertising = !isEmpty(orderForEdit.advertising) ? orderForEdit.advertising : '';
+
       orderForEdit.comment = !isEmpty(orderForEdit.comment) ? orderForEdit.comment : '';
 
       if (isEmpty(orderForEdit.phone2)) {
@@ -86,7 +100,10 @@ class EditOrder extends Component {
       this.setState({
         _id: orderForEdit._id,
         disinfectorId: orderForEdit.disinfectorId._id,
+        userAcceptedOrder: orderForEdit.userAcceptedOrder,
+        clientType: orderForEdit.clientType,
         client: orderForEdit.client,
+        clientId: orderForEdit.clientId,
         address: orderForEdit.address,
         date: defaultDateString,
         timeFrom: defaultHourString,
@@ -142,7 +159,10 @@ class EditOrder extends Component {
       const order = {
         _id: this.state._id,
         disinfectorId: this.state.disinfectorId,
+        userAcceptedOrder: this.state.userAcceptedOrder,
+        clientType: this.state.clientType,
         client: this.state.client,
+        clientId: this.state.clientId,
         address: this.state.address,
         date: this.state.date,
         dateFrom: dateStringFrom,
@@ -159,12 +179,24 @@ class EditOrder extends Component {
 
   render() {
     const { errors } = this.state;
-    const disinfectors = this.props.order.disinfectors ? this.props.order.disinfectors : [];
-    const disinfectorOptions = [
+    console.log('state', this.state);
+    let allUsers = this.props.order.allUsers ? this.props.order.allUsers.sort((x, y) => x.name - y.name) : [];
+    const userOptions = [
+      { label: '-- Кто принял заказ? --', value: 0 }
+    ];
+    allUsers.forEach(item => {
+      userOptions.push({
+        label: `${item.occupation}, ${item.name}`,
+        value: item._id
+      });
+    });
+
+    let disinfectors = allUsers.filter(user => user.occupation === 'disinfector' || user.occupation === 'subadmin');
+    let disinfectorOptions = [
       { label: '-- Выберите ответственного дезинфектора --', value: 0 }
     ];
     disinfectors.forEach(worker => disinfectorOptions.push(
-      { label: worker.name, value: worker._id }
+      { label: `${worker.name}, ${worker.occupation}`, value: worker._id }
     ));
 
     const orderTypes = [
@@ -177,6 +209,22 @@ class EditOrder extends Component {
       { label: 'MX', value: 'MX' },
       { label: 'KOMP', value: 'KOMP' }
     ];
+
+    const clientTypes = [
+      { label: '-- Выберите тип клиента --', value: '' },
+      { label: 'Корпоративный', value: 'corporate' },
+      { label: 'Физический', value: 'individual' }
+    ];
+
+    const corporateClients = [
+      { label: '-- Выберите корпоративного клиента --', value: '' }
+    ];
+    this.props.order.corporateClients.forEach(item => {
+      corporateClients.push({
+        label: item.name,
+        value: item._id
+      });
+    });
 
     const advOptions = [
       { label: '-- Откуда узнали о нас? --', value: 0 }
@@ -199,6 +247,23 @@ class EditOrder extends Component {
                   <div className="card-body">
                     <h1 className="display-5 text-center">Редактировать Заказ</h1>
                     <form noValidate onSubmit={this.onSubmit}>
+                      <SelectListGroup
+                        name="clientType"
+                        value={this.state.clientType}
+                        onChange={this.onChange}
+                        options={clientTypes}
+                        error={errors.clientType}
+                      />
+                      {this.state.clientType === 'corporate' ? (
+                        <SelectListGroup
+                          name="clientId"
+                          value={this.state.clientId}
+                          onChange={this.onChange}
+                          options={corporateClients}
+                          error={errors.clientId}
+                        />
+                      ) : ''}
+
                       <TextFieldGroup
                         label="Введите Имя Клиента"
                         type="text"
@@ -216,22 +281,6 @@ class EditOrder extends Component {
                         error={errors.address}
                       />
                       <TextFieldGroup
-                        label="Дата выполнения заказа"
-                        name="date"
-                        type="date"
-                        value={this.state.date}
-                        onChange={this.onChange}
-                        error={errors.date}
-                      />
-                      <TextFieldGroup
-                        label="Время (часы:минуты:AM/PM) C"
-                        name="timeFrom"
-                        type="time"
-                        value={this.state.timeFrom}
-                        onChange={this.onChange}
-                        error={errors.timeFrom}
-                      />
-                      <TextFieldGroup
                         label="Телефон"
                         type="phone"
                         name="phone"
@@ -239,6 +288,7 @@ class EditOrder extends Component {
                         onChange={this.onChange}
                         error={errors.phone}
                       />
+
                       {this.state.hasSecondPhone ? (
                         <React.Fragment>
                           <TextFieldGroup
@@ -254,6 +304,23 @@ class EditOrder extends Component {
                       ) : (
                           <button className="btn btn-success mb-3" onClick={this.toggleSecondPhone}>Добавить другой номер</button>
                         )}
+
+                      <TextFieldGroup
+                        label="Дата выполнения заказа"
+                        name="date"
+                        type="date"
+                        value={this.state.date}
+                        onChange={this.onChange}
+                        error={errors.date}
+                      />
+                      <TextFieldGroup
+                        label="Время (часы:минуты:AM/PM) C"
+                        name="timeFrom"
+                        type="time"
+                        value={this.state.timeFrom}
+                        onChange={this.onChange}
+                        error={errors.timeFrom}
+                      />
                       <label htmlFor="typeOfService" className="d-block">Выберите тип заказа</label>
                       <SelectListGroup
                         name="typeOfService"
@@ -281,6 +348,14 @@ class EditOrder extends Component {
                             </select>
                           </div>
                         )}
+
+                      <SelectListGroup
+                        name="userAcceptedOrder"
+                        value={this.state.userAcceptedOrder}
+                        onChange={this.onChange}
+                        options={userOptions}
+                        error={errors.userAcceptedOrder}
+                      />
                       <TextAreaFieldGroup
                         name="comment"
                         placeholder="Комментарии (Это поле не обязательное)"
@@ -308,4 +383,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getDisinfectors, getOrderForEdit, editOrder })(withRouter(EditOrder));
+export default connect(mapStateToProps, { getDisinfectors, getAllUsers, getCorporateClients, getOrderForEdit, editOrder })(withRouter(EditOrder));

@@ -31,28 +31,42 @@ class ConfirmOrder extends Component {
     e.preventDefault();
     const object = {
       orderId: this.props.operator.orderToConfirm._id,
+      decision: 'confirm',
       clientReview: this.state.clientReview,
-      score: this.state.score,
-      operatorCheckedAt: new Date()
+      score: this.state.score
     };
     this.props.confirmCompleteOrder(object, this.props.history);
   }
 
   reject = (e) => {
     e.preventDefault();
-    console.log('reject');
+    const object = {
+      orderId: this.props.operator.orderToConfirm._id,
+      decision: 'reject'
+    };
+    this.props.confirmCompleteOrder(object, this.props.history);
   }
 
   render() {
     const completeOrder = this.props.operator.orderToConfirm;
     const { errors } = this.state;
 
-    let consumptionRender;
-    if (completeOrder.consumption) {
-      consumptionRender = completeOrder.consumption.map((item, index) =>
-        <li key={index}>{item.material} : {item.amount} {item.unit}</li>
-      );
-    }
+    let consumptionArray = [];
+    completeOrder.disinfectors.forEach(item => {
+      consumptionArray.push({
+        user: item.user,
+        consumption: item.consumption
+      });
+    });
+
+    let consumptionRender = consumptionArray.map((item, index) =>
+      <li key={index}>
+        <p className="mb-0">Пользователь: {item.user.occupation} {item.user.name}</p>
+        {item.consumption.map((element, number) =>
+          <p key={number} className="mb-0">{element.material}: {element.amount.toLocaleString()} {element.unit}</p>
+        )}
+      </li>
+    );
 
     return (
       <div className="container-fluid">
@@ -64,8 +78,34 @@ class ConfirmOrder extends Component {
               <div className="card order mt-2">
                 <div className="card-body p-0">
                   <ul className="font-bold mb-0">
-                    <li>Дезинфектор: {completeOrder.disinfectorId.name}</li>
-                    <li>Клиент: {completeOrder.client}</li>
+                    <li>Ответственный: {completeOrder.disinfectorId.occupation} {completeOrder.disinfectorId.name}</li>
+
+
+                    {completeOrder.clientType === 'corporate' && !completeOrder.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
+
+                    {completeOrder.clientType === 'corporate' && completeOrder.accountantDecided ?
+                      <React.Fragment>
+                        <li>Бухгалтер рассмотрел заявку</li>
+                        {completeOrder.accountantConfirmed ? (
+                          <React.Fragment>
+                            <li className="text-success">Бухгалтер Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{completeOrder.accountantCheckedAt}</Moment>)</li>
+                            <li>Счет-Фактура: {completeOrder.invoice}</li>
+                            <li>Общая Сумма: {completeOrder.cost.toLocaleString()} (каждому по {(completeOrder.cost / completeOrder.disinfectors.length).toLocaleString()})</li>
+                          </React.Fragment>
+                        ) : <li className="text-danger">Бухгалтер Отклонил (<Moment format="DD/MM/YYYY HH:mm">{completeOrder.accountantCheckedAt}</Moment>)</li>}
+                      </React.Fragment>
+                      : ''}
+
+                    {completeOrder.clientType === 'corporate' ?
+                      <React.Fragment>
+                        <li>Корпоративный Клиент: {completeOrder.clientId.name}</li>
+                        <li>Имя клиента: {completeOrder.client}</li>
+                      </React.Fragment>
+                      : ''}
+
+                    {completeOrder.clientType === 'individual' ?
+                      <li>Физический Клиент: {completeOrder.client}</li>
+                      : ''}
                     <li>Телефон клиента: {completeOrder.phone}</li>
                     {completeOrder.phone2 !== '' ? <li>Запасной номер: {completeOrder.phone2}</li> : ''}
                     <li>Дата: <Moment format="DD/MM/YYYY">{completeOrder.dateFrom}</Moment></li>
@@ -74,15 +114,21 @@ class ConfirmOrder extends Component {
                     <li>Тип услуги: {completeOrder.typeOfService}</li>
                     <li>Комментарии Оператора: {completeOrder.comment ? completeOrder.comment : 'Нет комментариев'}</li>
                     <li>Комментарии Дезинфектора: {completeOrder.disinfectorComment ? completeOrder.disinfectorComment : 'Нет комментариев'}</li>
-                    <li>Расход Материалов:</li>
+
+                    <li>Расход Материалов (заказ выполнили {completeOrder.disinfectors.length} чел):</li>
                     <ul className="font-bold mb-0">
                       {consumptionRender}
                     </ul>
-                    <li>Тип Платежа: {completeOrder.paymentMethod}</li>
 
-                    {completeOrder.paymentMethod === 'Безналичный' ? <li>Счет-Фактура: {completeOrder.invoice}</li> : ''}
+                    {completeOrder.clientType === 'corporate' ?
+                      <li>Номер Договора: {completeOrder.contractNumber}</li>
+                      : ''}
+                    {completeOrder.clientType === 'individual' ?
+                      <li>Общая Сумма: {completeOrder.cost.toLocaleString()} UZS (каждому по {(completeOrder.cost / completeOrder.disinfectors.length).toLocaleString()} UZS)</li>
+                      : ''}
 
-                    <li>Общая Сумма: {completeOrder.cost ? completeOrder.cost.toLocaleString() : ''} UZS</li>
+                    <li>Заказ принял: {completeOrder.userAcceptedOrder.occupation} {completeOrder.userAcceptedOrder.name}</li>
+                    <li>Заказ добавил: {completeOrder.userCreated.occupation} {completeOrder.userCreated.name}</li>
                     <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{completeOrder.completedAt}</Moment></li>
                   </ul>
                   <button className="btn btn-danger" onClick={this.reject}>Отменить Выполнение Заказа</button>
@@ -97,9 +143,11 @@ class ConfirmOrder extends Component {
                 <h2 className="text-center">Форма Подтверждения Заказа</h2>
                 <form noValidate onSubmit={this.onSubmit}>
                   <TextFieldGroup
-                    label="Полученный Балл за Выполнение Заказа:"
+                    label="Полученный Балл за Выполнение Заказа (0-5):"
                     type="number"
                     name="score"
+                    min="0"
+                    max="5"
                     value={this.state.score}
                     onChange={this.onChange}
                     error={errors.score}

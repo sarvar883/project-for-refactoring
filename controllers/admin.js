@@ -21,7 +21,7 @@ exports.getSortedOrders = (req, res) => {
   const year = date.getFullYear();
 
   Order.find()
-    .populate('disinfectorId userCreated')
+    .populate('disinfectorId userCreated clientId userAcceptedOrder')
     .exec()
     .then(orders => {
       let sortedOrders = orders.filter(item =>
@@ -41,9 +41,10 @@ exports.getSortedOrders = (req, res) => {
 exports.getOrderQueriesForAdmin = (req, res) => {
   Order.find({
     completed: true,
-    adminDecided: false
+    adminDecided: false,
+    clientType: 'individual'
   })
-    .populate('disinfectorId userCreated')
+    .populate('disinfectorId userCreated userAcceptedOrder disinfectors.user')
     .exec()
     .then(orderQueries => res.json(orderQueries))
     .catch(err => {
@@ -276,36 +277,64 @@ exports.matComingWeek = (req, res) => {
 
 
 exports.addClient = (req, res) => {
-  const { errors, isValid } = validateAddClient(req.body.object);
+  // const { errors, isValid } = validateAddClient(req.body.object);
+  // // Check Validation
+  // if (!isValid) {
+  //   // Return any errors with 400 status
+  //   return res.status(400).json(errors);
+  // }
 
-  // Check Validation
-  if (!isValid) {
-    // Return any errors with 400 status
-    return res.status(400).json(errors);
+  let errors = {};
+
+  if (req.body.object.type === 'corporate') {
+    // case insensitive search
+    Client.findOne({ name: new RegExp(`^${req.body.object.name}$`, 'i') })
+      .then(client => {
+        if (client) {
+          errors.name = 'Корпоративный Клиент с таким именем уже существует';
+          return res.status(400).json(errors);
+        } else {
+          const newClient = new Client({
+            _id: mongoose.Types.ObjectId(),
+            type: req.body.object.type,
+            name: req.body.object.name,
+            orders: [],
+            createdAt: req.body.object.createdAt
+          });
+          return newClient.save();
+        }
+      })
+      .then(savedClient => res.json(savedClient))
+      .catch(err => {
+        console.log('addClient ERROR', err);
+        res.status(400).json(err);
+      });
+
+  } else if (req.body.object.type === 'individual') {
+    Client.findOne({ phone: req.body.object.phone })
+      .then(client => {
+        if (client) {
+          errors.phone = 'Физический Клиент с таким номером уже существует';
+          return res.status(400).json(errors);
+        } else {
+          const newClient = new Client({
+            _id: mongoose.Types.ObjectId(),
+            type: req.body.object.type,
+            name: req.body.object.name,
+            phone: req.body.object.phone,
+            address: req.body.object.address,
+            orders: [],
+            createdAt: req.body.object.createdAt
+          });
+          return newClient.save();
+        }
+      })
+      .then(savedClient => res.json(savedClient))
+      .catch(err => {
+        console.log('addClient ERROR', err);
+        res.status(400).json(err);
+      });
   }
-
-  Client.findOne({ phone: req.body.object.phone })
-    .then(client => {
-      if (client) {
-        errors.phone = 'Клиент с таким номером уже существует';
-        return res.status(400).json(errors);
-      } else {
-        const newClient = new Client({
-          _id: mongoose.Types.ObjectId(),
-          name: req.body.object.name,
-          phone: req.body.object.phone,
-          address: req.body.object.address,
-          orders: [],
-          createdAt: req.body.object.createdAt
-        });
-        return newClient.save();
-      }
-    })
-    .then(savedClient => res.json(savedClient))
-    .catch(err => {
-      console.log('addClient ERROR', err);
-      res.status(400).json(err);
-    });
 };
 
 

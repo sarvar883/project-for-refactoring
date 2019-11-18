@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getDisinfectors, createOrder } from '../../actions/orderActions';
+import { getCorporateClients, getAllUsers, createOrder } from '../../actions/orderActions';
 import TextFieldGroup from '../common/TextFieldGroup';
 import SelectListGroup from '../common/SelectListGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
@@ -24,7 +23,11 @@ class CreateOrder extends Component {
 
     this.state = {
       disinfectorId: '',
+      userAcceptedOrder: '',
       client: '',
+      clientType: '',
+      clientId: '',
+
       address: '',
       date: date,
       timeFrom: hour,
@@ -39,7 +42,8 @@ class CreateOrder extends Component {
   }
 
   componentDidMount() {
-    this.props.getDisinfectors();
+    this.props.getCorporateClients();
+    this.props.getAllUsers();
     window.scrollTo({ top: 0 });
   }
 
@@ -92,6 +96,8 @@ class CreateOrder extends Component {
       const newOrder = {
         disinfectorId: this.state.disinfectorId,
         client: this.state.client,
+        clientType: this.state.clientType,
+        clientId: this.state.clientId,
         address: this.state.address,
         date: this.state.date,
         dateFrom: dateStringFrom,
@@ -101,9 +107,9 @@ class CreateOrder extends Component {
         typeOfService: this.state.typeOfService,
         advertising: this.state.advertising,
         comment: this.state.comment,
-        userCreated: this.props.auth.user.id
+        userCreated: this.props.auth.user.id,
+        userAcceptedOrder: this.state.userAcceptedOrder
       };
-
       this.props.createOrder(newOrder, this.props.history, this.props.auth.user.occupation);
     }
   };
@@ -111,7 +117,18 @@ class CreateOrder extends Component {
   render() {
     const { errors } = this.state;
 
-    const disinfectors = this.props.order.disinfectors ? this.props.order.disinfectors : [];
+    let allUsers = this.props.order.allUsers ? this.props.order.allUsers.sort((x, y) => x.name - y.name) : [];
+    const userOptions = [
+      { label: '-- Кто принял заказ? --', value: 0 }
+    ];
+    allUsers.forEach(item => {
+      userOptions.push({
+        label: `${item.occupation}, ${item.name}`,
+        value: item._id
+      });
+    });
+
+    let disinfectors = allUsers.filter(user => user.occupation === 'disinfector' || user.occupation === 'subadmin');
     const disinfectorOptions = [
       { label: '-- Выберите ответственного дезинфектора --', value: 0 }
     ];
@@ -130,10 +147,25 @@ class CreateOrder extends Component {
       { label: 'KOMP', value: 'KOMP' }
     ];
 
+    const clientTypes = [
+      { label: '-- Выберите тип клиента --', value: '' },
+      { label: 'Корпоративный', value: 'corporate' },
+      { label: 'Физический', value: 'individual' }
+    ];
+
+    const corporateClients = [
+      { label: '-- Выберите корпоративного клиента --', value: '' }
+    ];
+    this.props.order.corporateClients.forEach(item => {
+      corporateClients.push({
+        label: item.name,
+        value: item._id
+      });
+    });
+
     const advOptions = [
       { label: '-- Откуда узнали о нас? --', value: 0 }
     ];
-
     advertisements.forEach(item => {
       advOptions.push({
         label: item.label,
@@ -149,6 +181,23 @@ class CreateOrder extends Component {
               <div className="card-body">
                 <h1 className="display-4 text-center">Создать Заказ</h1>
                 <form noValidate onSubmit={this.onSubmit}>
+                  <SelectListGroup
+                    name="clientType"
+                    value={this.state.clientType}
+                    onChange={this.onChange}
+                    options={clientTypes}
+                    error={errors.clientType}
+                  />
+                  {this.state.clientType === 'corporate' ? (
+                    <SelectListGroup
+                      name="clientId"
+                      value={this.state.clientId}
+                      onChange={this.onChange}
+                      options={corporateClients}
+                      error={errors.clientId}
+                    />
+                  ) : ''}
+
                   <TextFieldGroup
                     label="Введите Имя Клиента"
                     type="text"
@@ -164,22 +213,6 @@ class CreateOrder extends Component {
                     value={this.state.address}
                     onChange={this.onChange}
                     error={errors.address}
-                  />
-                  <TextFieldGroup
-                    label="Дата выполнения заказа"
-                    name="date"
-                    type="date"
-                    value={this.state.date}
-                    onChange={this.onChange}
-                    error={errors.date}
-                  />
-                  <TextFieldGroup
-                    label="Время (часы:минуты:AM/PM) C"
-                    name="timeFrom"
-                    type="time"
-                    value={this.state.timeFrom}
-                    onChange={this.onChange}
-                    error={errors.timeFrom}
                   />
                   <TextFieldGroup
                     label="Телефон"
@@ -204,6 +237,23 @@ class CreateOrder extends Component {
                   ) : (
                       <button className="btn btn-success mb-3" onClick={this.toggleSecondPhone}>Добавить другой номер</button>
                     )}
+
+                  <TextFieldGroup
+                    label="Дата выполнения заказа"
+                    name="date"
+                    type="date"
+                    value={this.state.date}
+                    onChange={this.onChange}
+                    error={errors.date}
+                  />
+                  <TextFieldGroup
+                    label="Время (часы:минуты:AM/PM) C"
+                    name="timeFrom"
+                    type="time"
+                    value={this.state.timeFrom}
+                    onChange={this.onChange}
+                    error={errors.timeFrom}
+                  />
                   <SelectListGroup
                     name="typeOfService"
                     value={this.state.typeOfService}
@@ -229,6 +279,13 @@ class CreateOrder extends Component {
                         options={disinfectorOptions}
                       />
                     )}
+                  <SelectListGroup
+                    name="userAcceptedOrder"
+                    value={this.state.userAcceptedOrder}
+                    onChange={this.onChange}
+                    options={userOptions}
+                    error={errors.userAcceptedOrder}
+                  />
                   <TextAreaFieldGroup
                     name="comment"
                     placeholder="Комментарии (Это поле не обязательное)"
@@ -247,18 +304,10 @@ class CreateOrder extends Component {
   }
 }
 
-CreateOrder.propTypes = {
-  getDisinfectors: PropTypes.func.isRequired,
-  createOrder: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
-  order: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired
-};
-
 const mapStateToProps = (state) => ({
   auth: state.auth,
   order: state.order,
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getDisinfectors, createOrder })(withRouter(CreateOrder));
+export default connect(mapStateToProps, { getCorporateClients, getAllUsers, createOrder })(withRouter(CreateOrder));

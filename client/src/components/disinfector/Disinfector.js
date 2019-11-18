@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getOrders } from '../../actions/orderActions';
@@ -14,57 +13,52 @@ class Disinfector extends Component {
   }
 
   render() {
-    let currentMaterials = this.props.auth.user.materials.map((item, index) => {
-      return (
-        <li key={index}>{item.material}: {item.amount.toLocaleString()} {item.unit}</li>
-      );
-    });
+    let currentMaterials = this.props.auth.user.materials.map((item, index) =>
+      <li key={index}>{item.material}: {item.amount.toLocaleString()} {item.unit}</li>
+    );
 
     return (
-      <div className="container">
-        <div className="row">
-          <div className="col-12">
-            <h1 className="text-center">Страница Дезинфектора {this.props.auth.user.name}</h1>
-          </div>
-        </div>
-
-        {this.props.auth.loadingUser ? <Spinner /> : (
+      <React.Fragment>
+        <div className="container">
           <div className="row">
             <div className="col-12">
-              <h3 className="text-center">Ваши имеющиеся материалы</h3>
+              <h1 className="text-center">Страница Дезинфектора {this.props.auth.user.name}</h1>
             </div>
+          </div>
 
-            <div className="col-md-6 mx-auto mt-3">
-              <div className="card order">
-                <div className="card-body p-0">
-                  <ul className="font-bold mb-0 pl-3">
-                    {currentMaterials}
-                  </ul>
+          {this.props.auth.loadingUser ? <Spinner /> : (
+            <div className="row">
+              <div className="col-12">
+                <h3 className="text-center">Ваши имеющиеся материалы</h3>
+              </div>
+
+              <div className="col-md-6 mx-auto mt-3">
+                <div className="card order">
+                  <div className="card-body p-0">
+                    <ul className="font-bold mb-0 pl-3">
+                      {currentMaterials}
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        {this.props.order.loading ? <Spinner /> : (
-          <div className="row">
-            <div className="col-12">
-              <h2 className="text-center mt-3">Ваши Заказы</h2>
+        <div className="container-fluid">
+          {this.props.order.loading ? <Spinner /> : (
+            <div className="row">
+              <div className="col-12">
+                <h2 className="text-center mt-3">Ваши Заказы</h2>
+              </div>
+              <DisplayOrders />
             </div>
-            <DisplayOrders />
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </React.Fragment>
     );
   }
 }
-
-Disinfector.propTypes = {
-  getOrders: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
-  order: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired
-};
 
 const mapStateToProps = (state) => ({
   auth: state.auth,

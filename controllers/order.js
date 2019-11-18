@@ -9,6 +9,24 @@ const validateOrderInput = require('../validation/order');
 const io = require('../socket');
 
 
+// get all corporate clients
+exports.getCorporateClients = (req, res) => {
+  Client.find({ type: 'corporate' })
+    .then(clients => res.json(clients))
+    .catch(err => {
+      console.log('getCorporateClients ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.getAllUsers = (req, res) => {
+  User.find()
+    .then(users => res.json(users))
+    .catch(err => console.log('getAllUsers ERROR', err));
+};
+
+
 // get disinfectors and subadmins
 exports.getAllDisinfectors = (req, res) => {
   User.find()
@@ -27,9 +45,10 @@ exports.createOrder = (req, res) => {
     return res.status(400).json(errors);
   }
 
-  const order = new Order({
+  let orderObject = {
     _id: mongoose.Types.ObjectId(),
     disinfectorId: req.body.disinfectorId,
+    clientType: req.body.clientType,
     client: req.body.client,
     address: req.body.address,
     dateFrom: req.body.dateFrom,
@@ -40,37 +59,50 @@ exports.createOrder = (req, res) => {
     comment: req.body.comment,
     disinfectorComment: '',
     userCreated: req.body.userCreated,
+    userAcceptedOrder: req.body.userAcceptedOrder,
     repeatedOrder: false
-  });
+  };
+  if (req.body.clientType === 'corporate') {
+    orderObject.clientId = req.body.clientId;
+  }
 
+  const order = new Order(orderObject);
   order.save()
     .then((savedOrder) => {
-
-      Client.findOne({ phone: req.body.phone })
-        .then(client => {
-          if (client) {
-            // if we have a client with this phone number
+      if (req.body.clientType === 'corporate') {
+        Client.findById(req.body.clientId)
+          .then(client => {
             client.orders.push(savedOrder._id);
             client.save();
-          } else {
-            let array = [];
-            array.push(savedOrder._id);
+          });
 
-            const newClient = new Client({
-              _id: mongoose.Types.ObjectId(),
-              name: req.body.client,
-              phone: req.body.phone,
-              address: req.body.address,
-              orders: array,
-              createdAt: new Date()
-            });
-            newClient.save();
-          }
-        });
+      } else if (req.body.clientType === 'individual') {
+        Client.findOne({ phone: req.body.phone })
+          .then(client => {
+            if (client) {
+              // if we have a client with this phone number
+              client.orders.push(savedOrder._id);
+              client.save();
+            } else {
+              let array = [];
+              array.push(savedOrder._id);
 
+              const newClient = new Client({
+                _id: mongoose.Types.ObjectId(),
+                type: req.body.clientType,
+                name: req.body.client,
+                phone: req.body.phone,
+                address: req.body.address,
+                orders: array,
+                createdAt: new Date()
+              });
+              newClient.save();
+            }
+          });
+      }
 
       Order.findOne(order)
-        .populate('disinfectorId userCreated')
+        .populate('disinfectorId userCreated userAcceptedOrder clientId')
         .exec()
         .then(savedOrder => {
           io.getIO().emit('createOrder', {
@@ -92,7 +124,10 @@ exports.editOrder = (req, res) => {
   Order.findById(order._id)
     .then(orderForEdit => {
       orderForEdit.disinfectorId = order.disinfectorId;
+      orderForEdit.userAcceptedOrder = order.userAcceptedOrder;
+      orderForEdit.clientType = order.clientType;
       orderForEdit.client = order.client;
+      orderForEdit.clientId = order.clientId;
       orderForEdit.address = order.address;
       orderForEdit.dateFrom = order.dateFrom;
       orderForEdit.phone = order.phone;
@@ -103,7 +138,7 @@ exports.editOrder = (req, res) => {
 
       orderForEdit.save()
         .then(editedOrder => {
-          editedOrder.populate('disinfectorId')
+          editedOrder.populate('disinfectorId userCreated userAcceptedOrder clientId')
             .execPopulate()
             .then(item => {
               io.getIO().emit('editOrder', {
@@ -152,6 +187,7 @@ exports.createRepeatOrder = (req, res) => {
   Order.findById(req.body.order.id)
     .then(order => {
       order.disinfectorId = req.body.order.disinfectorId;
+      order.clientType = req.body.order.clientType;
       order.client = req.body.order.client;
       order.address = req.body.order.address;
       order.dateFrom = req.body.order.dateFrom;
@@ -160,9 +196,12 @@ exports.createRepeatOrder = (req, res) => {
       order.typeOfService = req.body.order.typeOfService;
       order.advertising = req.body.order.advertising;
       order.comment = req.body.order.comment;
-      order.phone = req.body.order.phone;
       order.repeatedOrderDecided = true;
       order.repeatedOrderNeeded = true;
+
+      if (req.body.order.clientType === 'corporate') {
+        order.clientId = req.body.order.clientId;
+      }
 
       order.save()
         .then((savedOrder) => {
@@ -212,7 +251,7 @@ exports.getOrders = (req, res) => {
   Order.find({
     disinfectorId: req.body.userId
   })
-    .populate('disinfectorId userCreated')
+    .populate('disinfectorId userCreated clientId userAcceptedOrder')
     .exec()
     .then(orders => {
       orders = orders.filter(item => (!item.repeatedOrder && !item.completed) || (!item.completed && item.repeatedOrder && item.repeatedOrderDecided && item.repeatedOrderNeeded));
@@ -242,7 +281,7 @@ exports.addDisinfectorComment = (req, res) => {
 
 exports.getOrderById = (req, res) => {
   Order.findById(req.body.id)
-    .populate('disinfectorId userCreated')
+    .populate('disinfectorId userCreated clientId userAcceptedOrder')
     .exec()
     .then(order => res.json(order))
     .catch(err => {
@@ -254,7 +293,7 @@ exports.getOrderById = (req, res) => {
 
 exports.searchOrders = (req, res) => {
   Order.find()
-    .populate('disinfectorId userCreated')
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(orders => {
       if (req.body.object.method === 'address') {
@@ -274,23 +313,40 @@ exports.searchOrders = (req, res) => {
 exports.submitCompleteOrder = (req, res) => {
   const { order } = req.body;
 
-  User.findById(order.disinfectorId)
-    .then(user => {
-      user.subtractConsumptionMaterials(order.consumption)
-    });
+  order.disinfectors.forEach(item => {
+    User.findById(item.disinfectorId)
+      .then(user => {
+        user.subtractConsumptionMaterials(item.consumption)
+      });
+  });
 
   Order.findById(order.orderId)
     .then(foundOrder => {
       foundOrder.completed = true;
-      foundOrder.consumption = order.consumption;
+
+      let newArray = [];
+      order.disinfectors.forEach(item => {
+        newArray.push({
+          user: item.disinfectorId,
+          consumption: item.consumption
+        });
+      });
+
+      foundOrder.disinfectors = newArray;
       foundOrder.guarantee = order.guarantee;
-      foundOrder.paymentMethod = order.paymentMethod;
-      if (order.paymentMethod === 'Безналичный') {
-        foundOrder.invoice = order.invoice;
-      } else {
-        foundOrder.invoice = -1;
+
+      if (order.clientType === 'corporate') {
+        foundOrder.contractNumber = order.contractNumber;
+      } else if (order.clientType === 'individual') {
+        foundOrder.cost = order.cost;
       }
-      foundOrder.cost = order.cost;
+
+      // if (order.paymentMethod === 'Безналичный') {
+      //   foundOrder.invoice = order.invoice;
+      // } else {
+      //   foundOrder.invoice = -1;
+      // }
+
       foundOrder.completedAt = new Date();
       return foundOrder.save();
     })
@@ -299,12 +355,16 @@ exports.submitCompleteOrder = (req, res) => {
 
       const repeatOrder = new Order({
         disinfectorId: newCompleteOrder.disinfectorId,
+        clientType: newCompleteOrder.clientType,
         client: newCompleteOrder.client,
+        clientId: newCompleteOrder.clientId,
         address: newCompleteOrder.address,
         phone: newCompleteOrder.phone,
+        phone2: newCompleteOrder.phone2,
         typeOfService: newCompleteOrder.typeOfService,
         advertising: newCompleteOrder.advertising,
         userCreated: newCompleteOrder.userCreated,
+        userAcceptedOrder: newCompleteOrder.userAcceptedOrder,
         repeatedOrder: true,
         // add several months to date
         timeOfRepeat: new Date(date.setMonth(date.getMonth() + newCompleteOrder.guarantee)),
@@ -330,10 +390,24 @@ exports.getCompleteOrdersInMonth = (req, res) => {
   const disinfectorId = req.body.disinfectorId;
 
   Order.find({
-    disinfectorId: disinfectorId,
     completed: true
   })
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
+    .exec()
     .then(orders => {
+
+      orders = orders.filter(item => {
+        let amongDisinfectors = 0;
+        item.disinfectors.forEach(element => {
+          if (element.user._id.toString() === disinfectorId) amongDisinfectors++;
+        });
+        if (item.disinfectorId._id.toString() === disinfectorId || amongDisinfectors > 0) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
       orders = orders.filter(item => new Date(item.createdAt).getMonth() === month && new Date(item.createdAt).getFullYear() === year);
       return res.json(orders);
     })
