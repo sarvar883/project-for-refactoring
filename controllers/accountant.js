@@ -55,3 +55,33 @@ exports.confirmQuery = (req, res) => {
       res.status(400).json(err);
     });
 };
+
+
+// accountant sees statistics
+exports.getAccStats = (req, res) => {
+  Order.find({ clientType: 'corporate' })
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
+    .exec()
+    .then(orders => {
+      let sortedOrders = [];
+      if (req.body.object.type === 'month') {
+        sortedOrders = orders.filter(order =>
+          new Date(order.dateFrom).getMonth() === req.body.object.month &&
+          new Date(order.dateFrom).getFullYear() === req.body.object.year
+        );
+      } else if (req.body.object.type === 'week') {
+        sortedOrders = orders.filter(order =>
+          new Date(order.dateFrom) >= new Date(req.body.object.days[0]) &&
+          new Date(order.dateFrom).setHours(0, 0, 0, 0) <= new Date(req.body.object.days[6])
+        );
+      }
+      return res.json({
+        method: req.body.object.type,
+        orders: sortedOrders
+      });
+    })
+    .catch(err => {
+      console.log('Accountant getAccStats ERROR', err);
+      res.status(400).json(err);
+    });
+};

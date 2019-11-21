@@ -11,63 +11,84 @@ class ShowAdminStats extends Component {
   };
 
   render() {
-    const { orders } = this.state;
-
     let totalSum = 0,
-      cash = 0,
       totalScore = 0,
-      allConsumptions = [],
+      totalConsumption = [],
       completedOrders = [],
       confirmedOrders = [],
-      rejectedOders = [];
+      rejectedOrders = [];
 
-    orders.forEach(order => {
+    materials.forEach(object => {
+      const emptyObject = {
+        material: object.material,
+        amount: 0,
+        unit: object.unit
+      };
+      totalConsumption.push(emptyObject);
+    });
+
+    this.state.orders.forEach(order => {
       if (order.completed) {
         completedOrders.push(order);
-        order.consumption.forEach(element => allConsumptions.push(element));
+      }
 
-        if (order.operatorConfirmed && order.adminConfirmed) {
+      if (order.clientType === 'corporate') {
+        if (order.completed && order.operatorConfirmed && order.accountantConfirmed) {
           confirmedOrders.push(order);
           totalSum += order.cost;
-          if (order.paymentMethod === 'Наличный') cash++;
           totalScore += order.score;
         }
-
-        if (!order.operatorConfirmed || !order.adminConfirmed) {
-          rejectedOders.push(order);
+        if (order.completed && (!order.operatorConfirmed || !order.accountantConfirmed)) {
+          rejectedOrders.push(order);
         }
       }
-    });
 
-    let notCash = orders.length - cash;
-    const cashPercent = (cash * 100 / orders.length).toFixed(1);
-    const notCashPercent = (100 - cashPercent).toFixed(1);
-
-    let consumptionArrayResult = [];
-    materials.forEach(object => consumptionArrayResult.push({
-      material: object.material,
-      amount: 0,
-      unit: object.unit
-    }));
-
-    allConsumptions.forEach(item => {
-      consumptionArrayResult.forEach(element => {
-        if (element.material === item.material) {
-          element.amount += item.amount;
-          return;
+      if (order.clientType === 'individual') {
+        if (order.completed && order.operatorConfirmed && order.adminConfirmed) {
+          confirmedOrders.push(order);
+          totalSum += order.cost;
+          totalScore += order.score;
         }
-      })
+        if (order.completed && (!order.operatorConfirmed || !order.adminConfirmed)) {
+          rejectedOrders.push(order);
+        }
+      }
+
+      // calculate total consumption of all orders in given period
+      order.disinfectors.forEach(element => {
+        element.consumption.forEach(object => {
+          totalConsumption.forEach(item => {
+            if (object.material === item.material && object.unit === item.unit) {
+              item.amount += object.amount;
+            }
+          });
+        });
+      });
+
     });
 
-    let renderConsumption;
-    renderConsumption = consumptionArrayResult.map((item, index) =>
-      <li key={index}>{item.material}: {item.amount} {item.unit}</li>
+    let renderTotalConsumption = totalConsumption.map((item, key) =>
+      <li key={key}>{item.material}: {item.amount.toLocaleString()} {item.unit}</li>
     );
 
-    let renderConfirmedOrders = confirmedOrders.map((item, key) => {
+    let renderConfirmedOrders = confirmedOrders.map((order, key) => {
+      // consumption array of specific confirmed order
+      let consumptionArray = [];
 
-      let renderConsumptionOfOrder = item.consumption.map((material, index) =>
-        <li key={index}>{material.material} : {material.amount.toLocaleString()} {material.unit}</li>
+      order.disinfectors.forEach(item => {
+        consumptionArray.push({
+          user: item.user,
+          consumption: item.consumption
+        });
+      });
+
+      let renderOrderConsumption = consumptionArray.map((object, number) =>
+        <li key={number}>
+          <p className="mb-0">Пользователь: {object.user.occupation} {object.user.name}</p>
+          {object.consumption.map((element, number) =>
+            <p key={number} className="mb-0">{element.material}: {element.amount.toLocaleString()} {element.unit}</p>
+          )}
+        </li>
       );
 
       return (
@@ -75,31 +96,91 @@ class ShowAdminStats extends Component {
           <div className="card order mt-2">
             <div className="card-body p-0">
               <ul className="font-bold mb-0 list-unstyled">
-                <li>Дизинфектор: {item.disinfectorId.name}</li>
-                <li>Оператор, получивший заказ: {item.userCreated.name}</li>
-                <li>Клиент: {item.client}</li>
-                <li>Телефон: {item.phone}</li>
-                <li>Адрес: {item.address}</li>
-                <li>Тип услуги: {item.typeOfService}</li>
-                <li>Откуда узнали: {item.advertising}</li>
-                <li>Дата выполнения: <Moment format="DD/MM/YYYY">{item.dateFrom}</Moment></li>
-                <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
-                <li>Сумма: {item.cost.toLocaleString()} UZS</li>
-                <li>Тип Платежа: {item.paymentMethod}</li>
+                <li>Ответственный: {order.disinfectorId.occupation} {order.disinfectorId.name}</li>
 
-                {item.paymentMethod === 'Безналичный' ? <li>Счет-Фактура: {item.invoice}</li> : ''}
+                {order.operatorDecided ? (
+                  <React.Fragment>
+                    <li>Оператор рассмотрел заявку</li>
+                    {order.operatorConfirmed ? (
+                      <React.Fragment>
+                        <li className="text-success">Оператор Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{order.operatorCheckedAt}</Moment>)</li>
+                        <li>Балл (0-5): {order.score}</li>
+                        <li>Отзыв Клиента: {order.clientReview ? order.clientReview : 'Нет Отзыва'}</li>
+                      </React.Fragment>
+                    ) : <li className="text-danger">Оператор Отклонил (<Moment format="DD/MM/YYYY HH:mm">{order.operatorCheckedAt}</Moment>)</li>}
+                  </React.Fragment>
+                ) : <li>Оператор еще не рассмотрел заявку</li>}
 
-                <li>Расход Материалов:</li>
+                {order.clientType === 'corporate' && !order.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
+
+                {order.clientType === 'corporate' && order.accountantDecided ?
+                  <React.Fragment>
+                    <li>Бухгалтер рассмотрел заявку</li>
+                    {order.accountantConfirmed ? (
+                      <React.Fragment>
+                        <li className="text-success">Бухгалтер Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{order.accountantCheckedAt}</Moment>)</li>
+                        <li>Счет-Фактура: {order.invoice}</li>
+                        <li>Общая Сумма: {order.cost.toLocaleString()} UZS (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
+                      </React.Fragment>
+                    ) : <li className="text-danger">Бухгалтер Отклонил (<Moment format="DD/MM/YYYY HH:mm">{order.accountantCheckedAt}</Moment>)</li>}
+                  </React.Fragment>
+                  : ''}
+
+                {order.clientType === 'individual' && !order.adminDecided ? <li>Админ еще не рассмотрел заявку</li> : ''}
+                {order.clientType === 'individual' && order.adminDecided ? (
+                  <React.Fragment>
+                    <li>Админ рассмотрел заявку</li>
+                    {order.adminConfirmed ? (
+                      <li className="text-success">Админ Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{order.adminCheckedAt}</Moment>)</li>
+                    ) : <li className="text-danger">Админ Отклонил (<Moment format="DD/MM/YYYY HH:mm">{order.adminCheckedAt}</Moment>)</li>}
+                  </React.Fragment>
+                ) : ''}
+
+                {order.clientType === 'corporate' ?
+                  <React.Fragment>
+                    <li>Корпоративный Клиент: {order.clientId.name}</li>
+                    <li>Имя клиента: {order.client}</li>
+                  </React.Fragment>
+                  : ''}
+
+                {order.clientType === 'individual' ?
+                  <li>Физический Клиент: {order.client}</li>
+                  : ''}
+
+                <li>Телефон Клиента: {order.phone}</li>
+                {order.phone2 ? <li>Другой номер: {order.phone2}</li> : ''}
+                <li>Дата выполнения: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
+                <li>Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment> ПО <Moment format="HH:mm">{order.completedAt}</Moment></li>
+                <li>Адрес: {order.address}</li>
+                <li>Тип услуги: {order.typeOfService}</li>
+                <li>Комментарии Оператора: {order.comment ? order.comment : 'Нет комментариев'}</li>
+                <li>Комментарии Дезинфектора: {order.disinfectorComment ? order.disinfectorComment : 'Нет комментариев'}</li>
+                <li>Срок гарантии (в месяцах): {order.guarantee}</li>
+
+                <li>Расход Материалов (заказ выполнили {order.disinfectors.length} чел):</li>
                 <ul className="font-bold mb-0">
-                  {renderConsumptionOfOrder}
+                  {renderOrderConsumption}
                 </ul>
-                <li>Балл: {item.score}</li>
-                <li>Отзыв Клиента: {item.clientReview}</li>
+
+                {order.clientType === 'corporate' ?
+                  <li>Номер Договора: {order.contractNumber}</li>
+                  : ''}
+
+                {order.clientType === 'individual' ?
+                  <React.Fragment>
+                    <li>Общая Цена: {order.cost.toLocaleString()} Сум</li>
+                    <li>Из них Вам досталось: {parseFloat((order.cost / order.disinfectors.length).toFixed(2)).toLocaleString()} Сум</li>
+                  </React.Fragment>
+                  : ''}
+
+                <li>Заказ принял: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>
+                <li>Заказ добавил: {order.userCreated.occupation} {order.userCreated.name} (<Moment format="DD/MM/YYYY HH:mm">{order.createdAt}</Moment>)</li>
+                <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{order.completedAt}</Moment></li>
               </ul>
             </div>
           </div>
         </div>
-      )
+      );
     });
 
     return (
@@ -110,15 +191,10 @@ class ShowAdminStats extends Component {
               <div className="card-body p-0">
                 <h2 className="text-center">Заказы</h2>
                 <ul className="font-bold mb-0 list-unstyled">
-                  <li>Всего Получено Заказов: {orders.length}</li>
+                  <li>Всего Получено Заказов: {this.state.orders.length}</li>
                   <li>Выполнено Заказов: {completedOrders.length}</li>
                   <li>Подтверждено Заказов: {confirmedOrders.length}</li>
                   <li>Общая Сумма: {totalSum.toLocaleString()} UZS</li>
-                  <li>Тип Платежей:</li>
-                  <ul className="font-bold mb-1">
-                    <li>Наличный: {cash} ({cashPercent} %)</li>
-                    <li>Безналичный: {notCash} ({notCashPercent} %)</li>
-                  </ul>
                 </ul>
               </div>
             </div>
@@ -129,7 +205,7 @@ class ShowAdminStats extends Component {
               <div className="card-body p-0">
                 <h2 className="text-center">Рейтинг:</h2>
                 <ul className="font-bold mb-0 pl-3">
-                  <li>Средний балл: {(totalScore / confirmedOrders.length).toFixed(2)} (из 10)</li>
+                  <li>Средний балл: {(totalScore / confirmedOrders.length).toFixed(2)} (из 5)</li>
                 </ul>
               </div>
             </div>
@@ -138,9 +214,9 @@ class ShowAdminStats extends Component {
           <div className="col-lg-4 col-md-6">
             <div className="card order mt-2">
               <div className="card-body p-0">
-                <h2 className="text-center">Расход Материалов:</h2>
+                <h2 className="text-center">Общий Расход Материалов:</h2>
                 <ul className="font-bold mb-0 pl-3">
-                  {renderConsumption}
+                  {renderTotalConsumption}
                 </ul>
               </div>
             </div>

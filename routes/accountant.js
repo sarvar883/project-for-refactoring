@@ -11,4 +11,6 @@ router.post('/get-query-by-id', passport.authenticate('jwt', { session: false })
 
 router.post('/confirm-query', passport.authenticate('jwt', { session: false }), isAccountant, accountantController.confirmQuery);
 
+router.post('/get-stats', passport.authenticate('jwt', { session: false }), isAccountant, accountantController.getAccStats);
+
 module.exports = router;

@@ -141,7 +141,7 @@ export const editOrder = (order, history, occupation) => (dispatch) => {
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };

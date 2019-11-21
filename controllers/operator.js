@@ -92,7 +92,15 @@ exports.confirmCompleteOrder = (req, res) => {
 
 exports.getRepeatOrders = (req, res) => {
   Order.find({ repeatedOrder: true, repeatedOrderDecided: false })
-    .populate('previousOrder disinfectorId clientId userCreated userAcceptedOrder')
+    .populate('disinfectors.user disinfectorId clientId userCreated userAcceptedOrder')
+    .populate({
+      path: 'previousOrder',
+      model: 'Order',
+      populate: {
+        path: 'disinfectors.user',
+        model: 'User'
+      }
+    })
     .exec()
     .then(orders => {
       orders = orders.sort((a, b) => new Date(a.timeOfRepeat) - new Date(b.timeOfRepeat));
@@ -128,5 +136,35 @@ exports.repeatOrderNotNeeded = (req, res) => {
     .catch(err => {
       console.log('repeatOrderNotNeeded ERROR', err);
       return res.status(400).json(err);
+    });
+};
+
+
+// operator sees his own statistics
+exports.getOperatorStats = (req, res) => {
+  Order.find({ userAcceptedOrder: req.body.object.operatorId })
+    .populate('disinfectorId clientId userCreated userAcceptedOrder disinfectors.user')
+    .exec()
+    .then(orders => {
+      let sortedOrders = [];
+      if (req.body.object.type === 'month') {
+        sortedOrders = orders.filter(order =>
+          new Date(order.dateFrom).getMonth() === req.body.object.month &&
+          new Date(order.dateFrom).getFullYear() === req.body.object.year
+        );
+      } else if (req.body.object.type === 'week') {
+        sortedOrders = orders.filter(order =>
+          new Date(order.dateFrom) >= new Date(req.body.object.days[0]) &&
+          new Date(order.dateFrom).setHours(0, 0, 0, 0) <= new Date(req.body.object.days[6])
+        );
+      }
+      return res.json({
+        method: req.body.object.type,
+        sortedOrders: sortedOrders
+      });
+    })
+    .catch(err => {
+      console.log('getOperatorStats ERROR', err);
+      res.status(404).json(err);
     });
 };

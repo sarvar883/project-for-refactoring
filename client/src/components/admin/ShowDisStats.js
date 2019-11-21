@@ -7,67 +7,33 @@ import materials from '../common/materials';
 
 class ShowDisStats extends Component {
   state = {
-    orders: this.props.admin.stats.orders
+    orders: this.props.admin.stats.orders,
+    acceptedOrders: this.props.admin.stats.acceptedOrders
   };
 
-  render() {
-    const { orders } = this.state;
 
-    let totalSum = 0,
-      cash = 0,
-      totalScore = 0,
-      allConsumptions = [],
-      completedOrders = [],
-      confirmedOrders = [],
-      rejectedOders = [];
 
-    orders.forEach(order => {
-      if (order.completed) {
-        completedOrders.push(order);
-        order.consumption.forEach(element => allConsumptions.push(element));
 
-        if (order.operatorConfirmed && order.adminConfirmed) {
-          confirmedOrders.push(order);
-          totalSum += order.cost;
-          if (order.paymentMethod === 'Наличный') cash++;
-          totalScore += order.score;
-        }
 
-        if (!order.operatorConfirmed || !order.adminConfirmed) {
-          rejectedOders.push(order);
-        }
-      }
-    });
+  renderOrders = (orders) => {
+    return orders.map((order, key) => {
+      // consumption array of specific order
+      let consumptionArray = [];
 
-    let notCash = orders.length - cash;
-    const cashPercent = (cash * 100 / orders.length).toFixed(1);
-    const notCashPercent = (100 - cashPercent).toFixed(1);
+      order.disinfectors.forEach(item => {
+        consumptionArray.push({
+          user: item.user,
+          consumption: item.consumption
+        });
+      });
 
-    let consumptionArrayResult = [];
-    materials.forEach(object => consumptionArrayResult.push({
-      material: object.material,
-      amount: 0,
-      unit: object.unit
-    }));
-
-    allConsumptions.forEach(item => {
-      consumptionArrayResult.forEach(element => {
-        if (element.material === item.material) {
-          element.amount += item.amount;
-          return;
-        }
-      })
-    });
-
-    let renderConsumption;
-    renderConsumption = consumptionArrayResult.map((item, index) =>
-      <li key={index}>{item.material}: {item.amount} {item.unit}</li>
-    );
-
-    let renderOrders = orders.map((item, key) => {
-
-      let renderConsumptionOfOrder = item.consumption.map((material, index) =>
-        <li key={index}>{material.material} : {material.amount.toLocaleString()} {material.unit}</li>
+      let renderOrderConsumption = consumptionArray.map((object, number) =>
+        <li key={number}>
+          <p className="mb-0">Пользователь: {object.user.occupation} {object.user.name}</p>
+          {object.consumption.map((element, number) =>
+            <p key={number} className="mb-0">{element.material}: {element.amount.toLocaleString()} {element.unit}</p>
+          )}
+        </li>
       );
 
       return (
@@ -75,51 +41,212 @@ class ShowDisStats extends Component {
           <div className="card order mt-2">
             <div className="card-body p-0">
               <ul className="font-bold mb-0 list-unstyled">
-                <li>Оператор, получивший заказ: {item.userCreated.name}</li>
-                <li>Клиент: {item.client}</li>
-                <li>Телефон: {item.phone}</li>
-                <li>Адрес: {item.address}</li>
-                <li>Тип услуги: {item.typeOfService}</li>
-                <li>Откуда узнали: {item.advertising}</li>
-                <li>Дата выполнения: <Moment format="DD/MM/YYYY">{item.dateFrom}</Moment></li>
+                <li>Ответственный: {order.disinfectorId.occupation} {order.disinfectorId.name}</li>
 
-                {item.completed ? (
+                {order.repeatedOrder ? (
                   <React.Fragment>
-                    <li className="text-success">Заказ Выполнен</li>
-                    <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
-                    <li>Сумма: {item.cost.toLocaleString()} UZS</li>
-                    <li>Тип Платежа: {item.paymentMethod}</li>
-
-                    {item.paymentMethod === 'Безналичный' ? <li>Счет-Фактура: {item.invoice}</li> : ''}
-
-                    <li>Расход Материалов:</li>
-                    <ul className="font-bold mb-0">
-                      {renderConsumptionOfOrder}
-                    </ul>
-                  </React.Fragment>
-                ) : <li>Заказ еще не выполнен</li>}
-
-                {item.completed && item.operatorDecided ? (
-                  <React.Fragment>
-                    <li>Оператор рассмотрел заявку (время: <Moment format="DD/MM/YYYY HH:mm">{item.operatorCheckedAt}</Moment>)</li>
-                    {item.operatorConfirmed ? <li className="text-success">Оператор подтвердил заяку</li> : <li className="text-danger">Оператор отверг заяку</li>}
-                    <li>Балл: {item.score}</li>
-                    <li>Отзыв Клиента: {item.clientReview}</li>
-                  </React.Fragment>
-                ) : <li>Оператор еще рассмотрел заявку</li>}
-
-                {item.completed && item.adminDecided ? (
-                  <React.Fragment>
-                    <li>Админ рассмотрел заявку (время: <Moment format="DD/MM/YYYY HH:mm">{item.adminCheckedAt}</Moment>)</li>
-                    {item.adminConfirmed ? <li className="text-success">Админ подтвердил заяку</li> : <li className="text-danger">Админ отверг заяку</li>}
+                    <li>Это повторный заказ</li>
+                    {order.repeatedOrderDecided ? (
+                      <React.Fragment>
+                        <li>Решение по проведению повторной работы принята</li>
+                        {order.repeatedOrderNeeded ? <li>Повторная Работа требуется</li> : <li>Повторная Работа Не требуется</li>}
+                      </React.Fragment>
+                    ) : <li>Решение по проведению повторной заявки еще не принята</li>}
                   </React.Fragment>
                 ) : ''}
+
+                {order.completed ? <li>Заказ выполнен</li> : <li>Заказ еще не выполнен</li>}
+
+                {order.operatorDecided ? (
+                  <React.Fragment>
+                    <li>Оператор рассмотрел заявку</li>
+                    {order.operatorConfirmed ? (
+                      <React.Fragment>
+                        <li className="text-success">Оператор Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{order.operatorCheckedAt}</Moment>)</li>
+                        <li>Балл (0-5): {order.score}</li>
+                        <li>Отзыв Клиента: {order.clientReview ? order.clientReview : 'Нет Отзыва'}</li>
+                      </React.Fragment>
+                    ) : <li className="text-danger">Оператор Отклонил (<Moment format="DD/MM/YYYY HH:mm">{order.operatorCheckedAt}</Moment>)</li>}
+                  </React.Fragment>
+                ) : <li>Оператор еще не рассмотрел заявку</li>}
+
+                {order.clientType === 'corporate' && !order.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
+
+                {order.clientType === 'corporate' && order.accountantDecided ?
+                  <React.Fragment>
+                    <li>Бухгалтер рассмотрел заявку</li>
+                    {order.accountantConfirmed ? (
+                      <React.Fragment>
+                        <li className="text-success">Бухгалтер Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{order.accountantCheckedAt}</Moment>)</li>
+                        <li>Счет-Фактура: {order.invoice}</li>
+                        <li>Общая Сумма: {order.cost.toLocaleString()} UZS (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
+                      </React.Fragment>
+                    ) : <li className="text-danger">Бухгалтер Отклонил (<Moment format="DD/MM/YYYY HH:mm">{order.accountantCheckedAt}</Moment>)</li>}
+                  </React.Fragment>
+                  : ''}
+
+                {order.clientType === 'individual' && !order.adminDecided ? <li>Админ еще не рассмотрел заявку</li> : ''}
+                {order.clientType === 'individual' && order.adminDecided ? (
+                  <React.Fragment>
+                    <li>Админ рассмотрел заявку</li>
+                    {order.adminConfirmed ? (
+                      <li className="text-success">Админ Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{order.adminCheckedAt}</Moment>)</li>
+                    ) : <li className="text-danger">Админ Отклонил (<Moment format="DD/MM/YYYY HH:mm">{order.adminCheckedAt}</Moment>)</li>}
+                  </React.Fragment>
+                ) : ''}
+
+                {order.clientType === 'corporate' ?
+                  <React.Fragment>
+                    <li>Корпоративный Клиент: {order.clientId.name}</li>
+                    <li>Имя клиента: {order.client}</li>
+                  </React.Fragment>
+                  : ''}
+
+                {order.clientType === 'individual' ?
+                  <li>Физический Клиент: {order.client}</li>
+                  : ''}
+
+                <li>Телефон Клиента: {order.phone}</li>
+                {order.phone2 ? <li>Другой номер: {order.phone2}</li> : ''}
+
+                {order.completed ? (
+                  <React.Fragment>
+                    <li>Дата выполнения: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
+                    <li>Время выполнения: <Moment format="HH:mm">{order.dateFrom}</Moment></li>
+                  </React.Fragment>
+                ) : ''}
+
+                {!order.completed && order.repeatedOrder && order.repeatedOrderDecided && order.repeatedOrderNeeded ? (
+                  <React.Fragment>
+                    <li>Дата выполнения: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
+                    <li>Время выполнения: <Moment format="HH:mm">{order.dateFrom}</Moment></li>
+                  </React.Fragment>
+                ) : ''}
+
+                <li>Адрес: {order.address}</li>
+                <li>Тип услуги: {order.typeOfService}</li>
+                <li>Комментарии Оператора: {order.comment ? order.comment : 'Нет комментариев'}</li>
+                <li>Комментарии Дезинфектора: {order.disinfectorComment ? order.disinfectorComment : 'Нет комментариев'}</li>
+
+                {order.completed ?
+                  <React.Fragment>
+                    <li>Срок гарантии (в месяцах): {order.guarantee}</li>
+                    <li>Расход Материалов (заказ выполнили {order.disinfectors.length} чел):</li>
+                    <ul className="font-bold mb-0">
+                      {renderOrderConsumption}
+                    </ul>
+                  </React.Fragment>
+                  : ''}
+
+                {order.completed && order.clientType === 'corporate' ?
+                  <li>Номер Договора: {order.contractNumber}</li>
+                  : ''}
+
+                {order.completed && order.clientType === 'individual' ?
+                  <li>Общая Сумма: {order.cost.toLocaleString()} UZS (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
+                  : ''}
+
+                <li>Заказ принял: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>
+                <li>Заказ добавил: {order.userCreated.occupation} {order.userCreated.name} (<Moment format="DD/MM/YYYY HH:mm">{order.createdAt}</Moment>)</li>
+
+                {order.completed ?
+                  <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{order.completedAt}</Moment></li> : ''}
               </ul>
             </div>
           </div>
         </div>
-      )
+      );
     });
+  };
+
+
+
+
+
+  render() {
+
+    let totalSum = 0,
+      totalScore = 0,
+      totalSumOfAcceptedOrders = 0,
+      totalConsumption = [],
+      completedOrders = [],
+      confirmedOrders = [],
+      rejectedOrders = [];
+
+    materials.forEach(item => {
+      const emptyObject = {
+        material: item.material,
+        amount: 0,
+        unit: item.unit
+      };
+      totalConsumption.push(emptyObject);
+    });
+
+    this.state.orders.forEach(order => {
+      if (order.completed) {
+        completedOrders.push(order);
+      }
+
+      if (order.clientType === 'corporate') {
+        if (order.completed && order.operatorConfirmed && order.accountantConfirmed) {
+          confirmedOrders.push(order);
+          totalSum += order.cost / order.disinfectors.length;
+          totalScore += order.score;
+        }
+        if (order.completed && (!order.operatorConfirmed || !order.accountantConfirmed)) {
+          rejectedOrders.push(order);
+        }
+      }
+
+      if (order.clientType === 'individual') {
+        if (order.completed && order.operatorConfirmed && order.adminConfirmed) {
+          confirmedOrders.push(order);
+          totalSum += order.cost / order.disinfectors.length;
+          totalScore += order.score;
+        }
+        if (order.completed && (!order.operatorConfirmed || !order.adminConfirmed)) {
+          rejectedOrders.push(order);
+        }
+      }
+
+      // calculate total consumption of all orders of disinfector in given period
+      order.disinfectors.forEach(element => {
+        if (element.user._id.toString() === this.props.admin.stats.disinfectorId) {
+          element.consumption.forEach(object => {
+            totalConsumption.forEach(item => {
+              if (object.material === item.material && object.unit === item.unit) {
+                item.amount += object.amount;
+              }
+            });
+          });
+        }
+      });
+    });
+
+    this.state.acceptedOrders.forEach(order => {
+
+      if (order.clientType === 'corporate') {
+        if (order.completed && order.operatorConfirmed && order.accountantConfirmed) {
+          totalSumOfAcceptedOrders += order.cost;
+        }
+      }
+
+      if (order.clientType === 'individual') {
+        if (order.completed && order.operatorConfirmed && order.adminConfirmed) {
+          totalSumOfAcceptedOrders += order.cost;
+        }
+      }
+
+    });
+
+    let renderTotalConsumption = totalConsumption.map((item, key) =>
+      <li key={key}>{item.material}: {item.amount.toLocaleString()} {item.unit}</li>
+    );
+
+    // let renderAllOrders = this.state
+    let renderAllOrders = this.renderOrders(this.state.orders);
+
+    let renderAcceptedOrders = this.renderOrders(this.state.acceptedOrders);
 
     return (
       <React.Fragment>
@@ -129,15 +256,12 @@ class ShowDisStats extends Component {
               <div className="card-body p-0">
                 <h2 className="text-center">Заказы</h2>
                 <ul className="font-bold mb-0 list-unstyled">
-                  <li>Всего Получено Заказов: {orders.length}</li>
+                  <li>Всего Получено Заказов: {this.state.orders.length}</li>
                   <li>Выполнено Заказов: {completedOrders.length}</li>
                   <li>Подтверждено Заказов: {confirmedOrders.length}</li>
                   <li>Общая Сумма: {totalSum.toLocaleString()} UZS</li>
-                  <li>Тип Платежей:</li>
-                  <ul className="font-bold mb-1">
-                    <li>Наличный: {cash} ({cashPercent} %)</li>
-                    <li>Безналичный: {notCash} ({notCashPercent} %)</li>
-                  </ul>
+                  <li>Средний балл подтвержденных заказов: {(totalScore / confirmedOrders.length).toFixed(2)} (из 5)</li>
+                  <li>Отвергнуто Заказов: {rejectedOrders.length}</li>
                 </ul>
               </div>
             </div>
@@ -146,9 +270,9 @@ class ShowDisStats extends Component {
           <div className="col-lg-4 col-md-6">
             <div className="card order mt-2">
               <div className="card-body p-0">
-                <h2 className="text-center">Рейтинг:</h2>
                 <ul className="font-bold mb-0 pl-3">
-                  <li>Средний балл: {(totalScore / confirmedOrders.length).toFixed(2)} (из 10)</li>
+                  <li>Пользователь принял заказов: {this.state.acceptedOrders.length}</li>
+                  <li>Общая сумма принятых заказов: {totalSumOfAcceptedOrders.toLocaleString()} UZS</li>
                 </ul>
               </div>
             </div>
@@ -159,7 +283,7 @@ class ShowDisStats extends Component {
               <div className="card-body p-0">
                 <h2 className="text-center">Расход Материалов:</h2>
                 <ul className="font-bold mb-0 pl-3">
-                  {renderConsumption}
+                  {renderTotalConsumption}
                 </ul>
               </div>
             </div>
@@ -170,7 +294,14 @@ class ShowDisStats extends Component {
           <div className="col-12">
             <h2 className="text-center pl-3 pr-3">Все Заказы Пользователя</h2>
           </div>
-          {confirmedOrders.length > 0 ? (renderOrders) : <h2>Нет подтвержденных заказов</h2>}
+          {this.state.orders.length > 0 ? (renderAllOrders) : <h2>Нет заказов</h2>}
+        </div>
+
+        <div className="row mt-2">
+          <div className="col-12">
+            <h2 className="text-center pl-3 pr-3">Принятые Заказы Пользователя</h2>
+          </div>
+          {this.state.acceptedOrders.length > 0 ? (renderAcceptedOrders) : <h2>Нет заказов</h2>}
         </div>
       </React.Fragment>
     )

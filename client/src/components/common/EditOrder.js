@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Spinner from '../common/Spinner';
 import TextFieldGroup from '../common/TextFieldGroup';
-import SelectListGroup from '../common/SelectListGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 import isEmpty from '../../validation/is-empty';
 import advertisements from '../common/advertisements';
@@ -27,8 +26,7 @@ class EditOrder extends Component {
     phone2: '',
     typeOfService: '',
     advertising: '',
-    comment: '',
-    errors: {}
+    comment: ''
   }
 
   componentDidMount() {
@@ -39,19 +37,21 @@ class EditOrder extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.errors) {
-      this.setState({
-        order: nextProps.order,
-        errors: nextProps.errors
-      });
-    }
+    // if (nextProps.order) {
+    //   this.setState({
+    //     order: nextProps.order
+    //   });
+    // }
+
+    console.log('orderById', nextProps.order.orderById);
 
     if (nextProps.order.orderById) {
       let orderForEdit = nextProps.order.orderById;
 
       orderForEdit.disinfectorId = !isEmpty(orderForEdit.disinfectorId) ? orderForEdit.disinfectorId : '';
 
-      orderForEdit.userAcceptedOrder = !isEmpty(orderForEdit.userAcceptedOrder) ? orderForEdit.userAcceptedOrder._id : '';
+      // orderForEdit.userAcceptedOrder = !isEmpty(orderForEdit.userAcceptedOrder) ? orderForEdit.userAcceptedOrder : '';
+      orderForEdit.userAcceptedOrder = orderForEdit.userAcceptedOrder ? orderForEdit.userAcceptedOrder._id : '';
 
       orderForEdit.clientType = !isEmpty(orderForEdit.clientType) ? orderForEdit.clientType : '';
       orderForEdit.clientId = !isEmpty(orderForEdit.clientId) ? orderForEdit.clientId._id : '';
@@ -178,11 +178,9 @@ class EditOrder extends Component {
   }
 
   render() {
-    const { errors } = this.state;
-    console.log('state', this.state);
     let allUsers = this.props.order.allUsers ? this.props.order.allUsers.sort((x, y) => x.name - y.name) : [];
     const userOptions = [
-      { label: '-- Кто принял заказ? --', value: 0 }
+      { label: '-- Кто принял заказ? --', value: '' }
     ];
     allUsers.forEach(item => {
       userOptions.push({
@@ -193,14 +191,14 @@ class EditOrder extends Component {
 
     let disinfectors = allUsers.filter(user => user.occupation === 'disinfector' || user.occupation === 'subadmin');
     let disinfectorOptions = [
-      { label: '-- Выберите ответственного дезинфектора --', value: 0 }
+      { label: '-- Выберите ответственного дезинфектора --', value: '' }
     ];
     disinfectors.forEach(worker => disinfectorOptions.push(
       { label: `${worker.name}, ${worker.occupation}`, value: worker._id }
     ));
 
     const orderTypes = [
-      { label: '-- Выберите тип заказа --', value: 0 },
+      { label: '-- Выберите тип заказа --', value: '' },
       { label: 'DF', value: 'DF' },
       { label: 'DZ', value: 'DZ' },
       { label: 'KL', value: 'KL' },
@@ -227,7 +225,7 @@ class EditOrder extends Component {
     });
 
     const advOptions = [
-      { label: '-- Откуда узнали о нас? --', value: 0 }
+      { label: '-- Откуда узнали о нас? --', value: '' }
     ];
 
     advertisements.forEach(item => {
@@ -246,31 +244,34 @@ class EditOrder extends Component {
                 <div className="card">
                   <div className="card-body">
                     <h1 className="display-5 text-center">Редактировать Заказ</h1>
-                    <form noValidate onSubmit={this.onSubmit}>
-                      <SelectListGroup
-                        name="clientType"
-                        value={this.state.clientType}
-                        onChange={this.onChange}
-                        options={clientTypes}
-                        error={errors.clientType}
-                      />
+                    <form onSubmit={this.onSubmit}>
+                      <div className="form-group">
+                        <label htmlFor="clientType">Выберите Тип Клиента:</label>
+                        <select className="form-control" value={this.state.clientType} name="clientType" onChange={this.onChange} required>
+                          {clientTypes.map((item, index) =>
+                            <option key={index} value={item.value}>{item.label}</option>
+                          )}
+                        </select>
+                      </div>
+
                       {this.state.clientType === 'corporate' ? (
-                        <SelectListGroup
-                          name="clientId"
-                          value={this.state.clientId}
-                          onChange={this.onChange}
-                          options={corporateClients}
-                          error={errors.clientId}
-                        />
+                        <div className="form-group">
+                          <label htmlFor="clientId">Выберите Корпоративного Клиента:</label>
+                          <select className="form-control" value={this.state.clientId} name="clientId" onChange={this.onChange} required>
+                            {corporateClients.map((item, index) =>
+                              <option key={index} value={item.value}>{item.label}</option>
+                            )}
+                          </select>
+                        </div>
                       ) : ''}
 
                       <TextFieldGroup
-                        label="Введите Имя Клиента"
+                        label="Введите Имя Клиента:"
                         type="text"
                         name="client"
                         value={this.state.client}
                         onChange={this.onChange}
-                        error={errors.client}
+                        required
                       />
                       <TextFieldGroup
                         label="Адрес"
@@ -278,7 +279,7 @@ class EditOrder extends Component {
                         name="address"
                         value={this.state.address}
                         onChange={this.onChange}
-                        error={errors.address}
+                        required
                       />
                       <TextFieldGroup
                         label="Телефон"
@@ -286,7 +287,7 @@ class EditOrder extends Component {
                         name="phone"
                         value={this.state.phone}
                         onChange={this.onChange}
-                        error={errors.phone}
+                        required
                       />
 
                       {this.state.hasSecondPhone ? (
@@ -298,6 +299,7 @@ class EditOrder extends Component {
                             name="phone2"
                             value={this.state.phone2}
                             onChange={this.onChange}
+                            required
                           />
                           <button className="btn btn-danger mb-2" onClick={this.deleteSecondPhone}>Убрать запасной номер телефона</button>
                         </React.Fragment>
@@ -311,7 +313,7 @@ class EditOrder extends Component {
                         type="date"
                         value={this.state.date}
                         onChange={this.onChange}
-                        error={errors.date}
+                        required
                       />
                       <TextFieldGroup
                         label="Время (часы:минуты:AM/PM) C"
@@ -319,29 +321,33 @@ class EditOrder extends Component {
                         type="time"
                         value={this.state.timeFrom}
                         onChange={this.onChange}
-                        error={errors.timeFrom}
+                        required
                       />
-                      <label htmlFor="typeOfService" className="d-block">Выберите тип заказа</label>
-                      <SelectListGroup
-                        name="typeOfService"
-                        value={this.state.typeOfService}
-                        onChange={this.onChange}
-                        error={errors.typeOfService}
-                        options={orderTypes}
-                      />
-                      <SelectListGroup
-                        name="advertising"
-                        value={this.state.advertising}
-                        onChange={this.onChange}
-                        error={errors.advertising}
-                        options={advOptions}
-                      />
+
+                      <div className="form-group">
+                        <label htmlFor="typeOfService">Выберите Тип Заказа:</label>
+                        <select className="form-control" value={this.state.typeOfService} name="typeOfService" onChange={this.onChange} required>
+                          {orderTypes.map((item, index) =>
+                            <option key={index} value={item.value}>{item.label}</option>
+                          )}
+                        </select>
+                      </div>
+
+                      <div className="form-group">
+                        <label htmlFor="advertising">Откуда Узнали:</label>
+                        <select className="form-control" value={this.state.advertising} name="advertising" onChange={this.onChange} required>
+                          {advOptions.map((item, index) =>
+                            <option key={index} value={item.value}>{item.label}</option>
+                          )}
+                        </select>
+                      </div>
+
                       {this.props.order.loading ? (
                         <p>Дезинфекторы загружаются...</p>
                       ) : (
                           <div className="form-group">
                             <label htmlFor="disinfectorId">Выберите Дезинфектора:</label>
-                            <select className="form-control" value={this.state.disinfectorId} name="disinfectorId" onChange={this.onChange}>
+                            <select className="form-control" value={this.state.disinfectorId} name="disinfectorId" onChange={this.onChange} required>
                               {disinfectorOptions.map((item, index) =>
                                 <option key={index} value={item.value}>{item.label}</option>
                               )}
@@ -349,19 +355,22 @@ class EditOrder extends Component {
                           </div>
                         )}
 
-                      <SelectListGroup
-                        name="userAcceptedOrder"
-                        value={this.state.userAcceptedOrder}
-                        onChange={this.onChange}
-                        options={userOptions}
-                        error={errors.userAcceptedOrder}
-                      />
+
+                      <div className="form-group">
+                        <label htmlFor="userAcceptedOrder">Кто принял заказ:</label>
+                        <select className="form-control" value={this.state.userAcceptedOrder} name="userAcceptedOrder" onChange={this.onChange} required>
+                          {userOptions.map((item, index) =>
+                            <option key={index} value={item.value}>{item.label}</option>
+                          )}
+                        </select>
+                      </div>
+
                       <TextAreaFieldGroup
                         name="comment"
                         placeholder="Комментарии (Это поле не обязательное)"
                         value={this.state.comment}
                         onChange={this.onChange}
-                        error={errors.comment}
+                        required
                       />
                       <button type="submit" className="btn btn-primary">Редактировать</button>
                     </form>

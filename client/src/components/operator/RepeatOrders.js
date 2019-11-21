@@ -27,12 +27,22 @@ class RepeatOrders extends Component {
 
   render() {
     let renderOrders = this.state.repeatOrders.map((item, index) => {
-      let consumptionRender;
-      if (item.consumption) {
-        consumptionRender = item.previousOrder.consumption.map((item, index) =>
-          <li key={index}>{item.material} : {item.amount} {item.unit}</li>
-        );
-      }
+      let consumptionArray = [];
+      item.previousOrder.disinfectors.forEach(object => {
+        consumptionArray.push({
+          user: object.user,
+          consumption: object.consumption
+        });
+      });
+
+      let consumptionRender = consumptionArray.map((element, key) =>
+        <li key={key}>
+          <p className="mb-0">Пользователь: {element.user.occupation} {element.user.name}</p>
+          {element.consumption.map((thing, number) =>
+            <p key={number} className="mb-0">{thing.material}: {thing.amount.toLocaleString()} {thing.unit}</p>
+          )}
+        </li>
+      );
 
       return (
         <React.Fragment key={index}>
@@ -41,7 +51,18 @@ class RepeatOrders extends Component {
               <div className="card-body p-0">
                 <ul className="font-bold mb-0 list-unstyled">
                   <li>Дезинфектор: {item.disinfectorId.name}</li>
-                  <li>Клиент: {item.client}</li>
+
+                  {item.clientType === 'corporate' ?
+                    <React.Fragment>
+                      <li>Корпоративный Клиент: {item.clientId.name}</li>
+                      <li>Имя клиента: {item.client}</li>
+                    </React.Fragment>
+                    : ''}
+
+                  {item.clientType === 'individual' ?
+                    <li>Физический Клиент: {item.client}</li>
+                    : ''}
+
                   <li>Телефон: {item.phone}</li>
                   {item.phone2 && item.phone2 !== '' ? <li>Запасной номер: {item.phone2}</li> : ''}
                   <li>Адрес: {item.address}</li>
@@ -62,8 +83,20 @@ class RepeatOrders extends Component {
               <div className="modal-content">
                 <div className="modal-body">
                   <ul className="font-bold mb-0 list-unstyled">
-                    <li>Дезинфектор: {item.disinfectorId.name}</li>
-                    <li>Клиент: {item.client}</li>
+                    <li>Ответственный: {item.disinfectorId.occupation} {item.disinfectorId.name}</li>
+
+                    {item.clientType === 'corporate' ?
+                      <React.Fragment>
+                        <li>Корпоративный Клиент: {item.clientId.name}</li>
+                        <li>Имя клиента: {item.client}</li>
+                        <li>Номер договора: {item.previousOrder.contractNumber}</li>
+                      </React.Fragment>
+                      : ''}
+
+                    {item.clientType === 'individual' ?
+                      <li>Физический Клиент: {item.client}</li>
+                      : ''}
+
                     <li>Телефон: {item.phone}</li>
                     {item.phone2 && item.phone2 !== '' ? <li>Запасной номер: {item.phone2}</li> : ''}
                     <li>Адрес: {item.address}</li>
@@ -72,17 +105,18 @@ class RepeatOrders extends Component {
                     <li>Дата: <Moment format="DD/MM/YYYY">{item.previousOrder.dateFrom}</Moment></li>
                     <li>Время выполнения: С <Moment format="HH:mm">{item.previousOrder.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.previousOrder.completedAt}</Moment></li>
                     <li>Срок гарантии (в месяцах): {item.previousOrder.guarantee}</li>
-                    <li>Комментарии: {item.previousOrder.comment ? item.previousOrder.comment : '--'}</li>
+                    <li>Комментарии Оператора: {item.previousOrder.comment ? item.previousOrder.comment : '--'}</li>
                     <li>Комментарии Дезинфектора: {item.previousOrder.disinfectorComment ? item.previousOrder.disinfectorComment : '--'}</li>
+                    <li>Принял Заказ: {item.userAcceptedOrder.occupation} {item.userAcceptedOrder.name}</li>
+                    <li>Заказ Добавлен: {item.userCreated.occupation} {item.userCreated.name} (время: <Moment format="DD/MM/YYYY HH:mm">{item.createdAt}</Moment>)</li>
+
                     <li>Расход Материалов:</li>
                     <ul className="font-bold mb-0">
                       {consumptionRender}
                     </ul>
-                    <li>Тип Платежа: {item.previousOrder.paymentMethod}</li>
-                    {item.previousOrder.paymentMethod === 'Безналичный' ? <li>Счет-Фактура: {item.previousOrder.invoice}</li> : ''}
-                    <li>Общая Сумма: {item.previousOrder.cost ? item.previousOrder.cost.toLocaleString() : ''} UZS</li>
 
-                    {item.previousOrder.completed && item.previousOrder.operatorDecided ? (
+
+                    {item.previousOrder.operatorDecided ? (
                       <React.Fragment>
                         <li>Оператор рассмотрел заявку (время: <Moment format="DD/MM/YYYY HH:mm">{item.previousOrder.operatorCheckedAt}</Moment>)</li>
                         {item.previousOrder.operatorConfirmed ? <li className="text-success">Оператор подтвердил заяку</li> : <li className="text-danger">Оператор отверг заяку</li>}
@@ -91,10 +125,31 @@ class RepeatOrders extends Component {
                       </React.Fragment>
                     ) : <li>Оператор еще рассмотрел заявку</li>}
 
-                    {item.previousOrder.completed && item.previousOrder.adminDecided ? (
+                    {item.clientType === 'corporate' ? (
                       <React.Fragment>
-                        <li>Админ рассмотрел заявку (время: <Moment format="DD/MM/YYYY HH:mm">{item.previousOrder.adminCheckedAt}</Moment>)</li>
-                        {item.previousOrder.adminConfirmed ? <li className="text-success">Админ подтвердил заяку</li> : <li className="text-danger">Админ отверг заяку</li>}
+                        {item.previousOrder.accountantDecided ? (
+                          <React.Fragment>
+                            <li>Бухгалтер рассмотрел заявку (время: <Moment format="DD/MM/YYYY HH:mm">{item.previousOrder.accountantCheckedAt}</Moment>)</li>
+                            {item.previousOrder.accountantConfirmed ? (
+                              <React.Fragment>
+                                <li className="text-success">Бухгалтер подтвердил заяку</li>
+                                <li>Общая сумма: {item.previousOrder.cost.toLocaleString()} UZS</li>
+                                <li>Счет-Фактура: {item.previousOrder.invoice}</li>
+                              </React.Fragment>
+                            ) : <li className="text-danger">Бухгалтер отверг заяку</li>}
+                          </React.Fragment>
+                        ) : <li>Бухгалтер еще не рассмотрел заявку</li>}
+                      </React.Fragment>
+                    ) : ''}
+
+                    {item.clientType === 'individual' ? (
+                      <React.Fragment>
+                        {item.previousOrder.adminDecided ? (
+                          <React.Fragment>
+                            <li>Админ рассмотрел заявку (время: <Moment format="DD/MM/YYYY HH:mm">{item.previousOrder.adminCheckedAt}</Moment>)</li>
+                            {item.previousOrder.adminConfirmed ? <li className="text-success">Админ подтвердил заяку</li> : <li className="text-danger">Админ отверг заяку</li>}
+                          </React.Fragment>
+                        ) : ''}
                       </React.Fragment>
                     ) : ''}
                   </ul>

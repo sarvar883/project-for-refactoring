@@ -1,7 +1,9 @@
 import {
   GET_ACC_QUERIES,
   GET_ACC_QUERY_BY_ID,
-  LOADING_ACC_QUERIES
+  GET_ACC_STATS,
+  LOADING_ACC_QUERIES,
+  SET_LOADING_ACC_STATS
 } from '../actions/types';
 
 
@@ -14,8 +16,12 @@ const initialState = {
     userAcceptedOrder: {},
     disinfectors: []
   },
-
-  loadingQueries: false
+  stats: {
+    method: '',
+    orders: []
+  },
+  loadingQueries: false,
+  loadingStats: false
 };
 
 
@@ -35,11 +41,28 @@ export default function (state = initialState, action) {
         loadingQueries: false
       };
 
+    case GET_ACC_STATS:
+      return {
+        ...state,
+        stats: {
+          ...state.stats,
+          orders: action.payload.orders,
+          method: action.payload.method
+        },
+        loadingStats: false
+      };
+
     // loadings
     case LOADING_ACC_QUERIES:
       return {
         ...state,
         loadingQueries: true
+      };
+
+    case SET_LOADING_ACC_STATS:
+      return {
+        ...state,
+        loadingStats: true
       };
 
     default:

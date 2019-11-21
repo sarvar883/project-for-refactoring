@@ -40,13 +40,27 @@ class ShowDisinfStats extends Component {
           totalScore += order.score;
         }
 
+
+        // was
+        // if (order.clientType === 'corporate') {
+        //   if (!order.operatorConfirmed || !order.accountantConfirmed) {
+        //     rejectedOrders.push(order);
+        //   } else if (order.clientType === 'individual') {
+        //     if (!order.operatorConfirmed || !order.adminConfirmed) {
+        //       rejectedOrders.push(order);
+        //     }
+        //   }
+        // }
+
+
+        // changed to this
         if (order.clientType === 'corporate') {
           if (!order.operatorConfirmed || !order.accountantConfirmed) {
             rejectedOrders.push(order);
-          } else if (order.clientType === 'individual') {
-            if (!order.operatorConfirmed || !order.adminConfirmed) {
-              rejectedOrders.push(order);
-            }
+          }
+        } else if (order.clientType === 'individual') {
+          if (!order.operatorConfirmed || !order.adminConfirmed) {
+            rejectedOrders.push(order);
           }
         }
       }

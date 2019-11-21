@@ -3,16 +3,19 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Spinner from '../common/Spinner';
 import TextFieldGroup from '../common/TextFieldGroup';
-import SelectListGroup from '../common/SelectListGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 import advertisements from '../common/advertisements';
 
-import { getDisinfectors, getRepeatOrderForm, createRepeatOrder } from '../../actions/orderActions';
+import { getAllUsers, getRepeatOrderForm, createRepeatOrder } from '../../actions/orderActions';
 
 class CreateRepeatOrder extends Component {
   state = {
     disinfectorId: '',
+    userAcceptedOrder: '',
     client: '',
+    clientType: '',
+    clientId: '',
+
     address: '',
     date: '',
     timeFrom: '',
@@ -21,20 +24,16 @@ class CreateRepeatOrder extends Component {
     phone2: '',
     typeOfService: '',
     advertising: '',
-    comment: '',
-    errors: {}
+    comment: ''
   };
 
   componentDidMount() {
     this.props.getRepeatOrderForm(this.props.match.params.orderId);
-    this.props.getDisinfectors();
+    this.props.getAllUsers();
     window.scrollTo({ top: 0 });
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.errors) {
-      this.setState({ errors: nextProps.errors });
-    }
 
     if (nextProps.order.repeatOrder) {
       let newOrder = nextProps.order.repeatOrder;
@@ -52,11 +51,15 @@ class CreateRepeatOrder extends Component {
 
       this.setState({
         disinfectorId: newOrder.disinfectorId._id ? newOrder.disinfectorId._id : '',
+        clientType: newOrder.clientType ? newOrder.clientType : '',
         client: newOrder.client ? newOrder.client : '',
+        clientId: newOrder.clientId ? newOrder.clientId._id : '',
+
         address: newOrder.address ? newOrder.address : '',
         phone: newOrder.phone ? newOrder.phone : '',
         typeOfService: newOrder.typeOfService ? newOrder.typeOfService : '',
-        advertising: newOrder.advertising ? newOrder.advertising : ''
+        advertising: newOrder.advertising ? newOrder.advertising : '',
+        userAcceptedOrder: newOrder.userAcceptedOrder ? newOrder.userAcceptedOrder._id : '',
       });
     }
   }
@@ -104,7 +107,10 @@ class CreateRepeatOrder extends Component {
       const newOrder = {
         id: this.props.match.params.orderId,
         disinfectorId: this.state.disinfectorId,
+        clientType: this.state.clientType,
         client: this.state.client,
+        clientId: this.state.clientId,
+
         address: this.state.address,
         date: this.state.date,
         dateFrom: dateStringFrom,
@@ -114,24 +120,35 @@ class CreateRepeatOrder extends Component {
         typeOfService: this.state.typeOfService,
         advertising: this.state.advertising,
         comment: this.state.comment,
-        userCreated: this.props.auth.user.id
+        userCreated: this.props.auth.user.id,
+        userAcceptedOrder: this.state.userAcceptedOrder
       };
       this.props.createRepeatOrder(newOrder, this.props.history, this.props.auth.user.occupation);
     }
   }
 
   render() {
-    const { errors } = this.state;
-    const disinfectors = this.props.order.disinfectors ? this.props.order.disinfectors : [];
-    const disinfectorOptions = [
-      { label: '-- Выберите ответственного дезинфектора --', value: 0 }
+    let allUsers = this.props.order.allUsers ? this.props.order.allUsers.sort((x, y) => x.name - y.name) : [];
+    const userOptions = [
+      { label: '-- Кто принял заказ? --', value: "" }
     ];
-    disinfectors.forEach(worker => disinfectorOptions.push(
-      { label: worker.name, value: worker._id }
-    ));
+    allUsers.forEach(item => {
+      userOptions.push({
+        label: `${item.occupation}, ${item.name}`,
+        value: item._id
+      });
+    });
+
+    let disinfectors = allUsers.filter(user => user.occupation === 'disinfector' || user.occupation === 'subadmin');
+    const disinfectorOptions = [
+      { label: '-- Выберите ответственного дезинфектора --', value: "" }
+    ];
+    disinfectors.forEach(worker => disinfectorOptions.push({
+      label: `${worker.name}, ${worker.occupation}`, value: worker._id
+    }));
 
     const orderTypes = [
-      { label: '-- Выберите тип заказа --', value: 0 },
+      { label: '-- Выберите тип заказа --', value: "" },
       { label: 'DF', value: 'DF' },
       { label: 'DZ', value: 'DZ' },
       { label: 'KL', value: 'KL' },
@@ -142,7 +159,7 @@ class CreateRepeatOrder extends Component {
     ];
 
     const advOptions = [
-      { label: '-- Откуда узнали о нас? --', value: 0 }
+      { label: '-- Откуда узнали о нас? --', value: "" }
     ];
 
     advertisements.forEach(item => {
@@ -161,14 +178,22 @@ class CreateRepeatOrder extends Component {
                 <div className="card">
                   <div className="card-body">
                     <h1 className="display-5 text-center">Создать Повторный Заказ</h1>
-                    <form noValidate onSubmit={this.onSubmit}>
+                    <form onSubmit={this.onSubmit}>
+                      {this.state.clientType === 'corporate' ? (
+                        <p>Корпоративный Клиент: {this.props.order.repeatOrder.clientId.name}</p>
+                      ) : ''}
+
+                      {this.state.clientType === 'individual' ? (
+                        <p>Физический Клиент</p>
+                      ) : ''}
+
                       <TextFieldGroup
                         label="Введите Имя Клиента"
                         type="text"
                         name="client"
                         value={this.state.client}
                         onChange={this.onChange}
-                        error={errors.client}
+                        required
                       />
                       <TextFieldGroup
                         label="Адрес"
@@ -176,21 +201,21 @@ class CreateRepeatOrder extends Component {
                         name="address"
                         value={this.state.address}
                         onChange={this.onChange}
-                        error={errors.address}
+                        required
                       />
                       <TextFieldGroup
                         label="Дата выполнения заказа"
                         name="date"
                         type="date"
                         onChange={this.onChange}
-                        error={errors.date}
+                        required
                       />
                       <TextFieldGroup
                         label="Время (часы:минуты:AM/PM) C"
                         name="timeFrom"
                         type="time"
                         onChange={this.onChange}
-                        error={errors.timeFrom}
+                        required
                       />
                       <TextFieldGroup
                         label="Телефон"
@@ -198,7 +223,7 @@ class CreateRepeatOrder extends Component {
                         name="phone"
                         value={this.state.phone}
                         onChange={this.onChange}
-                        error={errors.phone}
+                        required
                       />
                       {this.state.hasSecondPhone ? (
                         <React.Fragment>
@@ -209,45 +234,60 @@ class CreateRepeatOrder extends Component {
                             name="phone2"
                             value={this.state.phone2}
                             onChange={this.onChange}
+                            required
                           />
                           <button className="btn btn-danger mb-2" onClick={this.deleteSecondPhone}>Убрать запасной номер телефона</button>
                         </React.Fragment>
                       ) : (
                           <button className="btn btn-success mb-3" onClick={this.toggleSecondPhone}>Добавить другой номер</button>
                         )}
-                      <label htmlFor="typeOfService" className="d-block">Выберите тип заказа</label>
-                      <SelectListGroup
-                        name="typeOfService"
-                        value={this.state.typeOfService}
-                        onChange={this.onChange}
-                        error={errors.typeOfService}
-                        options={orderTypes}
-                      />
-                      <SelectListGroup
-                        name="advertising"
-                        value={this.state.advertising}
-                        onChange={this.onChange}
-                        error={errors.advertising}
-                        options={advOptions}
-                      />
+
+                      <div className="form-group">
+                        <label htmlFor="typeOfService">Выберите тип заказа:</label>
+                        <select className="form-control" value={this.state.typeOfService} name="typeOfService" onChange={this.onChange} required>
+                          {orderTypes.map((item, index) =>
+                            <option key={index} value={item.value}>{item.label}</option>
+                          )}
+                        </select>
+                      </div>
+
+                      <div className="form-group">
+                        <label htmlFor="advertising">Откуда узнали:</label>
+                        <select className="form-control" value={this.state.advertising} name="advertising" onChange={this.onChange} required>
+                          {advOptions.map((item, index) =>
+                            <option key={index} value={item.value}>{item.label}</option>
+                          )}
+                        </select>
+                      </div>
+
                       {this.props.order.loading ? (
                         <p>Дезинфекторы загружаются...</p>
                       ) : (
                           <div className="form-group">
                             <label htmlFor="disinfectorId">Выберите Дезинфектора:</label>
-                            <select className="form-control" value={this.state.disinfectorId} name="disinfectorId" onChange={this.onChange}>
+                            <select className="form-control" value={this.state.disinfectorId} name="disinfectorId" onChange={this.onChange} required>
                               {disinfectorOptions.map((item, index) =>
                                 <option key={index} value={item.value}>{item.label}</option>
                               )}
                             </select>
                           </div>
                         )}
+
+                      <div className="form-group">
+                        <label htmlFor="userAcceptedOrder">Кто принял Заказ:</label>
+                        <select className="form-control" value={this.state.userAcceptedOrder} name="userAcceptedOrder" onChange={this.onChange} required>
+                          {userOptions.map((item, index) =>
+                            <option key={index} value={item.value}>{item.label}</option>
+                          )}
+                        </select>
+                      </div>
+
                       <TextAreaFieldGroup
                         name="comment"
                         placeholder="Комментарии (Это поле не обязательное)"
                         value={this.state.comment}
                         onChange={this.onChange}
-                        error={errors.comment}
+                        required
                       />
                       <button type="submit" className="btn btn-primary">Создать Повторный Заказ</button>
                     </form>
@@ -269,4 +309,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getDisinfectors, getRepeatOrderForm, createRepeatOrder })(withRouter(CreateRepeatOrder));
+export default connect(mapStateToProps, { getAllUsers, getRepeatOrderForm, createRepeatOrder })(withRouter(CreateRepeatOrder));

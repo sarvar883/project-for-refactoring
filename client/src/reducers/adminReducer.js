@@ -38,7 +38,9 @@ const initialState = {
     materials: []
   },
   stats: {
-    orders: []
+    disinfectorId: '',
+    orders: [],
+    acceptedOrders: []
   },
   method: '',
   addMatEvents: [],
@@ -147,7 +149,9 @@ export default function (state = initialState, action) {
         method: 'month',
         stats: {
           ...state.stats,
-          orders: action.payload
+          disinfectorId: action.payload.disinfectorId,
+          orders: action.payload.orders,
+          acceptedOrders: action.payload.acceptedOrders
         },
         loadingStats: false
       };
@@ -158,7 +162,9 @@ export default function (state = initialState, action) {
         method: 'week',
         stats: {
           ...state.stats,
-          orders: action.payload
+          disinfectorId: action.payload.disinfectorId,
+          orders: action.payload.orders,
+          acceptedOrders: action.payload.acceptedOrders
         },
         loadingStats: false
       };

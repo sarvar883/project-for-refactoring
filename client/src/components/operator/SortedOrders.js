@@ -33,13 +33,14 @@ class SortedOrders extends Component {
 
     socket.on('editOrder', data => {
       // check if today
-      if (
-        new Date(data.order.dateFrom).getDate() === new Date(this.props.date).getDate() &&
-        new Date(data.order.dateFrom).getMonth() === new Date(this.props.date).getMonth() &&
-        new Date(data.order.dateFrom).getFullYear() === new Date(this.props.date).getFullYear()
-      ) {
-        this.editOrderOnDOM(data.order);
-      }
+      // if (
+      //   new Date(data.order.dateFrom).getDate() === new Date(this.props.date).getDate() &&
+      //   new Date(data.order.dateFrom).getMonth() === new Date(this.props.date).getMonth() &&
+      //   new Date(data.order.dateFrom).getFullYear() === new Date(this.props.date).getFullYear()
+      // ) {
+      //   this.editOrderOnDOM(data.order);
+      // }
+      this.editOrderOnDOM(data.order);
     });
 
     socket.on('deleteOrder', data => {
@@ -167,7 +168,8 @@ class SortedOrders extends Component {
                 <li>Адрес: {element.address}</li>
                 <li>Тип услуги: {element.typeOfService}</li>
                 <li>Откуда узнали: {element.advertising}</li>
-                <li>Заказ принял: {element.userCreated.name}</li>
+                <li>Заказ принял: {element.userAcceptedOrder.occupation} {element.userAcceptedOrder.name}</li>
+                <li>Заказ Добавил: {element.userCreated.occupation} {element.userCreated.name}</li>
               </ul>
               <Link to={`/order-details/${element._id}`} className="btn btn-warning">Подробнее</Link>
             </div>

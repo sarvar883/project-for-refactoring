@@ -55,7 +55,9 @@ exports.weekStatsForDisinfector = async (req, res) => {
   const id = req.body.id;
   const days = req.body.days;
 
-  let addedMaterials = await AddMaterial.find({ disinfector: id }).populate('disinfector admin').exec();
+  let addedMaterials = await AddMaterial.find({ disinfector: id })
+    .populate('disinfector admin')
+    .exec();
 
   addedMaterials = addedMaterials.filter(item =>
     new Date(item.createdAt) >= new Date(days[0]) &&
@@ -100,7 +102,7 @@ exports.monthStatsForAdmin = (req, res) => {
   const year = Number(req.body.year);
 
   Order.find()
-    .populate('disinfectorId userCreated')
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(orders => {
       orders = orders.filter(order =>
@@ -120,7 +122,7 @@ exports.weekStatsForAdmin = (req, res) => {
   const days = req.body.days;
 
   Order.find()
-    .populate('disinfectorId userCreated')
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(orders => {
       orders = orders.filter(order =>
@@ -140,16 +142,36 @@ exports.disinfMonthStatsForAdmin = (req, res) => {
   const id = req.body.id;
   const month = Number(req.body.month);
   const year = Number(req.body.year);
+  let acceptedOrders = [];
 
-  Order.find({ disinfectorId: id })
-    .populate('userCreated')
+  Order.find()
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(orders => {
+      acceptedOrders = orders.filter(item => item.userAcceptedOrder._id.toString() === id && new Date(item.dateFrom).getMonth() === month && new Date(item.dateFrom).getFullYear() === year);
+
+      orders = orders.filter(item => {
+
+        let amongDisinfectors = 0;
+        item.disinfectors.forEach(element => {
+          if (element.user._id.toString() === id) amongDisinfectors++;
+        });
+        if (item.disinfectorId._id.toString() === id || amongDisinfectors > 0) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
       orders = orders.filter(order =>
         new Date(order.dateFrom).getMonth() === month &&
         new Date(order.dateFrom).getFullYear() === year
       );
-      return res.json(orders);
+      return res.json({
+        disinfectorId: id,
+        orders: orders,
+        acceptedOrders: acceptedOrders
+      });
     })
     .catch(err => {
       console.log('disinfMonthStatsForAdmin ERROR', err);
@@ -161,16 +183,36 @@ exports.disinfMonthStatsForAdmin = (req, res) => {
 exports.disinfWeekStatsForAdmin = (req, res) => {
   const id = req.body.id;
   const days = req.body.days;
+  let acceptedOrders = [];
 
-  Order.find({ disinfectorId: id })
-    .populate('userCreated')
+  Order.find()
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(orders => {
+      acceptedOrders = orders.filter(item => item.userAcceptedOrder._id.toString() === id && new Date(item.dateFrom) >= new Date(days[0]) && new Date(item.dateFrom).setHours(0, 0, 0, 0) <= new Date(days[6]));
+
+      orders = orders.filter(item => {
+
+        let amongDisinfectors = 0;
+        item.disinfectors.forEach(element => {
+          if (element.user._id.toString() === id) amongDisinfectors++;
+        });
+        if (item.disinfectorId._id.toString() === id || amongDisinfectors > 0) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
       orders = orders.filter(order =>
         new Date(order.dateFrom) >= new Date(days[0]) &&
         new Date(order.dateFrom).setHours(0, 0, 0, 0) <= new Date(days[6])
       );
-      return res.json(orders);
+      return res.json({
+        disinfectorId: id,
+        orders: orders,
+        acceptedOrders: acceptedOrders
+      });
     })
     .catch(err => {
       console.log('disinfWeekStatsForAdmin ERROR', err);
@@ -181,7 +223,7 @@ exports.disinfWeekStatsForAdmin = (req, res) => {
 
 exports.getAdvStats = (req, res) => {
   Order.find()
-    .populate('userCreated')
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(orders => {
       let sortedOrders = [];
@@ -208,7 +250,7 @@ exports.getAdvStats = (req, res) => {
 
 exports.getOperatorStats = (req, res) => {
   Order.find({ userCreated: req.body.object.operatorId })
-    .populate('disinfectorId')
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(orders => {
       let sortedOrders = [];

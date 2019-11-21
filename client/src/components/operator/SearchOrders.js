@@ -52,37 +52,34 @@ class SearchOrders extends Component {
 
   render() {
     let renderOrders = this.state.orders.map((item, index) => {
-      let consumptionRender;
-      if (item.consumption) {
-        consumptionRender = item.consumption.map((item, index) =>
-          <li key={index}>{item.material} : {item.amount} {item.unit}</li>
-        );
-      }
+
+      let consumptionArray = [];
+      item.disinfectors.forEach(thing => {
+        consumptionArray.push({
+          user: thing.user,
+          consumption: thing.consumption
+        });
+      });
+
+      let consumptionRender = consumptionArray.map((element, number) =>
+        <li key={number}>
+          <p className="mb-0">Пользователь: {element.user.occupation} {element.user.name}</p>
+          {element.consumption.map((thing, key) =>
+            <p key={key} className="mb-0">{thing.material}: {thing.amount.toLocaleString()} {thing.unit}</p>
+          )}
+        </li>
+      );
 
       return (
         <div className="col-lg-4 col-md-6" key={index}>
           <div className="card order mt-2">
             <div className="card-body p-0">
               <ul className="font-bold mb-0 list-unstyled">
-                <li>Дезинфектор: {item.disinfectorId.name}</li>
-                <li>Клиент: {item.client}</li>
-                <li>Телефон: {item.phone}</li>
-                {item.phone2 && item.phone2 !== '' ? <li>Запасной номер: {item.phone2}</li> : ''}
-                <li>Адрес: {item.address}</li>
-                <li>Откуда узнали: {item.advertising}</li>
-                <li>Тип услуги: {item.typeOfService}</li>
-                <li>Дата: <Moment format="DD/MM/YYYY">{item.dateFrom}</Moment></li>
-                <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
-                <li>Срок гарантии (в месяцах): {item.guarantee}</li>
-                <li>Комментарии: {item.comment ? item.comment : '--'}</li>
-                <li>Комментарии Дезинфектора: {item.disinfectorComment ? item.disinfectorComment : '--'}</li>
-                <li>Расход Материалов:</li>
-                <ul className="font-bold mb-0">
-                  {consumptionRender}
-                </ul>
-                <li>Тип Платежа: {item.paymentMethod}</li>
-                {item.paymentMethod === 'Безналичный' ? <li>Счет-Фактура: {item.invoice}</li> : ''}
-                <li>Общая Сумма: {item.cost ? item.cost.toLocaleString() : ''} UZS</li>
+                <li>Ответственный: {item.disinfectorId.occupation} {item.disinfectorId.name}</li>
+
+                {item.completed ? (
+                  <li>Заказ Выполнен</li>
+                ) : <li>Заказ еще Не Выполнен</li>}
 
                 {item.completed && item.operatorDecided ? (
                   <React.Fragment>
@@ -93,12 +90,74 @@ class SearchOrders extends Component {
                   </React.Fragment>
                 ) : <li>Оператор еще рассмотрел заявку</li>}
 
-                {item.completed && item.adminDecided ? (
+                {item.clientType === 'corporate' && !item.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
+
+                {item.clientType === 'corporate' && item.accountantDecided ?
                   <React.Fragment>
-                    <li>Админ рассмотрел заявку (время: <Moment format="DD/MM/YYYY HH:mm">{item.adminCheckedAt}</Moment>)</li>
-                    {item.adminConfirmed ? <li className="text-success">Админ подтвердил заяку</li> : <li className="text-danger">Админ отверг заяку</li>}
+                    <li>Бухгалтер рассмотрел заявку</li>
+                    {item.accountantConfirmed ? (
+                      <React.Fragment>
+                        <li className="text-success">Бухгалтер Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{item.accountantCheckedAt}</Moment>)</li>
+                        <li>Счет-Фактура: {item.invoice}</li>
+                        <li>Общая Сумма: {item.cost.toLocaleString()} (каждому по {(item.cost / item.disinfectors.length).toLocaleString()})</li>
+                      </React.Fragment>
+                    ) : <li className="text-danger">Бухгалтер Отклонил (<Moment format="DD/MM/YYYY HH:mm">{item.accountantCheckedAt}</Moment>)</li>}
                   </React.Fragment>
-                ) : <li>Админ еще не рассмотрел заявку</li>}
+                  : ''}
+
+                {item.clientType === 'individual' ? (
+                  <React.Fragment>
+                    {item.completed && item.adminDecided ? (
+                      <React.Fragment>
+                        <li>Админ рассмотрел заявку (время: <Moment format="DD/MM/YYYY HH:mm">{item.adminCheckedAt}</Moment>)</li>
+                        {item.adminConfirmed ? <li className="text-success">Админ подтвердил заяку</li> : <li className="text-danger">Админ отверг заяку</li>}
+                      </React.Fragment>
+                    ) : <li>Админ еще не рассмотрел заявку</li>}
+                  </React.Fragment>
+                ) : ''}
+
+                {item.clientType === 'corporate' ?
+                  <React.Fragment>
+                    <li>Корпоративный Клиент: {item.clientId.name}</li>
+                    <li>Имя клиента: {item.client}</li>
+                  </React.Fragment>
+                  : ''}
+
+                {item.clientType === 'individual' ?
+                  <li>Физический Клиент: {item.client}</li>
+                  : ''}
+
+                <li>Телефон: {item.phone}</li>
+                {item.phone2 && item.phone2 !== '' ? <li>Запасной номер: {item.phone2}</li> : ''}
+                <li>Адрес: {item.address}</li>
+                <li>Откуда узнали: {item.advertising}</li>
+                <li>Тип услуги: {item.typeOfService}</li>
+
+                {item.dateFrom ? (
+                  <React.Fragment>
+                    <li>Дата: <Moment format="DD/MM/YYYY">{item.dateFrom}</Moment></li>
+                    {item.completed ? (
+                      <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
+                    ) : <li>Время выполнения: <Moment format="HH:mm">{item.dateFrom}</Moment></li>}
+                  </React.Fragment>
+                ) : <li>Дата и время выполнения: --</li>}
+
+                {item.clientType === 'corporate' ? (
+                  <li>Номер договора: {item.contractNumber ? item.contractNumber : '--'}</li>
+                ) : ''}
+
+                <li>Срок гарантии (в месяцах): {item.guarantee ? item.guarantee : '--'}</li>
+                <li>Комментарии: {item.comment ? item.comment : '--'}</li>
+                <li>Комментарии Дезинфектора: {item.disinfectorComment ? item.disinfectorComment : '--'}</li>
+
+                {item.completed ? (
+                  <React.Fragment>
+                    <li>Расход Материалов:</li>
+                    <ul className="font-bold mb-0">
+                      {consumptionRender}
+                    </ul>
+                  </React.Fragment>
+                ) : <li>Расход Материалов: --</li>}
 
                 {item.repeatedOrder ? (
                   <React.Fragment>

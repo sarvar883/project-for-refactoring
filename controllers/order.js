@@ -127,7 +127,10 @@ exports.editOrder = (req, res) => {
       orderForEdit.userAcceptedOrder = order.userAcceptedOrder;
       orderForEdit.clientType = order.clientType;
       orderForEdit.client = order.client;
-      orderForEdit.clientId = order.clientId;
+      if (orderForEdit.clientType === 'corporate') {
+        orderForEdit.clientId = order.clientId;
+      }
+
       orderForEdit.address = order.address;
       orderForEdit.dateFrom = order.dateFrom;
       orderForEdit.phone = order.phone;
@@ -136,16 +139,18 @@ exports.editOrder = (req, res) => {
       orderForEdit.advertising = order.advertising;
       orderForEdit.comment = order.comment;
 
-      orderForEdit.save()
-        .then(editedOrder => {
-          editedOrder.populate('disinfectorId userCreated userAcceptedOrder clientId')
-            .execPopulate()
-            .then(item => {
-              io.getIO().emit('editOrder', {
-                order: item
-              });
-              return res.json(editedOrder);
-            });
+      return orderForEdit.save()
+    })
+    .then(editedOrder => {
+      editedOrder.populate('disinfectorId userCreated userAcceptedOrder clientId')
+        .execPopulate()
+        .then(item => {
+          io.getIO().emit('editOrder', {
+            order: item
+          });
+          // console.log('editedOrder', item);
+          // return res.json(editedOrder);
+          return res.json(item);
         });
     })
     .catch(err => {
@@ -196,6 +201,7 @@ exports.createRepeatOrder = (req, res) => {
       order.typeOfService = req.body.order.typeOfService;
       order.advertising = req.body.order.advertising;
       order.comment = req.body.order.comment;
+      order.userAcceptedOrder = req.body.order.userAcceptedOrder;
       order.repeatedOrderDecided = true;
       order.repeatedOrderNeeded = true;
 
@@ -205,30 +211,41 @@ exports.createRepeatOrder = (req, res) => {
 
       order.save()
         .then((savedOrder) => {
-          Client.findOne({ phone: req.body.order.phone })
-            .then(client => {
-              if (client) {
-                // if we have a client with this phone number
+
+          if (req.body.clientType === 'corporate') {
+            Client.findById(req.body.clientId)
+              .then(client => {
                 client.orders.push(savedOrder._id);
                 client.save();
-              } else {
-                let array = [];
-                array.push(savedOrder._id);
+              });
 
-                const newClient = new Client({
-                  _id: mongoose.Types.ObjectId(),
-                  name: req.body.order.client,
-                  phone: req.body.order.phone,
-                  address: req.body.order.address,
-                  orders: array,
-                  createdAt: new Date()
-                });
-                newClient.save();
-              }
-            });
+          } else if (req.body.clientType === 'individual') {
+            Client.findOne({ phone: req.body.phone })
+              .then(client => {
+                if (client) {
+                  // if we have a client with this phone number
+                  client.orders.push(savedOrder._id);
+                  client.save();
+                } else {
+                  let array = [];
+                  array.push(savedOrder._id);
+
+                  const newClient = new Client({
+                    _id: mongoose.Types.ObjectId(),
+                    type: req.body.clientType,
+                    name: req.body.client,
+                    phone: req.body.phone,
+                    address: req.body.address,
+                    orders: array,
+                    createdAt: new Date()
+                  });
+                  newClient.save();
+                }
+              });
+          }
 
           Order.findOne(order)
-            .populate('disinfectorId userCreated')
+            .populate('disinfectorId userCreated clientId userAcceptedOrder')
             .exec()
             .then(savedOrder => {
               io.getIO().emit('createOrder', {
@@ -297,9 +314,9 @@ exports.searchOrders = (req, res) => {
     .exec()
     .then(orders => {
       if (req.body.object.method === 'address') {
-        orders = orders.filter(item => stringSimilarity.compareTwoStrings(item.address.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.55);
+        orders = orders.filter(item => stringSimilarity.compareTwoStrings(item.address.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.50);
       } else if (req.body.object.method === 'phone') {
-        orders = orders.filter(item => stringSimilarity.compareTwoStrings(item.phone.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.80);
+        orders = orders.filter(item => stringSimilarity.compareTwoStrings(item.phone.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.70);
       }
       return res.json(orders);
     })

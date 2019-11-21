@@ -56,7 +56,7 @@ class Anons extends Component {
                               rows="5"
                               name="anons"
                               defaultValue={this.state.anons}
-                              placeholder="Пишите Ваше Объяление ..."
+                              placeholder="Пишите Ваше Объявление ..."
                               required
                               onChange={this.onChange}
                             />

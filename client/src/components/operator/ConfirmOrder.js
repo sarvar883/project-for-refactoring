@@ -80,7 +80,6 @@ class ConfirmOrder extends Component {
                   <ul className="font-bold mb-0">
                     <li>Ответственный: {completeOrder.disinfectorId.occupation} {completeOrder.disinfectorId.name}</li>
 
-
                     {completeOrder.clientType === 'corporate' && !completeOrder.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
 
                     {completeOrder.clientType === 'corporate' && completeOrder.accountantDecided ?

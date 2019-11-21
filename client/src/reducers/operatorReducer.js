@@ -22,8 +22,8 @@ const initialState = {
     disinfectors: []
   },
   stats: {
-    orders: [],
-    completeOrders: []
+    sortedOrders: [],
+    method: ''
   },
   loadingSortedOrders: false,
   loadingCompleteOrders: false,
@@ -77,8 +77,8 @@ export default function (state = initialState, action) {
         ...state,
         stats: {
           ...state.stats,
-          orders: action.payload.orders,
-          completeOrders: action.payload.completeOrders
+          sortedOrders: action.payload.sortedOrders,
+          method: action.payload.method
         },
         loadingStats: false
       };

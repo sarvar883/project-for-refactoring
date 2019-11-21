@@ -130,6 +130,25 @@ export const repeatOrderNotNeeded = (id, history, occupation) => (dispatch) => {
 };
 
 
+// operator sees his own statistics
+export const getStatsForOperator = (object) => (dispatch) => {
+  dispatch(setLoadingStats());
+  axios.post('/operator/get-operator-stats', { object: object })
+    .then(res =>
+      dispatch({
+        type: GOT_STATS_FOR_OPERATOR,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
 // Loading sorted orders
 export const setLoadingSortedOrders = () => {
   return {
