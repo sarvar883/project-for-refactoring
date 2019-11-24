@@ -2,12 +2,14 @@ import {
   GET_ACC_QUERIES,
   GET_ACC_QUERY_BY_ID,
   GET_ACC_STATS,
+  SEARCH_CONTRACTS,
   LOADING_ACC_QUERIES,
   SET_LOADING_ACC_STATS
 } from '../actions/types';
 
 
 const initialState = {
+  orders: [],
   queries: [],
   queryById: {
     disinfectorId: {},
@@ -51,6 +53,14 @@ export default function (state = initialState, action) {
         },
         loadingStats: false
       };
+
+    case SEARCH_CONTRACTS:
+      return {
+        ...state,
+        orders: action.payload,
+        loadingQueries: false
+      };
+
 
     // loadings
     case LOADING_ACC_QUERIES:

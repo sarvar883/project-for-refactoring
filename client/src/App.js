@@ -35,6 +35,8 @@ import AddClient from './components/admin/AddClient';
 import AdmClients from './components/admin/AdmClients';
 
 import Subadmin from './components/subadmin/Subadmin';
+import SubadmOrders from './components/subadmin/SubadmOrders';
+import SubOrderForm from './components/subadmin/SubOrderForm';
 import MaterialDistrib from './components/subadmin/MaterialDistrib';
 import SubMatComHist from './components/subadmin/SubMatComHist';
 import MatDistribHistory from './components/subadmin/MatDistribHistory';
@@ -147,17 +149,32 @@ class App extends Component {
             <Switch>
               <AdminRoute exact path="/edit-order/:orderId" component={EditOrder} />
             </Switch>
+
             <Switch>
-              <AdminRoute exact path="/admin/add-client" component={AddClient} />
+              {/* <AdminRoute exact path="/admin/add-client" component={AddClient} /> */}
+              <PrivateRoute exact path="/add-client" component={AddClient} />
             </Switch>
+
             <Switch>
-              <AdminRoute exact path="/admin/clients" component={AdmClients} />
+              <PrivateRoute exact path="/clients" component={AdmClients} />
             </Switch>
 
 
             {/* Subadmin Routes */}
             <Switch>
               <SubadminRoute exact path="/subadmin" component={Subadmin} />
+            </Switch>
+            <Switch>
+              <SubadminRoute exact path="/subadmin/orders" component={SubadmOrders} />
+            </Switch>
+            <Switch>
+              <SubadminRoute exact path="/subadmin/queries" component={DisinfQueries} />
+            </Switch>
+            <Switch>
+              <SubadminRoute exact path="/subadmin/stats" component={DisinfStats} />
+            </Switch>
+            <Switch>
+              <SubadminRoute exact path="/subadmin/order-complete-form/:id" component={SubOrderForm} />
             </Switch>
             <Switch>
               <SubadminRoute exact path="/subadmin/materials" component={MaterialDistrib} />
@@ -214,6 +231,7 @@ class App extends Component {
               <OperatorRoute exact path="/operator/stats" component={OperatorStats} />
             </Switch>
 
+
             {/* Accountant Routes */}
             <Switch>
               <AccountantRoute exact path="/accountant" component={Accountant} />
@@ -227,6 +245,7 @@ class App extends Component {
             <Switch>
               <AccountantRoute exact path="/accountant/stats" component={AccStats} />
             </Switch>
+
 
             {/* Chat Routes */}
             <Switch>

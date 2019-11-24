@@ -1,15 +1,26 @@
 import {
+  SUBADM_GET_MY_ORDERS,
+  GET_ORDER_BY_ID,
   GET_SORTED_ORDERS_SUBADMIN,
   ALL_DISINFECTORS,
+  GET_ALL_DISINFECTORS,
   SUBADMIN_ADDS_MATERIAL,
   SUBADMIN_MAT_COM_HISTORY,
   SUBADMIN_MAT_DISTRIB_HISTORY,
   LOADING_SORTED_ORDERS_SUBADMIN,
+  SET_LOADING,
   SUBADMIN_LOADING,
   SUBADMIN_LOADING_STATS
 } from '../actions/types';
 
 const initialState = {
+  myOrders: [],
+  orderById: {
+    disinfectorId: {},
+    clientId: {},
+    userCreated: {},
+    userAcceptedOrder: {}
+  },
   disinfectors: [],
   sortedOrders: [],
   completeOrders: [],
@@ -45,13 +56,40 @@ export default function (state = initialState, action) {
         loading: true
       };
 
+    case SET_LOADING:
+      return {
+        ...state,
+        loading: true
+      };
+
     case SUBADMIN_LOADING_STATS:
       return {
         ...state,
         loadingStats: true
       };
 
+    // get all disinfectors and subadmins
+    case GET_ALL_DISINFECTORS:
+      return {
+        ...state,
+        disinfectors: action.payload
+      };
 
+    case SUBADM_GET_MY_ORDERS:
+      return {
+        ...state,
+        myOrders: action.payload,
+        loading: false
+      };
+
+    case GET_ORDER_BY_ID:
+      return {
+        ...state,
+        orderById: action.payload,
+        loading: false
+      };
+
+    // get all disinfectors only (not subadmins)
     case ALL_DISINFECTORS:
       return {
         ...state,

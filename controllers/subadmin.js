@@ -7,6 +7,23 @@ const ComingMaterial = require('../models/comingMaterial');
 const io = require('../socket');
 
 
+exports.getMyOrders = (req, res) => {
+  Order.find({
+    disinfectorId: req.body.id
+  })
+    .populate('disinfectorId userCreated clientId userAcceptedOrder')
+    .exec()
+    .then(orders => {
+      orders = orders.filter(item => (!item.repeatedOrder && !item.completed) || (!item.completed && item.repeatedOrder && item.repeatedOrderDecided && item.repeatedOrderNeeded));
+      return res.json(orders);
+    })
+    .catch(err => {
+      console.log('getOrders ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
 exports.getSortedOrders = (req, res) => {
   const date = new Date(req.body.date);
   const day = date.getDate();
@@ -14,7 +31,7 @@ exports.getSortedOrders = (req, res) => {
   const year = date.getFullYear();
 
   Order.find()
-    .populate('disinfectorId userCreated')
+    .populate('disinfectorId userCreated clientId userAcceptedOrder')
     .exec()
     .then(orders => {
       let sortedOrders = orders.filter(item =>

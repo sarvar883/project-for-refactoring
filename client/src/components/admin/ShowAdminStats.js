@@ -18,6 +18,16 @@ class ShowAdminStats extends Component {
       confirmedOrders = [],
       rejectedOrders = [];
 
+    let corporateClientOrders = {
+      sum: 0,
+      orders: 0
+    };
+
+    let indivClientOrders = {
+      sum: 0,
+      orders: 0
+    };
+
     materials.forEach(object => {
       const emptyObject = {
         material: object.material,
@@ -30,41 +40,46 @@ class ShowAdminStats extends Component {
     this.state.orders.forEach(order => {
       if (order.completed) {
         completedOrders.push(order);
-      }
 
-      if (order.clientType === 'corporate') {
-        if (order.completed && order.operatorConfirmed && order.accountantConfirmed) {
-          confirmedOrders.push(order);
-          totalSum += order.cost;
-          totalScore += order.score;
-        }
-        if (order.completed && (!order.operatorConfirmed || !order.accountantConfirmed)) {
-          rejectedOrders.push(order);
-        }
-      }
+        if (order.clientType === 'corporate') {
+          if (order.operatorConfirmed && order.accountantConfirmed) {
+            confirmedOrders.push(order);
+            totalSum += order.cost;
+            totalScore += order.score;
 
-      if (order.clientType === 'individual') {
-        if (order.completed && order.operatorConfirmed && order.adminConfirmed) {
-          confirmedOrders.push(order);
-          totalSum += order.cost;
-          totalScore += order.score;
+            corporateClientOrders.orders++;
+            corporateClientOrders.sum += order.cost;
+          }
+          if ((order.operatorDecided && !order.operatorConfirmed) || (order.accountantDecided && !order.accountantConfirmed)) {
+            rejectedOrders.push(order);
+          }
         }
-        if (order.completed && (!order.operatorConfirmed || !order.adminConfirmed)) {
-          rejectedOrders.push(order);
-        }
-      }
 
-      // calculate total consumption of all orders in given period
-      order.disinfectors.forEach(element => {
-        element.consumption.forEach(object => {
-          totalConsumption.forEach(item => {
-            if (object.material === item.material && object.unit === item.unit) {
-              item.amount += object.amount;
-            }
+        if (order.clientType === 'individual') {
+          if (order.operatorConfirmed && order.adminConfirmed) {
+            confirmedOrders.push(order);
+            totalSum += order.cost;
+            totalScore += order.score;
+
+            indivClientOrders.orders++;
+            indivClientOrders.sum += order.cost;
+          }
+          if ((order.operatorDecided && !order.operatorConfirmed) || (order.adminDecided && !order.adminConfirmed)) {
+            rejectedOrders.push(order);
+          }
+        }
+
+        // calculate total consumption of all orders in given period
+        order.disinfectors.forEach(element => {
+          element.consumption.forEach(object => {
+            totalConsumption.forEach(item => {
+              if (object.material === item.material && object.unit === item.unit) {
+                item.amount += object.amount;
+              }
+            });
           });
         });
-      });
-
+      }
     });
 
     let renderTotalConsumption = totalConsumption.map((item, key) =>
@@ -167,10 +182,7 @@ class ShowAdminStats extends Component {
                   : ''}
 
                 {order.clientType === 'individual' ?
-                  <React.Fragment>
-                    <li>Общая Цена: {order.cost.toLocaleString()} Сум</li>
-                    <li>Из них Вам досталось: {parseFloat((order.cost / order.disinfectors.length).toFixed(2)).toLocaleString()} Сум</li>
-                  </React.Fragment>
+                  <li>Общая Сумма: {order.cost.toLocaleString()} UZS (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
                   : ''}
 
                 <li>Заказ принял: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>
@@ -189,22 +201,12 @@ class ShowAdminStats extends Component {
           <div className="col-lg-4 col-md-6">
             <div className="card order mt-2">
               <div className="card-body p-0">
-                <h2 className="text-center">Заказы</h2>
+                <h3 className="text-center">Заказы</h3>
                 <ul className="font-bold mb-0 list-unstyled">
                   <li>Всего Получено Заказов: {this.state.orders.length}</li>
                   <li>Выполнено Заказов: {completedOrders.length}</li>
                   <li>Подтверждено Заказов: {confirmedOrders.length}</li>
                   <li>Общая Сумма: {totalSum.toLocaleString()} UZS</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-lg-4 col-md-6">
-            <div className="card order mt-2">
-              <div className="card-body p-0">
-                <h2 className="text-center">Рейтинг:</h2>
-                <ul className="font-bold mb-0 pl-3">
                   <li>Средний балл: {(totalScore / confirmedOrders.length).toFixed(2)} (из 5)</li>
                 </ul>
               </div>
@@ -214,7 +216,22 @@ class ShowAdminStats extends Component {
           <div className="col-lg-4 col-md-6">
             <div className="card order mt-2">
               <div className="card-body p-0">
-                <h2 className="text-center">Общий Расход Материалов:</h2>
+                <ul className="font-bold mb-0 list-unstyled">
+                  <h4 className="text-center">Корпоративные клиенты</h4>
+                  <li>Количество подтвержденных заказов: {corporateClientOrders.orders}</li>
+                  <li>На общую сумму: {corporateClientOrders.sum.toLocaleString()} UZS</li>
+                  <h4 className="text-center">Физические клиенты</h4>
+                  <li>Количество подтвержденных заказов: {indivClientOrders.orders}</li>
+                  <li>На общую сумму: {indivClientOrders.sum.toLocaleString()} UZS</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-lg-4 col-md-6">
+            <div className="card order mt-2">
+              <div className="card-body p-0">
+                <h3 className="text-center">Общий Расход Материалов:</h3>
                 <ul className="font-bold mb-0 pl-3">
                   {renderTotalConsumption}
                 </ul>

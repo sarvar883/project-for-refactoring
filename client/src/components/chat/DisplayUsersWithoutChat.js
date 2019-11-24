@@ -19,7 +19,6 @@ class DisplayUsersWithoutChat extends Component {
 
     // const socket = openSocket('http://localhost:5000');
     const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
-    // const socket = openSocket(window.location.origin);
 
     socket.on('createChat', data => {
       if (this.props.auth.user.id === data.user1._id.toString()) {

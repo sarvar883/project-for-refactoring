@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import Moment from 'react-moment';
+// import Moment from 'react-moment';
 
 import materials from '../common/materials';
 
@@ -34,16 +34,16 @@ class ShowAccStats extends Component {
 
         if (order.operatorConfirmed && (order.adminConfirmed || order.accountantConfirmed)) {
           confirmedOrders.push(order);
-          totalSum += order.cost / order.disinfectors.length;
+          totalSum += order.cost;
           totalScore += order.score;
         }
 
         if (order.clientType === 'corporate') {
-          if (!order.operatorConfirmed || !order.accountantConfirmed) {
+          if (!order.operatorConfirmed || (order.accountantDecided && !order.accountantConfirmed)) {
             rejectedOrders.push(order);
           }
         } else if (order.clientType === 'individual') {
-          if (!order.operatorConfirmed || !order.adminConfirmed) {
+          if (!order.operatorConfirmed || (order.adminDecided && !order.adminConfirmed)) {
             rejectedOrders.push(order);
           }
         }

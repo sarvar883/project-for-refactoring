@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const User = require('../models/user');
-const Chat = require('../models/chat');
-const Anons = require('../models/anons');
 const Order = require('../models/order');
 const Client = require('../models/client');
 const AddMaterial = require('../models/addMaterial');
@@ -12,7 +10,6 @@ const io = require('../socket');
 
 const materials = require('../client/src/components/common/materials');
 
-const validateAddClient = require('../validation/addClient');
 
 exports.getSortedOrders = (req, res) => {
   const date = new Date(req.body.date);
@@ -181,7 +178,7 @@ exports.getCurMat = (req, res) => {
   //   emptyArray.push({
   //     material: item.material,
   //     amount: 0,
-  //     unit: 'гр'
+  //     unit: item.unit
   //   });
   // });
 
@@ -340,16 +337,37 @@ exports.addClient = (req, res) => {
 
 exports.searchClients = (req, res) => {
   Client.find()
-    .populate('orders')
+    .populate({
+      path: 'orders',
+      model: 'Order',
+      populate: {
+        path: 'disinfectorId userCreated userAcceptedOrder disinfectors.user',
+        model: 'User'
+      }
+    })
     .exec()
     .then(clients => {
-      if (req.body.object.method === 'name') {
-        clients = clients.filter(item => stringSimilarity.compareTwoStrings(item.name.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.55);
-      } else if (req.body.object.method === 'phone') {
-        clients = clients.filter(item => stringSimilarity.compareTwoStrings(item.phone.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.80);
-      } else if (req.body.object.method === 'address') {
-        clients = clients.filter(item => stringSimilarity.compareTwoStrings(item.address.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.55);
-      }
+
+      clients = clients.filter(item => {
+        if (req.body.object.method === 'name') {
+          return stringSimilarity.compareTwoStrings(item.name.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.50;
+        } else if (req.body.object.method === 'phone') {
+          if (item.type === 'corporate') {
+            return false;
+          } else if (item.type === 'individual') {
+            return stringSimilarity.compareTwoStrings(item.phone, req.body.object.payload) > 0.75 || stringSimilarity.compareTwoStrings(item.phone2, req.body.object.payload) > 0.75;
+          }
+        } else if (req.body.object.method === 'address') {
+          if (item.type === 'corporate') {
+            return false;
+          } else if (item.type === 'individual') {
+            return stringSimilarity.compareTwoStrings(item.address.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.50;
+          }
+        } else if (req.body.object.method === 'all') {
+          return true;
+        }
+      });
+
       return res.json(clients);
     })
     .catch(err => {

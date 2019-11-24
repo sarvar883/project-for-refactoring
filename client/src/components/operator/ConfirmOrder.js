@@ -42,7 +42,9 @@ class ConfirmOrder extends Component {
     e.preventDefault();
     const object = {
       orderId: this.props.operator.orderToConfirm._id,
-      decision: 'reject'
+      decision: 'reject',
+      clientReview: '',
+      score: ''
     };
     this.props.confirmCompleteOrder(object, this.props.history);
   }

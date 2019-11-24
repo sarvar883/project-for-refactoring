@@ -7,7 +7,7 @@ import { getOrderById, submitCompleteOrder } from '../../actions/orderActions';
 import { getDisinfectorMaterials, getAllDisinfectorsAndSubadmins } from '../../actions/disinfectorActions';
 import materials from '../common/materials';
 
-class OrderComplete extends Component {
+class SubOrderForm extends Component {
   state = {
     // logged in disinfector
     loggedDisinf: {
@@ -40,7 +40,7 @@ class OrderComplete extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      allDisinfectors: nextProps.disinfector.disinfectors
+      allDisinfectors: nextProps.subadmin.disinfectors
     });
   }
 
@@ -322,7 +322,7 @@ class OrderComplete extends Component {
   };
 
   render() {
-    const order = this.props.order.orderById;
+    const order = this.props.subadmin.orderById;
 
     let consumptionMaterials = [
       { label: '-- Выберите вещество --', value: "", unit: "" }
@@ -475,7 +475,7 @@ class OrderComplete extends Component {
 
     return (
       <div className="container-fluid p-0">
-        {this.props.order.loading ? <Spinner /> : (
+        {this.props.subadmin.loading ? <Spinner /> : (
           <React.Fragment>
             <div className="row m-0">
               <div className="col-12">
@@ -597,8 +597,8 @@ class OrderComplete extends Component {
 const mapStateToProps = (state) => ({
   auth: state.auth,
   order: state.order,
-  disinfector: state.disinfector,
+  subadmin: state.subadmin,
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getOrderById, getDisinfectorMaterials, getAllDisinfectorsAndSubadmins, submitCompleteOrder })(withRouter(OrderComplete));
+export default connect(mapStateToProps, { getOrderById, getDisinfectorMaterials, getAllDisinfectorsAndSubadmins, submitCompleteOrder })(withRouter(SubOrderForm));

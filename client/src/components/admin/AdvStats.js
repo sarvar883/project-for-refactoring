@@ -122,7 +122,10 @@ class AdvStats extends Component {
         quantity: 0,
         orders: [],
         completed: 0,
-        totalSum: 0
+        confirmed: 0,
+        rejected: 0,
+        totalSum: 0,
+        totalScore: 0
       });
     });
 
@@ -132,9 +135,34 @@ class AdvStats extends Component {
           if (order.advertising === item.name) {
             item.quantity++;
             item.orders.push(order);
+
             if (order.completed) {
               item.completed++;
-              item.totalSum += order.cost;
+
+              if (order.clientType === 'corporate') {
+                if (order.operatorConfirmed && order.accountantConfirmed) {
+                  item.confirmed++;
+                  item.totalSum += order.cost;
+                  item.totalScore += order.score;
+                }
+
+                if (!order.operatorConfirmed || !order.accountantConfirmed) {
+                  item.rejected++;
+                }
+
+              }
+
+              if (order.clientType === 'individual') {
+                if (order.operatorConfirmed && order.adminConfirmed) {
+                  item.confirmed++;
+                  item.totalSum += order.cost;
+                  item.totalScore += order.score;
+                }
+
+                if (!order.operatorConfirmed || !order.adminConfirmed) {
+                  item.rejected++;
+                }
+              }
             }
           }
         });
@@ -152,7 +180,10 @@ class AdvStats extends Component {
               <ul className="font-bold mb-0 list-unstyled">
                 <li>Получено заказов: {item.quantity}</li>
                 <li>Выполнено заказов: {item.completed}</li>
+                <li>Подтверждено заказов: {item.confirmed}</li>
                 <li>На общую сумму: {item.totalSum.toLocaleString()} UZS</li>
+                <li>Средний балл: {(item.totalScore / item.confirmed).toFixed(2)} (из 5)</li>
+                <li>Отвергнуто заказов: {item.rejected}</li>
               </ul>
             </div>
           </div>

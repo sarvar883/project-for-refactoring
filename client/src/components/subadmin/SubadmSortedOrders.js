@@ -32,6 +32,29 @@ class SubadmSortedOrders extends Component {
         this.addOrderToDOM(data.order);
       }
     });
+
+    socket.on('editOrder', data => {
+      // check if today
+      // if (
+      //   new Date(data.order.dateFrom).getDate() === new Date(this.props.date).getDate() &&
+      //   new Date(data.order.dateFrom).getMonth() === new Date(this.props.date).getMonth() &&
+      //   new Date(data.order.dateFrom).getFullYear() === new Date(this.props.date).getFullYear()
+      // ) {
+      //   this.editOrderOnDOM(data.order);
+      // }
+      this.editOrderOnDOM(data.order);
+    });
+
+    socket.on('deleteOrder', data => {
+      // check if today
+      if (
+        new Date(data.orderDateFrom).getDate() === new Date(this.props.date).getDate() &&
+        new Date(data.orderDateFrom).getMonth() === new Date(this.props.date).getMonth() &&
+        new Date(data.orderDateFrom).getFullYear() === new Date(this.props.date).getFullYear()
+      ) {
+        this.removeOrderFromDOM(data.id);
+      }
+    });
   }
 
   addOrderToDOM = (order) => {
@@ -45,6 +68,42 @@ class SubadmSortedOrders extends Component {
       });
     }
   }
+
+  editOrderOnDOM = (order) => {
+    if (this._isMounted) {
+      let ordersInState = [...this.state.sortedOrders];
+      for (let i = 0; i < ordersInState.length; i++) {
+        if (ordersInState[i]._id.toString() === order._id.toString()) {
+          ordersInState[i].disinfectorId = order.disinfectorId;
+          ordersInState[i].userCreated = order.userCreated;
+          ordersInState[i].userAcceptedOrder = order.userAcceptedOrder;
+          ordersInState[i].clientType = order.clientType;
+          ordersInState[i].client = order.client;
+          ordersInState[i].clientId = order.clientId;
+          ordersInState[i].address = order.address;
+          ordersInState[i].dateFrom = order.dateFrom;
+          ordersInState[i].phone = order.phone;
+          ordersInState[i].typeOfService = order.typeOfService;
+          ordersInState[i].advertising = order.advertising;
+          ordersInState[i].comment = order.comment;
+        }
+      }
+      this.setState({
+        sortedOrders: ordersInState
+      });
+    }
+  }
+
+  removeOrderFromDOM = (id) => {
+    if (this._isMounted) {
+      let ordersInState = [...this.state.sortedOrders];
+      ordersInState = ordersInState.filter(item => item._id.toString() !== id);
+      this.setState({
+        sortedOrders: ordersInState
+      });
+    }
+  }
+
 
   onClick = (hour, date) => {
     let defaultDateMonth, defaultDateDay, defaultHourString;
@@ -97,12 +156,24 @@ class SubadmSortedOrders extends Component {
           <div className={`card mt-2 order order-bg-${element.disinfectorId.color}`}>
             <div className="card-body p-0">
               <ul className="font-bold mb-0">
-                <li className="pb-2">Время: <Moment format="HH:mm">{element.dateFrom}</Moment></li>
-                <li className="pb-2">Дезинфектор: {element.disinfectorId.name}</li>
-                <li className="pb-2">Клиент: {element.client}</li>
-                <li className="pb-2">Адрес: {element.address}</li>
-                <li className="pb-2">Тип услуги: {element.typeOfService}</li>
-                <li className="pb-2">Заказ принял: {element.userCreated.name}</li>
+                <li>Время: <Moment format="HH:mm">{element.dateFrom}</Moment></li>
+                <li>Ответственный: {element.disinfectorId.occupation} {element.disinfectorId.name}</li>
+                {element.clientType === 'corporate' ?
+                  <React.Fragment>
+                    <li>Корпоративный Клиент: {element.clientId.name}</li>
+                    <li>Имя клиента: {element.client}</li>
+                  </React.Fragment>
+                  : ''}
+
+                {element.clientType === 'individual' ?
+                  <li>Физический Клиент: {element.client}</li>
+                  : ''}
+                <li>Телефон Клиента: {element.phone}</li>
+                <li>Адрес: {element.address}</li>
+                <li>Тип услуги: {element.typeOfService}</li>
+                <li>Откуда узнали: {element.advertising}</li>
+                <li>Заказ принял: {element.userAcceptedOrder.occupation} {element.userAcceptedOrder.name}</li>
+                <li>Заказ Добавил: {element.userCreated.occupation} {element.userCreated.name}</li>
               </ul>
               <Link to={`/order-details/${element._id}`} className="btn btn-warning">Подробнее</Link>
             </div>

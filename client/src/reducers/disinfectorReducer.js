@@ -12,6 +12,7 @@ const initialState = {
   disinfectors: [],
   stats: {
     orders: [],
+    acceptedOrders: [],
     addedMaterials: []
   },
   method: '',
@@ -55,6 +56,7 @@ export default function (state = initialState, action) {
         stats: {
           ...state.stats,
           orders: action.payload.orders,
+          acceptedOrders: action.payload.acceptedOrders,
           addedMaterials: action.payload.addedMaterials
         },
         loadingDisinfStats: false
@@ -67,6 +69,7 @@ export default function (state = initialState, action) {
         stats: {
           ...state.stats,
           orders: action.payload.orders,
+          acceptedOrders: action.payload.acceptedOrders,
           addedMaterials: action.payload.addedMaterials
         },
         loadingDisinfStats: false

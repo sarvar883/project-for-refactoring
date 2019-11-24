@@ -59,12 +59,14 @@ exports.getCompleteOrderById = (req, res) => {
 
 
 exports.confirmCompleteOrder = (req, res) => {
-  const { errors, isValid } = validateConfirmedOrder(req.body.object);
+  if (req.body.object.decision === 'confirm') {
+    const { errors, isValid } = validateConfirmedOrder(req.body.object);
 
-  // Check Validation
-  if (!isValid) {
-    // Return any errors with 400 status
-    return res.status(400).json(errors);
+    // Check Validation
+    if (!isValid) {
+      // Return any errors with 400 status
+      return res.status(400).json(errors);
+    }
   }
 
   Order

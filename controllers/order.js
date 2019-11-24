@@ -212,15 +212,15 @@ exports.createRepeatOrder = (req, res) => {
       order.save()
         .then((savedOrder) => {
 
-          if (req.body.clientType === 'corporate') {
-            Client.findById(req.body.clientId)
+          if (req.body.order.clientType === 'corporate') {
+            Client.findById(req.body.order.clientId)
               .then(client => {
                 client.orders.push(savedOrder._id);
                 client.save();
               });
 
-          } else if (req.body.clientType === 'individual') {
-            Client.findOne({ phone: req.body.phone })
+          } else if (req.body.order.clientType === 'individual') {
+            Client.findOne({ phone: req.body.order.phone })
               .then(client => {
                 if (client) {
                   // if we have a client with this phone number
@@ -232,10 +232,10 @@ exports.createRepeatOrder = (req, res) => {
 
                   const newClient = new Client({
                     _id: mongoose.Types.ObjectId(),
-                    type: req.body.clientType,
-                    name: req.body.client,
-                    phone: req.body.phone,
-                    address: req.body.address,
+                    type: req.body.order.clientType,
+                    name: req.body.order.client,
+                    phone: req.body.order.phone,
+                    address: req.body.order.address,
                     orders: array,
                     createdAt: new Date()
                   });
@@ -317,6 +317,14 @@ exports.searchOrders = (req, res) => {
         orders = orders.filter(item => stringSimilarity.compareTwoStrings(item.address.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.50);
       } else if (req.body.object.method === 'phone') {
         orders = orders.filter(item => stringSimilarity.compareTwoStrings(item.phone.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.70);
+      } else if (req.body.object.method === 'contract') {
+        orders = orders.filter(item => {
+          if (item.clientType === 'corporate' && item.contractNumber) {
+            return stringSimilarity.compareTwoStrings(item.contractNumber.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.70;
+          } else {
+            return false;
+          }
+        });
       }
       return res.json(orders);
     })
@@ -350,12 +358,12 @@ exports.submitCompleteOrder = (req, res) => {
       });
 
       foundOrder.disinfectors = newArray;
-      foundOrder.guarantee = order.guarantee;
+      foundOrder.guarantee = Number(order.guarantee);
 
       if (order.clientType === 'corporate') {
         foundOrder.contractNumber = order.contractNumber;
       } else if (order.clientType === 'individual') {
-        foundOrder.cost = order.cost;
+        foundOrder.cost = Number(order.cost);
       }
 
       // if (order.paymentMethod === 'Безналичный') {

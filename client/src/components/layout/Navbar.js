@@ -86,14 +86,23 @@ class Navbar extends Component {
             <li className="nav-item">
               <Link className="nav-link" to="/search-orders">Поиск заказов</Link>
             </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/clients">Клиенты</Link>
+            </li>
           </div>
         </div>
 
-        <li className="nav-item mr-2 list-inline-item">
-          <Link className="nav-link" to="/create-order">
-            Создать заказ
-          </Link>
-        </li>
+        <div className="dropdown">
+          <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Добавить</button>
+          <div className="dropdown-menu">
+            <li className="nav-item">
+              <Link className="nav-link" to="/create-order">Заказ</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/add-client">Клиента</Link>
+            </li>
+          </div>
+        </div>
       </div>
     );
 
@@ -109,6 +118,12 @@ class Navbar extends Component {
             <li className="nav-item">
               <Link className="nav-link" to="/accountant/queries">Запросы</Link>
             </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/search-orders">Поиск заказов</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/clients">Клиенты</Link>
+            </li>
           </div>
         </div>
       </div>
@@ -121,6 +136,9 @@ class Navbar extends Component {
           <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Функции</button>
           <div className="dropdown-menu">
             <li className="nav-item">
+              <Link className="nav-link" to="/subadmin/orders">Ваши Заказы</Link>
+            </li>
+            <li className="nav-item">
               <Link className="nav-link" to="/subadmin/stats">Статистика</Link>
             </li>
             <li className="nav-item">
@@ -128,6 +146,9 @@ class Navbar extends Component {
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/search-orders">Поиск заказов</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/clients">Клиенты</Link>
             </li>
           </div>
         </div>
@@ -149,6 +170,9 @@ class Navbar extends Component {
           <div className="dropdown-menu">
             <li className="nav-item">
               <Link className="nav-link" to="/subadmin/materials">Материалы Дезинфектору</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/add-client">Клиента</Link>
             </li>
           </div>
         </div>
@@ -177,7 +201,7 @@ class Navbar extends Component {
               <Link className="nav-link" to="/admin/order-queries">Запросы</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/clients">Клиенты</Link>
+              <Link className="nav-link" to="/clients">Клиенты</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/search-orders">Поиск заказов</Link>
@@ -207,7 +231,8 @@ class Navbar extends Component {
               <Link className="nav-link" to="/admin/materials">Материалы Пользователю</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/add-client">Клиента</Link>
+              {/* <Link className="nav-link" to="/admin/add-client">Клиента</Link> */}
+              <Link className="nav-link" to="/add-client">Клиента</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/register">Новый Пользователь</Link>

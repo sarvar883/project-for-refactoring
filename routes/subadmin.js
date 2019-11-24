@@ -8,6 +8,8 @@ const isAdminOrSubadmin = require('../middleware/isAdminOrSubadmin');
 
 const subadminController = require('../controllers/subadmin');
 
+router.post('/get-my-orders', passport.authenticate('jwt', { session: false }), isSubadmin, subadminController.getMyOrders);
+
 router.post('/get-sorted-orders', passport.authenticate('jwt', { session: false }), isAdminOrSubadmin, subadminController.getSortedOrders);
 
 router.post('/get-all-disinfectors', passport.authenticate('jwt', { session: false }), isAdminOrSubadmin, subadminController.getAllDisinfectors);

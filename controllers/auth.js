@@ -27,7 +27,7 @@ exports.registerUser = (req, res) => {
         emptyArray.push({
           material: item.material,
           amount: 0,
-          unit: 'гр'
+          unit: item.unit
         });
       });
 
@@ -131,7 +131,7 @@ exports.getDisinfectorMaterials = (req, res) => {
   User.findById(req.body.id)
     .then(disinfector => res.json(disinfector.materials))
     .catch(err => {
-      console.log('getCurrentDisinfector ERROR', err);
+      console.log('getDisinfectorMaterials ERROR', err);
       return res.status(404).json(err);
     });
 };

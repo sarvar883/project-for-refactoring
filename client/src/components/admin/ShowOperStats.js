@@ -13,60 +13,99 @@ class ShowOperStats extends Component {
   render() {
     const { orders } = this.state;
     let totalSum = 0,
-      cash = 0,
       totalScore = 0,
-      allConsumptions = [],
+      totalConsumption = [],
       completedOrders = [],
       confirmedOrders = [],
-      rejectedOders = [];
+      rejectedOrders = [];
 
+    let corporateClientOrders = {
+      sum: 0,
+      orders: 0
+    };
+
+    let indivClientOrders = {
+      sum: 0,
+      orders: 0
+    };
+
+    materials.forEach(object => {
+      const emptyObject = {
+        material: object.material,
+        amount: 0,
+        unit: object.unit
+      };
+      totalConsumption.push(emptyObject);
+    });
 
     orders.forEach(order => {
       if (order.completed) {
         completedOrders.push(order);
 
-        if (order.operatorConfirmed && order.adminConfirmed) {
-          confirmedOrders.push(order);
-          totalSum += order.cost;
-          if (order.paymentMethod === 'Наличный') cash++;
-          totalScore += order.score;
+        if (order.clientType === 'corporate') {
+          if (order.operatorConfirmed && order.accountantConfirmed) {
+            confirmedOrders.push(order);
+            totalSum += order.cost;
+            totalScore += order.score;
+
+            corporateClientOrders.orders++;
+            corporateClientOrders.sum += order.cost;
+          }
+          if ((order.operatorDecided && !order.operatorConfirmed) || (order.accountantDecided && !order.accountantConfirmed)) {
+            rejectedOrders.push(order);
+          }
         }
 
-        if (!order.operatorConfirmed || !order.adminConfirmed) {
-          rejectedOders.push(order);
+        if (order.clientType === 'individual') {
+          if (order.operatorConfirmed && order.adminConfirmed) {
+            confirmedOrders.push(order);
+            totalSum += order.cost;
+            totalScore += order.score;
+
+            indivClientOrders.orders++;
+            indivClientOrders.sum += order.cost;
+          }
+          if ((order.operatorDecided && !order.operatorConfirmed) || (order.adminDecided && !order.adminConfirmed)) {
+            rejectedOrders.push(order);
+          }
         }
+
+        // calculate total consumption of all orders in given period
+        order.disinfectors.forEach(element => {
+          element.consumption.forEach(object => {
+            totalConsumption.forEach(item => {
+              if (object.material === item.material && object.unit === item.unit) {
+                item.amount += object.amount;
+              }
+            });
+          });
+        });
       }
     });
 
-    let notCash = orders.length - cash;
-    const cashPercent = (cash * 100 / orders.length).toFixed(1);
-    const notCashPercent = (100 - cashPercent).toFixed(1);
-
-    let consumptionArrayResult = [];
-    materials.forEach(object => consumptionArrayResult.push({
-      material: object.material,
-      amount: 0,
-      unit: object.unit
-    }));
-
-    allConsumptions.forEach(item => {
-      consumptionArrayResult.forEach(element => {
-        if (element.material === item.material) {
-          element.amount += item.amount;
-          return;
-        }
-      })
-    });
-
-    let renderConsumption;
-    renderConsumption = consumptionArrayResult.map((item, index) =>
-      <li key={index}>{item.material}: {item.amount} {item.unit}</li>
+    let renderTotalConsumption = totalConsumption.map((element, key) =>
+      <li key={key}>{element.material}: {element.amount.toLocaleString()} {element.unit}</li>
     );
 
     let renderOrders = orders.map((item, key) => {
 
-      let renderConsumptionOfOrder = item.consumption.map((material, index) =>
-        <li key={index}>{material.material} : {material.amount.toLocaleString()} {material.unit}</li>
+      // consumption array of specific order
+      let consumptionArray = [];
+
+      item.disinfectors.forEach(thing => {
+        consumptionArray.push({
+          user: thing.user,
+          consumption: thing.consumption
+        });
+      });
+
+      let renderOrderConsumption = consumptionArray.map((object, number) =>
+        <li key={number}>
+          <p className="mb-0">Пользователь: {object.user.occupation} {object.user.name}</p>
+          {object.consumption.map((element, number) =>
+            <p key={number} className="mb-0">{element.material}: {element.amount.toLocaleString()} {element.unit}</p>
+          )}
+        </li>
       );
 
       return (
@@ -74,44 +113,91 @@ class ShowOperStats extends Component {
           <div className="card order mt-2">
             <div className="card-body p-0">
               <ul className="font-bold mb-0 list-unstyled">
-                <li>Клиент: {item.client}</li>
-                <li>Телефон: {item.phone}</li>
-                <li>Адрес: {item.address}</li>
-                <li>Тип услуги: {item.typeOfService}</li>
-                <li>Откуда узнали: {item.advertising}</li>
-                <li>Дата выполнения: <Moment format="DD/MM/YYYY">{item.dateFrom}</Moment></li>
+                <li>Ответственный: {item.disinfectorId.occupation} {item.disinfectorId.name}</li>
 
-                {item.completed ? (
+                {item.operatorDecided ? (
                   <React.Fragment>
-                    <li className="text-success">Заказ Выполнен</li>
-                    <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
-                    <li>Сумма: {item.cost.toLocaleString()} UZS</li>
-                    <li>Тип Платежа: {item.paymentMethod}</li>
-
-                    {item.paymentMethod === 'Безналичный' ? <li>Счет-Фактура: {item.invoice}</li> : ''}
-
-                    <li>Расход Материалов:</li>
-                    <ul className="font-bold mb-0">
-                      {renderConsumptionOfOrder}
-                    </ul>
+                    <li>Оператор рассмотрел заявку</li>
+                    {item.operatorConfirmed ? (
+                      <React.Fragment>
+                        <li className="text-success">Оператор Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{item.operatorCheckedAt}</Moment>)</li>
+                        <li>Балл (0-5): {item.score}</li>
+                        <li>Отзыв Клиента: {item.clientReview ? item.clientReview : 'Нет Отзыва'}</li>
+                      </React.Fragment>
+                    ) : <li className="text-danger">Оператор Отклонил (<Moment format="DD/MM/YYYY HH:mm">{item.operatorCheckedAt}</Moment>)</li>}
                   </React.Fragment>
-                ) : <li>Заказ еще не выполнен</li>}
+                ) : <li>Оператор еще не рассмотрел заявку</li>}
 
-                {item.completed && item.operatorDecided ? (
+                {item.clientType === 'corporate' && !item.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
+
+                {item.clientType === 'corporate' && item.accountantDecided ?
                   <React.Fragment>
-                    <li>Оператор рассмотрел заявку (время: <Moment format="DD/MM/YYYY HH:mm">{item.operatorCheckedAt}</Moment>)</li>
-                    {item.operatorConfirmed ? <li className="text-success">Оператор подтвердил заяку</li> : <li className="text-danger">Оператор отверг заяку</li>}
-                    <li>Балл: {item.score}</li>
-                    <li>Отзыв Клиента: {item.clientReview}</li>
+                    <li>Бухгалтер рассмотрел заявку</li>
+                    {item.accountantConfirmed ? (
+                      <React.Fragment>
+                        <li className="text-success">Бухгалтер Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{item.accountantCheckedAt}</Moment>)</li>
+                        <li>Счет-Фактура: {item.invoice}</li>
+                        <li>Общая Сумма: {item.cost.toLocaleString()} UZS (каждому по {(item.cost / item.disinfectors.length).toLocaleString()} UZS)</li>
+                      </React.Fragment>
+                    ) : <li className="text-danger">Бухгалтер Отклонил (<Moment format="DD/MM/YYYY HH:mm">{item.accountantCheckedAt}</Moment>)</li>}
                   </React.Fragment>
-                ) : <li>Оператор еще рассмотрел заявку</li>}
+                  : ''}
 
-                {item.completed && item.adminDecided ? (
+                {item.clientType === 'individual' && !item.adminDecided ? <li>Админ еще не рассмотрел заявку</li> : ''}
+                {item.clientType === 'individual' && item.adminDecided ? (
                   <React.Fragment>
-                    <li>Админ рассмотрел заявку (время: <Moment format="DD/MM/YYYY HH:mm">{item.adminCheckedAt}</Moment>)</li>
-                    {item.adminConfirmed ? <li className="text-success">Админ подтвердил заяку</li> : <li className="text-danger">Админ отверг заяку</li>}
+                    <li>Админ рассмотрел заявку</li>
+                    {item.adminConfirmed ? (
+                      <li className="text-success">Админ Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{item.adminCheckedAt}</Moment>)</li>
+                    ) : <li className="text-danger">Админ Отклонил (<Moment format="DD/MM/YYYY HH:mm">{item.adminCheckedAt}</Moment>)</li>}
                   </React.Fragment>
                 ) : ''}
+
+                {item.clientType === 'corporate' ?
+                  <React.Fragment>
+                    <li>Корпоративный Клиент: {item.clientId.name}</li>
+                    <li>Имя клиента: {item.client}</li>
+                  </React.Fragment>
+                  : ''}
+
+                {item.clientType === 'individual' ?
+                  <li>Физический Клиент: {item.client}</li>
+                  : ''}
+
+                <li>Дата выполнения: <Moment format="DD/MM/YYYY">{item.dateFrom}</Moment></li>
+                {item.completed ? (
+                  <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
+                ) : (
+                    <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment></li>
+                  )}
+                <li>Адрес: {item.address}</li>
+                <li>Тип услуги: {item.typeOfService}</li>
+                <li>Комментарии Оператора: {item.comment ? item.comment : 'Нет комментариев'}</li>
+                <li>Комментарии Дезинфектора: {item.disinfectorComment ? item.disinfectorComment : 'Нет комментариев'}</li>
+                {item.completed ? (
+                  <React.Fragment>
+                    <li>Срок гарантии (в месяцах): {item.guarantee}</li>
+
+                    <li>Расход Материалов (заказ выполнили {item.disinfectors.length} чел):</li>
+                    <ul className="font-bold mb-0">
+                      {renderOrderConsumption}
+                    </ul>
+                  </React.Fragment>
+                ) : ''}
+
+                {item.completed && item.clientType === 'corporate' ?
+                  <li>Номер Договора: {item.contractNumber}</li>
+                  : ''}
+
+                {item.completed && item.clientType === 'individual' ?
+                  <li>Общая Сумма: {item.cost.toLocaleString()} UZS, (каждому по {(item.cost / item.disinfectors.length).toLocaleString()} UZS)</li>
+                  : ''}
+
+                <li>Заказ принял: {item.userAcceptedOrder.occupation} {item.userAcceptedOrder.name}</li>
+                <li>Заказ добавил: {item.userCreated.occupation} {item.userCreated.name} (<Moment format="DD/MM/YYYY HH:mm">{item.createdAt}</Moment>)</li>
+
+                {item.completed ? <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{item.completedAt}</Moment></li> : ''}
+
               </ul>
             </div>
           </div>
@@ -125,17 +211,12 @@ class ShowOperStats extends Component {
           <div className="col-lg-4 col-md-6">
             <div className="card order mt-2">
               <div className="card-body p-0">
-                <h2 className="text-center">Заказы</h2>
                 <ul className="font-bold mb-0 list-unstyled">
-                  <li>Всего Получено Заказов: {orders.length}</li>
+                  <li>Оператор принял Заказов: {orders.length}</li>
                   <li>Выполнено Заказов: {completedOrders.length}</li>
                   <li>Подтверждено Заказов: {confirmedOrders.length}</li>
                   <li>Общая Сумма: {totalSum.toLocaleString()} UZS</li>
-                  <li>Тип Платежей:</li>
-                  <ul className="font-bold mb-1">
-                    <li>Наличный: {cash} ({cashPercent} %)</li>
-                    <li>Безналичный: {notCash} ({notCashPercent} %)</li>
-                  </ul>
+                  <li>Средний балл подтвержденных заказов: {(totalScore / confirmedOrders.length).toFixed(2)} (из 5)</li>
                 </ul>
               </div>
             </div>
@@ -144,9 +225,9 @@ class ShowOperStats extends Component {
           <div className="col-lg-4 col-md-6">
             <div className="card order mt-2">
               <div className="card-body p-0">
-                <h4 className="text-center">На заказах Оператора расходовано материалов:</h4>
+                <h4 className="text-center">На этих заказах расходовано материалов:</h4>
                 <ul className="font-bold mb-0 pl-3">
-                  {renderConsumption}
+                  {renderTotalConsumption}
                 </ul>
               </div>
             </div>
@@ -155,9 +236,13 @@ class ShowOperStats extends Component {
           <div className="col-lg-4 col-md-6">
             <div className="card order mt-2">
               <div className="card-body p-0">
-                <h2 className="text-center">Рейтинг:</h2>
                 <ul className="font-bold mb-0 pl-3">
-                  <li>Средний балл: {(totalScore / confirmedOrders.length).toFixed(2)} (из 10)</li>
+                  <h4 className="text-center">Корпоративные клиенты</h4>
+                  <li>Количество подтвержденных заказов: {corporateClientOrders.orders}</li>
+                  <li>На общую сумму: {corporateClientOrders.sum.toLocaleString()} UZS</li>
+                  <h4 className="text-center">Физические клиенты</h4>
+                  <li>Количество подтвержденных заказов: {indivClientOrders.orders}</li>
+                  <li>На общую сумму: {indivClientOrders.sum.toLocaleString()} UZS</li>
                 </ul>
               </div>
             </div>
@@ -166,9 +251,9 @@ class ShowOperStats extends Component {
 
         <div className="row mt-2">
           <div className="col-12">
-            <h2 className="text-center pl-3 pr-3">Все Заказы Оператора</h2>
+            <h2 className="text-center pl-3 pr-3">Заказы, которые принял Оператора</h2>
           </div>
-          {confirmedOrders.length > 0 ? (renderOrders) : <h2>Нет подтвержденных заказов</h2>}
+          {orders.length > 0 ? (renderOrders) : <h2>Нет заказов</h2>}
         </div>
       </React.Fragment>
     )

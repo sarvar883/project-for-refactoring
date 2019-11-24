@@ -8,9 +8,9 @@ const isOperatorOrAdmin = require('../middleware/isOperatorOrAdmin');
 const isAdmin = require('../middleware/isAdmin');
 
 // stats for disinfector
-router.post('/for-disinfector-month', passport.authenticate('jwt', { session: false }), isDisinfector, statsController.monthStatsForDisinfector);
+router.post('/for-disinfector-month', passport.authenticate('jwt', { session: false }), statsController.monthStatsForDisinfector);
 
-router.post('/for-disinfector-week', passport.authenticate('jwt', { session: false }), isDisinfector, statsController.weekStatsForDisinfector);
+router.post('/for-disinfector-week', passport.authenticate('jwt', { session: false }), statsController.weekStatsForDisinfector);
 
 router.post('/for-admin-month', passport.authenticate('jwt', { session: false }), isAdmin, statsController.monthStatsForAdmin);
 

@@ -193,7 +193,7 @@ class ShowDisStats extends Component {
           totalSum += order.cost / order.disinfectors.length;
           totalScore += order.score;
         }
-        if (order.completed && (!order.operatorConfirmed || !order.accountantConfirmed)) {
+        if (order.completed && ((order.operatorDecided && !order.operatorConfirmed) || (order.accountantDecided && !order.accountantConfirmed))) {
           rejectedOrders.push(order);
         }
       }
@@ -204,7 +204,7 @@ class ShowDisStats extends Component {
           totalSum += order.cost / order.disinfectors.length;
           totalScore += order.score;
         }
-        if (order.completed && (!order.operatorConfirmed || !order.adminConfirmed)) {
+        if (order.completed && ((order.operatorDecided && !order.operatorConfirmed) || (order.adminDecided && !order.adminConfirmed))) {
           rejectedOrders.push(order);
         }
       }

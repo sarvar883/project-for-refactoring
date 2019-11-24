@@ -27,6 +27,7 @@ class AdmClients extends Component {
     };
     this.props.searchClients(object);
   }
+
   componentWillReceiveProps(nextProps) {
     this.setState({
       clients: nextProps.admin.clients
@@ -88,54 +89,52 @@ class AdmClients extends Component {
 
   render() {
     let renderClients = this.state.clients.map((client, index) => {
-      let totalSum = 0, score = 0, cash = 0, notCash, cashPercent, notCashPercent;
 
-      notCash = client.orders.length - cash;
-      cashPercent = (cash * 100 / client.orders.length).toFixed(1);
-      notCashPercent = (100 - cashPercent).toFixed(1);
-
-      let clientDetails = (
-        <div className="row mt-2">
-          <div className="col-md-6">
-            <div className="card order mt-2">
-              <div className="card-body p-0">
-                <ul className="font-bold mb-0 pl-3">
-                  <li>Имя: {client.name}</li>
-                  <li>Номер телефона: {client.phone}</li>
-                  <li>Адрес: {client.address}</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-md-6">
-            <div className="card order mt-2">
-              <div className="card-body p-0">
-                <ul className="font-bold mb-0 pl-3">
-                  <li>Получено заказов от клиента: {client.orders.length}</li>
-                  <li>Средняя оценка: {(score / client.orders.length).toFixed(2)}</li>
-                  <li>Общая Сумма выполненных заказов: {totalSum.toLocaleString()} UZS</li>
-                  <li>Тип Платежей:</li>
-                  <ul className="font-bold mb-1">
-                    <li>Наличный: {cash} ({cashPercent} %)</li>
-                    <li>Безналичный: {notCash} ({notCashPercent} %)</li>
-                  </ul>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
+      let totalSum = 0,
+        totalScore = 0,
+        operatorDecidedOrders = [],
+        confirmedOrders = [],
+        rejectedOrders = [];
 
       let clientOrders = client.orders.map((item, key) => {
-        totalSum += item.cost;
-        score += item.score;
-        if (item.paymentMethod === 'Наличный') {
-          cash++;
+
+        if (item.completed && item.operatorDecided) {
+          operatorDecidedOrders.push(item);
+
+          if (item.operatorConfirmed && (item.adminConfirmed || item.accountantConfirmed)) {
+            confirmedOrders.push(item);
+            totalSum += item.cost;
+            totalScore += item.score;
+          }
+
+          if (item.clientType === 'corporate') {
+            if (!item.operatorConfirmed || (item.accountantDecided && !item.accountantConfirmed)) {
+              rejectedOrders.push(item);
+            }
+          } else if (item.clientType === 'individual') {
+            if (!item.operatorConfirmed || (item.adminDecided && !item.adminConfirmed)) {
+              rejectedOrders.push(item);
+            }
+          }
         }
 
-        let renderConsumptionOfOrder = item.consumption.map((material, index) =>
-          <li key={index}>{material.material} : {material.amount.toLocaleString()} {material.unit}</li>
+        // consumption array of specific order
+        let consumptionArray = [];
+
+        item.disinfectors.forEach(element => {
+          consumptionArray.push({
+            user: element.user,
+            consumption: element.consumption
+          });
+        });
+
+        let renderOrderConsumption = consumptionArray.map((object, number) =>
+          <li key={number}>
+            <p className="mb-0">Пользователь: {object.user.occupation} {object.user.name}</p>
+            {object.consumption.map((element, number) =>
+              <p key={number} className="mb-0">{element.material}: {element.amount.toLocaleString()} {element.unit}</p>
+            )}
+          </li>
         );
 
         return (
@@ -143,41 +142,80 @@ class AdmClients extends Component {
             <div className="card order mt-2">
               <div className="card-body p-0">
                 <ul className="font-bold mb-0 list-unstyled">
-                  <li>Тип услуги: {item.typeOfService}</li>
-                  <li>Откуда узнали: {item.advertising}</li>
-                  <li>Дата выполнения: <Moment format="DD/MM/YYYY">{item.dateFrom}</Moment></li>
+                  <li>Ответственный: {item.disinfectorId.occupation} {item.disinfectorId.name}</li>
 
-                  {item.completed ? (
+                  {item.operatorDecided ? (
                     <React.Fragment>
-                      <li className="text-success">Заказ Выполнен</li>
-                      <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
-                      <li>Сумма: {item.cost.toLocaleString()} UZS</li>
-                      <li>Тип Платежа: {item.paymentMethod}</li>
-
-                      {item.paymentMethod === 'Безналичный' ? <li>Счет-Фактура: {item.invoice}</li> : ''}
-
-                      <li>Расход Материалов:</li>
-                      <ul className="font-bold mb-0">
-                        {renderConsumptionOfOrder}
-                      </ul>
+                      <li>Оператор рассмотрел заявку</li>
+                      {item.operatorConfirmed ? (
+                        <React.Fragment>
+                          <li className="text-success">Оператор Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{item.operatorCheckedAt}</Moment>)</li>
+                          <li>Балл (0-5): {item.score}</li>
+                          <li>Отзыв Клиента: {item.clientReview ? item.clientReview : 'Нет Отзыва'}</li>
+                        </React.Fragment>
+                      ) : <li className="text-danger">Оператор Отклонил (<Moment format="DD/MM/YYYY HH:mm">{item.operatorCheckedAt}</Moment>)</li>}
                     </React.Fragment>
-                  ) : <li>Заказ еще не выполнен</li>}
+                  ) : <li>Оператор еще не рассмотрел заявку</li>}
 
-                  {item.completed && item.operatorDecided ? (
+                  {item.clientType === 'corporate' && !item.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
+
+                  {item.clientType === 'corporate' && item.accountantDecided ?
                     <React.Fragment>
-                      <li>Оператор рассмотрел заявку (время: <Moment format="DD/MM/YYYY HH:mm">{item.operatorCheckedAt}</Moment>)</li>
-                      {item.operatorConfirmed ? <li className="text-success">Оператор подтвердил заяку</li> : <li className="text-danger">Оператор отверг заяку</li>}
-                      <li>Балл: {item.score}</li>
-                      <li>Отзыв Клиента: {item.clientReview}</li>
+                      <li>Бухгалтер рассмотрел заявку</li>
+                      {item.accountantConfirmed ? (
+                        <React.Fragment>
+                          <li className="text-success">Бухгалтер Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{item.accountantCheckedAt}</Moment>)</li>
+                          <li>Счет-Фактура: {item.invoice}</li>
+                          <li>Общая Сумма: {item.cost.toLocaleString()} UZS (каждому по {(item.cost / item.disinfectors.length).toLocaleString()} UZS)</li>
+                        </React.Fragment>
+                      ) : <li className="text-danger">Бухгалтер Отклонил (<Moment format="DD/MM/YYYY HH:mm">{item.accountantCheckedAt}</Moment>)</li>}
                     </React.Fragment>
-                  ) : <li>Оператор еще рассмотрел заявку</li>}
+                    : ''}
 
-                  {item.completed && item.adminDecided ? (
+                  {item.clientType === 'individual' && !item.adminDecided ? <li>Админ еще не рассмотрел заявку</li> : ''}
+                  {item.clientType === 'individual' && item.adminDecided ? (
                     <React.Fragment>
-                      <li>Админ рассмотрел заявку (время: <Moment format="DD/MM/YYYY HH:mm">{item.adminCheckedAt}</Moment>)</li>
-                      {item.adminConfirmed ? <li className="text-success">Админ подтвердил заяку</li> : <li className="text-danger">Админ отверг заяку</li>}
+                      <li>Админ рассмотрел заявку</li>
+                      {item.adminConfirmed ? (
+                        <li className="text-success">Админ Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{item.adminCheckedAt}</Moment>)</li>
+                      ) : <li className="text-danger">Админ Отклонил (<Moment format="DD/MM/YYYY HH:mm">{item.adminCheckedAt}</Moment>)</li>}
                     </React.Fragment>
                   ) : ''}
+
+                  <li>Дата выполнения: <Moment format="DD/MM/YYYY">{item.dateFrom}</Moment></li>
+                  {item.completed ? (
+                    <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
+                  ) : (
+                      <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment></li>
+                    )}
+                  <li>Адрес: {item.address}</li>
+                  <li>Тип услуги: {item.typeOfService}</li>
+                  <li>Комментарии Оператора: {item.comment ? item.comment : 'Нет комментариев'}</li>
+                  <li>Комментарии Дезинфектора: {item.disinfectorComment ? item.disinfectorComment : 'Нет комментариев'}</li>
+                  {item.completed ? (
+                    <React.Fragment>
+                      <li>Срок гарантии (в месяцах): {item.guarantee}</li>
+
+                      <li>Расход Материалов (заказ выполнили {item.disinfectors.length} чел):</li>
+                      <ul className="font-bold mb-0">
+                        {renderOrderConsumption}
+                      </ul>
+                    </React.Fragment>
+                  ) : ''}
+
+                  {item.completed && item.clientType === 'corporate' ?
+                    <li>Номер Договора: {item.contractNumber}</li>
+                    : ''}
+
+                  {item.completed && item.clientType === 'individual' ?
+                    <li>Общая Сумма: {item.cost.toLocaleString()} UZS, (каждому по {(item.cost / item.disinfectors.length).toLocaleString()} UZS)</li>
+                    : ''}
+
+                  <li>Заказ принял: {item.userAcceptedOrder.occupation} {item.userAcceptedOrder.name}</li>
+                  <li>Заказ добавил: {item.userCreated.occupation} {item.userCreated.name} (<Moment format="DD/MM/YYYY HH:mm">{item.createdAt}</Moment>)</li>
+
+                  {item.completed ? <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{item.completedAt}</Moment></li> : ''}
+
                 </ul>
               </div>
             </div>
@@ -187,13 +225,28 @@ class AdmClients extends Component {
 
       return (
         <React.Fragment key={index}>
-          <div className="row">
-            <div className="col-12">
-              <h2 className="text-center">Клиент: {client.name}</h2>
+          <div className="row mt-2">
+            <div className="col-md-6">
+              <div className="card order mt-2">
+                <div className="card-body p-0">
+                  <ul className="font-bold mb-0 pl-3">
+                    {client.type === 'corporate' ?
+                      <li>Корпоративный клиент: {client.name}</li> : ''}
+                    {client.type === 'individual' ?
+                      <React.Fragment>
+                        <li>Физический клиент: {client.name}</li>
+                        <li>Номер телефона: {client.phone}</li>
+                        <li>Адрес: {client.address}</li>
+                      </React.Fragment> : ''}
+                    <li>Всего Получено заказов от клиента: {client.orders.length}</li>
+                    <li>Выполнено и подтверждено заказов: {confirmedOrders.length}</li>
+                    <li>Средняя оценка подтвержденных заказов: {(totalScore / confirmedOrders.length).toFixed(2)} (из 5)</li>
+                    <li>Общая Сумма подтвержденных заказов: {totalSum.toLocaleString()} UZS</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
-
-          {clientDetails}
 
           <div className="row mt-2 pb-1 client-stats-order">
             {clientOrders}

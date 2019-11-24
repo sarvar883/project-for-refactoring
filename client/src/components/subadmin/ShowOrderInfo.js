@@ -5,7 +5,7 @@ import { getOrders, addDisinfectorComment } from '../../actions/orderActions';
 import Moment from 'react-moment';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 
-class OrderInfo extends Component {
+class ShowOrderInfo extends Component {
   state = {
     addComment: false,
     disinfectorComment: this.props.orderObject.disinfectorComment,
@@ -82,7 +82,7 @@ class OrderInfo extends Component {
                 <button type="button" className="btn btn-success d-block" onClick={this.toggleAddComment}>Добавить Комментарий</button>
               )}
             {currentTime.getTime() > new Date(orderObject.dateFrom).getTime() ? (
-              <Link to={`/order-complete-form/${orderObject._id}`} className="btn btn-primary mt-3">Форма О Выполнении</Link>
+              <Link to={`/subadmin/order-complete-form/${orderObject._id}`} className="btn btn-primary mt-3">Форма О Выполнении</Link>
             ) : ''}
           </div>
         </div>
@@ -94,7 +94,8 @@ class OrderInfo extends Component {
 const mapStateToProps = state => ({
   auth: state.auth,
   order: state.order,
+  subadmin: state.subadmin,
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getOrders, addDisinfectorComment })(withRouter(OrderInfo));
+export default connect(mapStateToProps, { getOrders, addDisinfectorComment })(withRouter(ShowOrderInfo));

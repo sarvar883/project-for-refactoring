@@ -53,8 +53,6 @@ class OperStats extends Component {
     selectedDaysAfterSubmit: [],
 
     operatorId: '',
-    // operatorIdMonth: '',
-    // operatorIdWeek: '',
     operatorName: ''
   };
 

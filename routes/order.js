@@ -17,7 +17,7 @@ router.post('/get-all-users', passport.authenticate('jwt', { session: false }), 
 router.get('/get-all-disinfectors', passport.authenticate('jwt', { session: false }), orderController.getAllDisinfectors);
 
 // create order
-router.post('/create-order', passport.authenticate('jwt', { session: false }), isOperatorOrAdmin, orderController.createOrder);
+router.post('/create-order', passport.authenticate('jwt', { session: false }), orderController.createOrder);
 
 // edit order
 router.post('/edit', passport.authenticate('jwt', { session: false }), isAdmin, orderController.editOrder);
@@ -31,7 +31,7 @@ router.post('/create-repeat-order', passport.authenticate('jwt', { session: fals
 router.post('/get-my-orders', passport.authenticate('jwt', { session: false }), isDisinfector, orderController.getOrders);
 
 // add disinfector comment to order
-router.post('/addDisinfectorComment', passport.authenticate('jwt', { session: false }), isDisinfector, orderController.addDisinfectorComment);
+router.post('/addDisinfectorComment', passport.authenticate('jwt', { session: false }), orderController.addDisinfectorComment);
 
 // get order by id to fill out order completion form
 router.post('/get-order-by-id', passport.authenticate('jwt', { session: false }), orderController.getOrderById);
@@ -39,11 +39,11 @@ router.post('/get-order-by-id', passport.authenticate('jwt', { session: false })
 router.post('/search-orders', passport.authenticate('jwt', { session: false }), orderController.searchOrders);
 
 // order completion form is submitted
-router.post('/submit-complete-order', passport.authenticate('jwt', { session: false }), isDisinfector, orderController.submitCompleteOrder);
+router.post('/submit-complete-order', passport.authenticate('jwt', { session: false }), orderController.submitCompleteOrder);
 
-router.post('/get-complete-order-in-month', passport.authenticate('jwt', { session: false }), isDisinfector, orderController.getCompleteOrdersInMonth)
+router.post('/get-complete-order-in-month', passport.authenticate('jwt', { session: false }), orderController.getCompleteOrdersInMonth)
 
 // get events when materials were added to disinfector
-router.post('/get-add-material-events', passport.authenticate('jwt', { session: false }), isDisinfector, orderController.getAddMaterialsEvents);
+router.post('/get-add-material-events', passport.authenticate('jwt', { session: false }), orderController.getAddMaterialsEvents);
 
 module.exports = router;

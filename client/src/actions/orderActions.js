@@ -180,9 +180,9 @@ export const getOrders = (userId) => (dispatch) => {
 
 
 // add disinfector comment to order
-export const addDisinfectorComment = (object, history) => (dispatch) => {
+export const addDisinfectorComment = (object, history, occupation) => (dispatch) => {
   axios.post('/order/addDisinfectorComment', object)
-    .then(res => history.push('/disinfector'))
+    .then(res => history.push(`/${occupation}`))
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
@@ -231,9 +231,9 @@ export const searchOrders = (object) => (dispatch) => {
 
 
 // submit completed order
-export const submitCompleteOrder = (object, history) => (dispatch) => {
+export const submitCompleteOrder = (object, history, occupation) => (dispatch) => {
   axios.post('/order/submit-complete-order', { order: object })
-    .then(() => history.push('/disinfector'))
+    .then(() => history.push(`/${occupation}`))
     .catch(err =>
       dispatch({
         type: GET_ERRORS,

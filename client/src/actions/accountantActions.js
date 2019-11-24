@@ -79,6 +79,24 @@ export const getAccStats = (object) => (dispatch) => {
 };
 
 
+// export const searchContracts = (object) => (dispatch) => {
+//   dispatch(loadingQueries());
+//   axios.post('/accountant/search-contracts', { object: object })
+//     .then(res =>
+//       dispatch({
+//         type: SEARCH_CONTRACTS,
+//         payload: res.data
+//       })
+//     )
+//     .catch(err =>
+//       dispatch({
+//         type: GET_ERRORS,
+//         payload: err
+//       })
+//     );
+// };
+
+
 // Loadings
 export const loadingQueries = () => {
   return {

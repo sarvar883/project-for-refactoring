@@ -11,6 +11,7 @@ class SearchOrders extends Component {
   state = {
     phone: '',
     address: '',
+    contractNumber: '',
     method: '',
     headingText: '',
     orders: []
@@ -46,6 +47,19 @@ class SearchOrders extends Component {
     const object = {
       method: 'phone',
       payload: this.state.phone
+    };
+    this.props.searchOrders(object);
+  };
+
+  searchByContract = (e) => {
+    e.preventDefault();
+    this.setState({
+      method: 'contract',
+      headingText: this.state.contractNumber
+    });
+    const object = {
+      method: 'contract',
+      payload: this.state.contractNumber
     };
     this.props.searchOrders(object);
   };
@@ -217,12 +231,27 @@ class SearchOrders extends Component {
               <button type="submit" className="btn btn-dark">Искать</button>
             </form>
           </div>
+          <div className="col-lg-4 col-md-6 mt-2">
+            <form onSubmit={this.searchByContract} className="form-bg p-1">
+              <h4 className="text-center mb-0">Поиск по номеру договора</h4>
+              <TextFieldGroup
+                type="text"
+                placeholder="Номер Договора"
+                name="contractNumber"
+                value={this.state.contractNumber}
+                onChange={this.onChange}
+                required
+              />
+              <button type="submit" className="btn btn-primary">Искать</button>
+            </form>
+          </div>
         </div>
 
         <div className="row mt-3">
           <div className="col-12">
             {this.state.method === 'phone' ? <h2 className="text-center">Результаты поиска заказов по номеру телефона "{this.state.headingText}"</h2> : ''}
             {this.state.method === 'address' ? <h2 className="text-center">Результаты поиска заказов по адресу "{this.state.headingText}"</h2> : ''}
+            {this.state.method === 'contract' ? <h2 className="text-center">Результаты поиска заказов по номеру договора "{this.state.headingText}"</h2> : ''}
           </div>
         </div>
 

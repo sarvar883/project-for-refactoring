@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import Moment from 'react-moment';
+// import Moment from 'react-moment';
 
 import materials from '../common/materials';
 
@@ -39,11 +39,11 @@ class ShowOperatorStats extends Component {
         }
 
         if (order.clientType === 'corporate') {
-          if (!order.operatorConfirmed || !order.accountantConfirmed) {
+          if (!order.operatorConfirmed || (order.accountantDecided && !order.accountantConfirmed)) {
             rejectedOrders.push(order);
           }
         } else if (order.clientType === 'individual') {
-          if (!order.operatorConfirmed || !order.adminConfirmed) {
+          if (!order.operatorConfirmed || (order.adminDecided && !order.adminConfirmed)) {
             rejectedOrders.push(order);
           }
         }
@@ -74,7 +74,7 @@ class ShowOperatorStats extends Component {
             <div className="card-body p-0">
               <h4 className="text-center">Заказы, которые вы приняли:</h4>
               <ul className="font-bold mb-0 list-unstyled">
-                <li>Всего Получено Заказов: {this.state.orders.length}</li>
+                <li>Принятые Заказов: {this.state.orders.length}</li>
                 <li>Выполнено и Подтверждено Заказов: {confirmedOrders.length}</li>
                 <li>Общая Сумма: {totalSum.toLocaleString()} UZS</li>
                 <li>Средний балл подтвержденных заказов: {(totalScore / confirmedOrders.length).toFixed(2)} (из 5)</li>

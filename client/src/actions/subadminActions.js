@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
   GET_ERRORS,
+  SUBADM_GET_MY_ORDERS,
   GET_SORTED_ORDERS_SUBADMIN,
   ALL_DISINFECTORS,
   SUBADMIN_MATERIALS,
@@ -11,6 +12,25 @@ import {
   SUBADMIN_LOADING,
   SUBADMIN_LOADING_STATS
 } from './types';
+
+
+// get orders that subadmin should complete
+export const getSubadmOrders = (id) => (dispatch) => {
+  dispatch(setSubadminLoading());
+  axios.post('/subadmin/get-my-orders', { id: id })
+    .then(res =>
+      dispatch({
+        type: SUBADM_GET_MY_ORDERS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
 
 
 export const getSortedOrders = (date) => (dispatch) => {

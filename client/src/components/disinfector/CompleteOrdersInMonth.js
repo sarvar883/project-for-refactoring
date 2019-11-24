@@ -103,10 +103,7 @@ class CompleteOrdersInMonth extends Component {
                   : ''}
 
                 {order.clientType === 'individual' ?
-                  <React.Fragment>
-                    <li>Общая Цена: {order.cost.toLocaleString()} Сум</li>
-                    <li>Из них Вам досталось: {parseFloat((order.cost / order.disinfectors.length).toFixed(2)).toLocaleString()} Сум</li>
-                  </React.Fragment>
+                  <li>Общая Сумма: {order.cost.toLocaleString()} UZS  (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
                   : ''}
 
                 <li>Заказ принял: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>

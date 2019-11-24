@@ -188,7 +188,7 @@ class AccStats extends Component {
 
 
     return (
-      <div className="container-fluid" >
+      <div className="container-fluid">
         <div className="row">
           <div className="col-lg-4 col-md-6">
             <h2 className="text-center">Статистика по месяцам</h2>

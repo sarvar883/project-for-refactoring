@@ -85,3 +85,16 @@ exports.getAccStats = (req, res) => {
       res.status(400).json(err);
     });
 };
+
+
+// exports.searchContracts = (req, res) => {
+//   // case insensitive search
+//   Order.find({ contractNumber: new RegExp(`^${req.body.object.payload}$`, 'i') })
+//     .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
+//     .exec()
+//     .then(orders => res.json(orders))
+//     .catch(err => {
+//       console.log('Accountant searchContracts ERROR', err);
+//       res.status(400).json(err);
+//     });
+// };

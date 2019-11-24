@@ -1,14 +1,12 @@
-const mongoose = require('mongoose');
-const User = require('../models/user');
 const Order = require('../models/order');
 const AddMaterial = require('../models/addMaterial');
-const io = require('../socket');
 
 
 exports.monthStatsForDisinfector = async (req, res) => {
   const id = req.body.id;
   const month = Number(req.body.month);
   const year = Number(req.body.year);
+  let acceptedOrders = [];
 
   let addedMaterials = await AddMaterial.find({ disinfector: id }).populate('disinfector admin').exec();
 
@@ -21,6 +19,7 @@ exports.monthStatsForDisinfector = async (req, res) => {
     .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(orders => {
+      acceptedOrders = orders.filter(item => item.userAcceptedOrder._id.toString() === id && new Date(item.dateFrom).getMonth() === month && new Date(item.dateFrom).getFullYear() === year);
 
       orders = orders.filter(item => {
         let amongDisinfectors = 0;
@@ -41,6 +40,7 @@ exports.monthStatsForDisinfector = async (req, res) => {
 
       return res.json({
         orders: orders,
+        acceptedOrders: acceptedOrders,
         addedMaterials: addedMaterials
       });
     })
@@ -54,6 +54,7 @@ exports.monthStatsForDisinfector = async (req, res) => {
 exports.weekStatsForDisinfector = async (req, res) => {
   const id = req.body.id;
   const days = req.body.days;
+  let acceptedOrders = [];
 
   let addedMaterials = await AddMaterial.find({ disinfector: id })
     .populate('disinfector admin')
@@ -68,6 +69,7 @@ exports.weekStatsForDisinfector = async (req, res) => {
     .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(orders => {
+      acceptedOrders = orders.filter(item => item.userAcceptedOrder._id.toString() === id && new Date(item.dateFrom) >= new Date(days[0]) && new Date(item.dateFrom).setHours(0, 0, 0, 0) <= new Date(days[6]));
 
       orders = orders.filter(item => {
         let amongDisinfectors = 0;
@@ -87,6 +89,7 @@ exports.weekStatsForDisinfector = async (req, res) => {
       );
       return res.json({
         orders: orders,
+        acceptedOrders: acceptedOrders,
         addedMaterials: addedMaterials
       });
     })
@@ -249,7 +252,7 @@ exports.getAdvStats = (req, res) => {
 
 
 exports.getOperatorStats = (req, res) => {
-  Order.find({ userCreated: req.body.object.operatorId })
+  Order.find({ userAcceptedOrder: req.body.object.operatorId })
     .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(orders => {
