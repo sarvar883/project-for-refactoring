@@ -161,17 +161,26 @@ exports.editOrder = (req, res) => {
 
 
 exports.deleteOrder = (req, res) => {
-  Order.findByIdAndRemove(req.body.id)
+  Order.findByIdAndRemove(req.body.object.id)
     .then(result => {
       io.getIO().emit('deleteOrder', {
-        id: req.body.id,
-        orderDateFrom: req.body.orderDateFrom
+        id: req.body.object.id,
+        orderDateFrom: req.body.object.orderDateFrom
       });
-      Client.findOne({ phone: req.body.clientPhone })
-        .then(client => {
-          client.orders = client.orders.filter(item => item.toString() !== req.body.id);
-          return client.save();
-        });
+
+      if (req.body.object.clientType === 'corporate') {
+        Client.findById(req.body.object.clientId)
+          .then(client => {
+            client.orders = client.orders.filter(item => item.toString() !== req.body.object.id);
+            return client.save();
+          });
+      } else if (req.body.object.clientType === 'individual') {
+        Client.findOne({ phone: req.body.object.clientPhone })
+          .then(client => {
+            client.orders = client.orders.filter(item => item.toString() !== req.body.object.id);
+            return client.save();
+          });
+      }
     })
     .catch(err => {
       console.log('deleteOrder ERROR', err);

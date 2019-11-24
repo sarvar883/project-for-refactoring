@@ -132,9 +132,17 @@ class AdmSortedOrders extends Component {
     });
   };
 
-  deleteOrder = (id, clientPhone, orderDateFrom) => {
-    this.props.deleteOrder(id, clientPhone, orderDateFrom, this.props.history, this.props.auth.user.occupation);
+  deleteOrder = (id, clientType, clientPhone, clientId, orderDateFrom) => {
+    const object = {
+      id: id,
+      clientType: clientType,
+      clientPhone: clientPhone,
+      clientId: clientId,
+      orderDateFrom: orderDateFrom,
+    };
+    this.props.deleteOrder(object, this.props.history, this.props.auth.user.occupation);
     this.props.getSortedOrders(this.state.date);
+    window.location.reload();
   }
 
   componentWillUnmount() {
@@ -142,6 +150,7 @@ class AdmSortedOrders extends Component {
   }
 
   render() {
+    console.log('sortedOrders', this.state.sortedOrders);
     let array = [];
     for (let i = 0; i <= 23; i++) {
       array.push({ hour: i, elements: [] });
@@ -186,7 +195,11 @@ class AdmSortedOrders extends Component {
                 <Link to={`/edit-order/${element._id}`} className="btn btn-warning mr-1">Редактировать</Link>
                 <button className="btn btn-danger" onClick={() => {
                   if (window.confirm('Вы уверены?')) {
-                    this.deleteOrder(element._id, element.phone, element.dateFrom);
+                    if (element.clientType === 'corporate') {
+                      this.deleteOrder(element._id, element.clientType, element.phone, element.clientId._id, element.dateFrom);
+                    } else if (element.clientType === 'individual') {
+                      this.deleteOrder(element._id, element.clientType, element.phone, '', element.dateFrom);
+                    }
                   }
                 }}>Удалить</button>
               </div>

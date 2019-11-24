@@ -97,8 +97,8 @@ class SearchOrders extends Component {
 
                 {item.completed && item.operatorDecided ? (
                   <React.Fragment>
-                    <li>Оператор рассмотрел заявку (время: <Moment format="DD/MM/YYYY HH:mm">{item.operatorCheckedAt}</Moment>)</li>
-                    {item.operatorConfirmed ? <li className="text-success">Оператор подтвердил заяку</li> : <li className="text-danger">Оператор отверг заяку</li>}
+                    <li>Оператор рассмотрел заявку</li>
+                    {item.operatorConfirmed ? <li className="text-success">Оператор подтвердил заяку (время: <Moment format="DD/MM/YYYY HH:mm">{item.operatorCheckedAt}</Moment>)</li> : <li className="text-danger">Оператор отверг заяку (время: <Moment format="DD/MM/YYYY HH:mm">{item.operatorCheckedAt}</Moment>)</li>}
                     <li>Балл: {item.score}</li>
                     <li>Отзыв Клиента: {item.clientReview}</li>
                   </React.Fragment>

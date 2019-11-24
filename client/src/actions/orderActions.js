@@ -148,8 +148,8 @@ export const editOrder = (order, history, occupation) => (dispatch) => {
 
 
 // delete order
-export const deleteOrder = (id, clientPhone, orderDateFrom, history, occupation) => (dispatch) => {
-  axios.post('/order/delete-order', { id: id, clientPhone: clientPhone, orderDateFrom: orderDateFrom, occupation: occupation })
+export const deleteOrder = (object, history, occupation) => (dispatch) => {
+  axios.post('/order/delete-order', { object: object })
     .then(result => history.push(`/${occupation}`))
     .catch(err =>
       dispatch({
