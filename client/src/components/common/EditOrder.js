@@ -43,8 +43,6 @@ class EditOrder extends Component {
     //   });
     // }
 
-    console.log('orderById', nextProps.order.orderById);
-
     if (nextProps.order.orderById) {
       let orderForEdit = nextProps.order.orderById;
 

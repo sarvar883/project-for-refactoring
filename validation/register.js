@@ -36,7 +36,7 @@ module.exports = function validateRegisterInput(data) {
     errors.occupation = 'Это поле обязятельное';
   }
 
-  if (data.occupation === 'disinfector' && Validator.isEmpty(data.color)) {
+  if ((data.occupation === 'disinfector' || data.occupation === 'subadmin') && Validator.isEmpty(data.color)) {
     errors.color = 'Выберите цвет дезинфектора';
   }
 

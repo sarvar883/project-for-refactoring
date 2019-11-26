@@ -8,7 +8,6 @@ const materials = require('../client/src/components/common/materials');
 const validateRegisterInput = require('../validation/register');
 const validateLoginInput = require('../validation/login');
 
-
 exports.registerUser = (req, res) => {
   const { errors, isValid } = validateRegisterInput(req.body);
 
@@ -88,7 +87,13 @@ exports.loginUser = (req, res) => {
           phone: user.phone,
           occupation: user.occupation,
           materials: user.materials,
-          color: user.color
+          color: user.color,
+
+          // CHANGED
+          birthday: user.birthday,
+          married: user.married,
+          hasChildren: user.hasChildren,
+          children: user.children
         };
 
         // Sign Token
@@ -122,8 +127,88 @@ exports.currentUser = (req, res) => {
     phone: req.user.phone,
     occupation: req.user.occupation,
     materials: req.user.materials,
-    color: req.user.color
+    color: req.user.color,
+
+    // CHANGED
+    birthday: req.user.birthday,
+    married: req.user.married,
+    hasChildren: req.user.hasChildren,
+    children: req.user.children
   });
+};
+
+
+exports.changePassword = (req, res) => {
+  User.findById(req.body.object.userId)
+    .then(user => {
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(req.body.object.password1, salt, (err, hash) => {
+          if (err) throw err;
+          user.password = hash;
+          return user.save();
+        });
+      });
+    })
+    .then(user => res.json(user))
+    .catch(err => {
+      console.log('changePassword ERROR', err);
+      return res.status(404).json(err);
+    });
+};
+
+
+exports.getUserById = (req, res) => {
+
+
+
+  // THIS code is user to add a new material to all users
+  // User.find()
+  //   .then(users => {
+  //     let emptyArray = [];
+  //     materials.forEach(item => {
+  //       emptyArray.push({
+  //         material: item.material,
+  //         amount: 0,
+  //         unit: item.unit
+  //       });
+  //     });
+  //     users.forEach(user => {
+  //       user.materials = emptyArray;
+  //       user.save();
+  //     });
+  //   })
+
+
+
+
+  User.findById(req.body.userId)
+    .then(user => res.json(user))
+    .catch(err => {
+      console.log('getUserById ERROR', err);
+      return res.status(404).json(err);
+    });
+};
+
+
+exports.editUser = (req, res) => {
+  User.findById(req.body.object.userId)
+    .then(user => {
+      user.name = req.body.object.name;
+      user.email = req.body.object.email;
+      user.phone = req.body.object.phone;
+      user.occupation = req.body.object.occupation;
+      user.color = req.body.object.color;
+      user.birthday = new Date(req.body.object.birthday);
+      user.married = req.body.object.married;
+      user.hasChildren = req.body.object.hasChildren;
+      user.children = req.body.object.children;
+      return user.save();
+    })
+    .then(savedUser => res.json(savedUser))
+    .catch(err => {
+      console.log('editUser ERROR', err);
+      return res.status(404).json(err);
+    });
 };
 
 

@@ -18,4 +18,10 @@ router.post('/auth/get-disinfector-materials', passport.authenticate('jwt', { se
 // @desc    Return current user
 router.get('/current', passport.authenticate('jwt', { session: false }), authController.currentUser);
 
+router.post('/change-password', passport.authenticate('jwt', { session: false }), isAdmin, authController.changePassword);
+
+router.post('/get-user-by-id', passport.authenticate('jwt', { session: false }), isAdmin, authController.getUserById);
+
+router.post('/edit-user', passport.authenticate('jwt', { session: false }), isAdmin, authController.editUser);
+
 module.exports = router;

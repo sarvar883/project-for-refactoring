@@ -7,6 +7,7 @@ import {
   LOADING_SORTED_ORDERS_ADMIN,
   LOADING_CUR_MAT,
   LOADING_CLIENTS,
+  SET_LOADING,
 
   GET_SORTED_ORDERS_ADMIN,
   GET_ORDER_QUERIES_FOR_ADMIN,
@@ -25,7 +26,9 @@ import {
   UPDATE_MAT_COMING,
   MAT_COMING_MONTH,
   MAT_COMING_WEEK,
-  SEARCH_CLIENTS
+  SEARCH_CLIENTS,
+  GET_ALL_USERS,
+  GET_USER_BY_ID
 } from '../actions/types';
 
 const initialState = {
@@ -34,6 +37,8 @@ const initialState = {
   operators: [],
   sortedOrders: [],
   clients: [],
+  users: [],
+  userById: {},
   currentMaterials: {
     materials: []
   },
@@ -53,7 +58,8 @@ const initialState = {
   loadingOperators: false,
   loadingAddMatEvents: false,
   loadingCurMat: false,
-  loadingClients: false
+  loadingClients: false,
+  loadingUsers: false
 };
 
 export default function (state = initialState, action) {
@@ -270,6 +276,26 @@ export default function (state = initialState, action) {
         ...state,
         clients: action.payload,
         loadingClients: false
+      };
+
+    case GET_ALL_USERS:
+      return {
+        ...state,
+        users: action.payload,
+        loadingUsers: false
+      };
+
+    case GET_USER_BY_ID:
+      return {
+        ...state,
+        userById: action.payload
+      };
+
+    case SET_LOADING:
+      // this is used when admin loads all users and user by id
+      return {
+        ...state,
+        loadingUsers: true
       };
 
     default:

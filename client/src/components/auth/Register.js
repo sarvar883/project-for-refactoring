@@ -60,13 +60,14 @@ class Register extends Component {
     ];
 
     const colorOptions = [
-      { label: '-- Выберите цвет дезинфектора (для календаря) --', value: 0 },
+      { label: '-- Выберите цвет пользователя (для календаря) --', value: 0 },
       { label: 'Красный', value: 'red' },
       { label: 'Зеленый', value: 'green' },
       { label: 'Синий', value: 'blue' },
       { label: 'Оранжевый', value: 'orange' },
       { label: 'Желтый', value: 'yellow' },
       { label: 'Фиолетовый', value: 'violet' },
+      { label: 'Коричневый', value: 'brown' }
     ];
 
     return (
@@ -108,7 +109,7 @@ class Register extends Component {
                     error={errors.occupation}
                     options={occupationOptions}
                   />
-                  {this.state.occupation === 'disinfector' ? (
+                  {this.state.occupation === 'disinfector' || this.state.occupation === 'subadmin' ? (
                     <SelectListGroup
                       name="color"
                       value={this.state.color}

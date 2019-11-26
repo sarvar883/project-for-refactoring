@@ -28,7 +28,8 @@ import {
   UPDATE_MAT_COMING,
   MAT_COMING_MONTH,
   MAT_COMING_WEEK,
-  SEARCH_CLIENTS
+  SEARCH_CLIENTS,
+  GET_USER_BY_ID
 } from './types';
 
 
@@ -381,12 +382,49 @@ export const searchClients = (object) => (dispatch) => {
         type: GET_ERRORS,
         payload: err
       })
-    )
+    );
 };
 
 
+export const changePassword = (object, history) => (dispatch) => {
+  axios.post('/change-password', { object: object })
+    .then(() => history.push('/admin/users'))
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
 
 
+export const getUserById = (userId) => (dispatch) => {
+  axios.post('/get-user-by-id', { userId: userId })
+    .then(res =>
+      dispatch({
+        type: GET_USER_BY_ID,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
+export const editUser = (object, history) => (dispatch) => {
+  axios.post('/edit-user', { object: object })
+    .then(() => history.push('/admin/users'))
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
 
 
 

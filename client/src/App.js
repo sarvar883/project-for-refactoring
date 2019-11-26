@@ -33,6 +33,8 @@ import MatComHistory from './components/admin/MatComHistory';
 import MaterialHistory from './components/admin/MaterialHistory';
 import AddClient from './components/admin/AddClient';
 import AdmClients from './components/admin/AdmClients';
+import Users from './components/common/Users';
+import EditUser from './components/common/EditUser';
 
 import Subadmin from './components/subadmin/Subadmin';
 import SubadmOrders from './components/subadmin/SubadmOrders';
@@ -148,6 +150,12 @@ class App extends Component {
             </Switch>
             <Switch>
               <AdminRoute exact path="/edit-order/:orderId" component={EditOrder} />
+            </Switch>
+            <Switch>
+              <AdminRoute exact path="/admin/users" component={Users} />
+            </Switch>
+            <Switch>
+              <AdminRoute exact path="/admin/edit-user/:userId" component={EditUser} />
             </Switch>
 
             <Switch>
