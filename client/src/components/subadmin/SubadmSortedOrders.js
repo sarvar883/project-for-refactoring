@@ -158,22 +158,9 @@ class SubadmSortedOrders extends Component {
               <ul className="font-bold mb-0">
                 <li>Время: <Moment format="HH:mm">{element.dateFrom}</Moment></li>
                 <li>Ответственный: {element.disinfectorId.occupation} {element.disinfectorId.name}</li>
-                {element.clientType === 'corporate' ?
-                  <React.Fragment>
-                    <li>Корпоративный Клиент: {element.clientId.name}</li>
-                    <li>Имя клиента: {element.client}</li>
-                  </React.Fragment>
-                  : ''}
 
-                {element.clientType === 'individual' ?
-                  <li>Физический Клиент: {element.client}</li>
-                  : ''}
                 <li>Телефон Клиента: {element.phone}</li>
                 <li>Адрес: {element.address}</li>
-                <li>Тип услуги: {element.typeOfService}</li>
-                <li>Откуда узнали: {element.advertising}</li>
-                <li>Заказ принял: {element.userAcceptedOrder.occupation} {element.userAcceptedOrder.name}</li>
-                <li>Заказ Добавил: {element.userCreated.occupation} {element.userCreated.name}</li>
               </ul>
               <Link to={`/order-details/${element._id}`} className="btn btn-warning">Подробнее</Link>
             </div>
