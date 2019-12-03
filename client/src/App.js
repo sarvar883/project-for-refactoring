@@ -32,9 +32,11 @@ import MatComing from './components/admin/MatComing';
 import MatComHistory from './components/admin/MatComHistory';
 import MaterialHistory from './components/admin/MaterialHistory';
 import AddClient from './components/admin/AddClient';
-import AdmClients from './components/admin/AdmClients';
+// import AdmClients from './components/admin/AdmClients';
 import Users from './components/common/Users';
 import EditUser from './components/common/EditUser';
+import ClientList from './components/admin/ClientList';
+import ClientId from './components/admin/ClientId';
 
 import Subadmin from './components/subadmin/Subadmin';
 import SubadmOrders from './components/subadmin/SubadmOrders';
@@ -164,7 +166,11 @@ class App extends Component {
             </Switch>
 
             <Switch>
-              <PrivateRoute exact path="/clients" component={AdmClients} />
+              {/* <PrivateRoute exact path="/clients" component={AdmClients} /> */}
+              <PrivateRoute exact path="/clients" component={ClientList} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/client/:clientId" component={ClientId} />
             </Switch>
 
 

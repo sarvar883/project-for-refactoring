@@ -1,101 +1,68 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import Spinner from '../common/Spinner';
 import Moment from 'react-moment';
 
-import materials from '../common/materials';
+import { clientById } from '../../actions/adminActions';
 
-class ShowOperStats extends Component {
+class ClientId extends Component {
   state = {
-    orders: this.props.admin.stats.orders
+    client: {
+      orders: []
+    }
   };
 
+  componentDidMount() {
+    this.props.clientById(this.props.match.params.clientId);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.admin.clientById) {
+      this.setState({
+        client: nextProps.admin.clientById
+      });
+    }
+  }
+
   render() {
-    const { orders } = this.state;
+    const { client } = this.state;
+
     let totalSum = 0,
       totalScore = 0,
-      totalConsumption = [],
-      completedOrders = [],
+      operatorDecidedOrders = [],
       confirmedOrders = [],
       rejectedOrders = [];
 
-    let corporateClientOrders = {
-      sum: 0,
-      orders: 0
-    };
+    let clientOrders = client.orders.map((item, key) => {
 
-    let indivClientOrders = {
-      sum: 0,
-      orders: 0
-    };
+      if (item.completed && item.operatorDecided) {
+        operatorDecidedOrders.push(item);
 
-    materials.forEach(object => {
-      const emptyObject = {
-        material: object.material,
-        amount: 0,
-        unit: object.unit
-      };
-      totalConsumption.push(emptyObject);
-    });
-
-    orders.forEach(order => {
-      if (order.completed) {
-        completedOrders.push(order);
-
-        if (order.clientType === 'corporate') {
-          if (order.operatorConfirmed && order.accountantConfirmed) {
-            confirmedOrders.push(order);
-            totalSum += order.cost;
-            totalScore += order.score;
-
-            corporateClientOrders.orders++;
-            corporateClientOrders.sum += order.cost;
-          }
-          if ((order.operatorDecided && !order.operatorConfirmed) || (order.accountantDecided && !order.accountantConfirmed)) {
-            rejectedOrders.push(order);
-          }
+        if (item.operatorConfirmed && (item.adminConfirmed || item.accountantConfirmed)) {
+          confirmedOrders.push(item);
+          totalSum += item.cost;
+          totalScore += item.score;
         }
 
-        if (order.clientType === 'individual') {
-          if (order.operatorConfirmed && order.adminConfirmed) {
-            confirmedOrders.push(order);
-            totalSum += order.cost;
-            totalScore += order.score;
-
-            indivClientOrders.orders++;
-            indivClientOrders.sum += order.cost;
+        if (item.clientType === 'corporate') {
+          if (!item.operatorConfirmed || (item.accountantDecided && !item.accountantConfirmed)) {
+            rejectedOrders.push(item);
           }
-          if ((order.operatorDecided && !order.operatorConfirmed) || (order.adminDecided && !order.adminConfirmed)) {
-            rejectedOrders.push(order);
+        } else if (item.clientType === 'individual') {
+          if (!item.operatorConfirmed || (item.adminDecided && !item.adminConfirmed)) {
+            rejectedOrders.push(item);
           }
         }
-
-        // calculate total consumption of all orders in given period
-        order.disinfectors.forEach(element => {
-          element.consumption.forEach(object => {
-            totalConsumption.forEach(item => {
-              if (object.material === item.material && object.unit === item.unit) {
-                item.amount += object.amount;
-              }
-            });
-          });
-        });
       }
-    });
-
-    let renderTotalConsumption = totalConsumption.map((element, key) =>
-      <li key={key}>{element.material}: {element.amount.toLocaleString()} {element.unit}</li>
-    );
-
-    let renderOrders = orders.map((item, key) => {
 
       // consumption array of specific order
       let consumptionArray = [];
 
-      item.disinfectors.forEach(thing => {
+      item.disinfectors.forEach(element => {
         consumptionArray.push({
-          user: thing.user,
-          consumption: thing.consumption
+          user: element.user,
+          consumption: element.consumption
         });
       });
 
@@ -153,17 +120,6 @@ class ShowOperStats extends Component {
                   </React.Fragment>
                 ) : ''}
 
-                {item.clientType === 'corporate' ?
-                  <React.Fragment>
-                    <li>Корпоративный Клиент: {item.clientId.name}</li>
-                    <li>Имя клиента: {item.client}</li>
-                  </React.Fragment>
-                  : ''}
-
-                {item.clientType === 'individual' ?
-                  <li>Физический Клиент: {item.client}</li>
-                  : ''}
-
                 <li>Дата выполнения: <Moment format="DD/MM/YYYY">{item.dateFrom}</Moment></li>
                 {item.completed ? (
                   <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
@@ -205,66 +161,61 @@ class ShowOperStats extends Component {
       )
     });
 
+
     return (
-      <React.Fragment>
-        <div className="row">
-          <div className="col-lg-4 col-md-6">
-            <div className="card order mt-2">
-              <div className="card-body p-0">
-                <ul className="font-bold mb-0 list-unstyled">
-                  <li>Оператор принял Заказов: {orders.length}</li>
-                  <li>Выполнено Заказов: {completedOrders.length}</li>
-                  <li>Подтверждено Заказов: {confirmedOrders.length}</li>
-                  <li>Общая Сумма: {totalSum.toLocaleString()} UZS</li>
-                  <li>Средний балл подтвержденных заказов: {(totalScore / confirmedOrders.length).toFixed(2)} (из 5)</li>
-                </ul>
-              </div>
+      <div className="container-fluid">
+
+        {this.props.admin.loadingClients ? (
+          <div className="row mt-3">
+            <div className="col-12">
+              <Spinner />
             </div>
           </div>
-
-          <div className="col-lg-4 col-md-6">
-            <div className="card order mt-2">
-              <div className="card-body p-0">
-                <h4 className="text-center">На этих заказах расходовано материалов:</h4>
-                <ul className="font-bold mb-0 pl-3">
-                  {renderTotalConsumption}
-                </ul>
+        ) : (
+            <React.Fragment>
+              <div className="row">
+                <div className="col-12">
+                  <h3 className="text-center">Клиент {client.name}</h3>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <div className="col-lg-4 col-md-6">
-            <div className="card order mt-2">
-              <div className="card-body p-0">
-                <ul className="font-bold mb-0 pl-3">
-                  <h4 className="text-center">Корпоративные клиенты</h4>
-                  <li>Количество подтвержденных заказов: {corporateClientOrders.orders}</li>
-                  <li>На общую сумму: {corporateClientOrders.sum.toLocaleString()} UZS</li>
-                  <h4 className="text-center">Физические клиенты</h4>
-                  <li>Количество подтвержденных заказов: {indivClientOrders.orders}</li>
-                  <li>На общую сумму: {indivClientOrders.sum.toLocaleString()} UZS</li>
-                </ul>
+              <div className="row mt-2">
+                <div className="col-md-6">
+                  <div className="card order mt-2">
+                    <div className="card-body p-0">
+                      <ul className="font-bold mb-0 pl-3">
+                        {client.type === 'corporate' ?
+                          <li>Корпоративный клиент: {client.name}</li> : ''}
+                        {client.type === 'individual' ?
+                          <React.Fragment>
+                            <li>Физический клиент: {client.name}</li>
+                            <li>Номер телефона: {client.phone}</li>
+                            <li>Адрес: {client.address}</li>
+                          </React.Fragment> : ''}
+                        <li>Всего Получено заказов от клиента: {client.orders.length}</li>
+                        <li>Выполнено и подтверждено заказов: {confirmedOrders.length}</li>
+                        <li>Средняя оценка подтвержденных заказов: {(totalScore / confirmedOrders.length).toFixed(2)} (из 5)</li>
+                        <li>Общая Сумма подтвержденных заказов: {totalSum.toLocaleString()} UZS</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="row mt-2">
-          <div className="col-12">
-            <h2 className="text-center pl-3 pr-3">Заказы, которые принял Оператор</h2>
-          </div>
-          {orders.length > 0 ? (renderOrders) : <h2>Нет заказов</h2>}
-        </div>
-      </React.Fragment>
+              <div className="row mt-2 pb-1">
+                {clientOrders}
+              </div>
+            </React.Fragment>
+          )}
+      </div>
     )
   }
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  order: state.order,
   admin: state.admin,
   errors: state.errors
 });
 
-export default connect(mapStateToProps)(withRouter(ShowOperStats));
+export default connect(mapStateToProps, { clientById })(withRouter(ClientId));

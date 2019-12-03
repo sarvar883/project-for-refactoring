@@ -27,6 +27,7 @@ import {
   MAT_COMING_MONTH,
   MAT_COMING_WEEK,
   SEARCH_CLIENTS,
+  CLIENT_BY_ID,
   GET_ALL_USERS,
   GET_USER_BY_ID
 } from '../actions/types';
@@ -37,6 +38,9 @@ const initialState = {
   operators: [],
   sortedOrders: [],
   clients: [],
+  clientById: {
+    orders: []
+  },
   users: [],
   userById: {},
   currentMaterials: {
@@ -275,6 +279,13 @@ export default function (state = initialState, action) {
       return {
         ...state,
         clients: action.payload,
+        loadingClients: false
+      };
+
+    case CLIENT_BY_ID:
+      return {
+        ...state,
+        clientById: action.payload,
         loadingClients: false
       };
 

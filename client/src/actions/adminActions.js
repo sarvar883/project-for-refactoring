@@ -29,6 +29,7 @@ import {
   MAT_COMING_MONTH,
   MAT_COMING_WEEK,
   SEARCH_CLIENTS,
+  CLIENT_BY_ID,
   GET_USER_BY_ID
 } from './types';
 
@@ -374,6 +375,24 @@ export const searchClients = (object) => (dispatch) => {
     .then(res =>
       dispatch({
         type: SEARCH_CLIENTS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
+export const clientById = (id) => (dispatch) => {
+  dispatch(loadingClients());
+  axios.post('/admin/client-by-id', { id: id })
+    .then(res =>
+      dispatch({
+        type: CLIENT_BY_ID,
         payload: res.data
       })
     )

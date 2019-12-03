@@ -155,7 +155,7 @@ class SubadmSortedOrders extends Component {
         <div className={`col-md-${colnumber} pr-0`} key={i}>
           <div className={`card mt-2 order order-bg-${element.disinfectorId.color}`}>
             <div className="card-body p-0">
-              <ul className="font-bold mb-0">
+              <ul className="font-bold mb-0 list-unstyled">
                 <li>Время: <Moment format="HH:mm">{element.dateFrom}</Moment></li>
                 <li>Ответственный: {element.disinfectorId.occupation} {element.disinfectorId.name}</li>
 

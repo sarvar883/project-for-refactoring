@@ -34,4 +34,6 @@ router.post('/add-client', passport.authenticate('jwt', { session: false }), adm
 
 router.post('/search-clients', passport.authenticate('jwt', { session: false }), adminController.searchClients);
 
+router.post('/client-by-id', passport.authenticate('jwt', { session: false }), adminController.clientById);
+
 module.exports = router;

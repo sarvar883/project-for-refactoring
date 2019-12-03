@@ -301,3 +301,22 @@ button.edit-message, button.delete-message {
 .client-stats-order {
   border-bottom: 4px solid red;
 }
+
+
+
+/* CLIENTS TABLE */
+.table {
+  text-align: center;
+  vertical-align: center;
+  font-weight: bold;
+}
+.table tbody th, .table tbody td {
+  border: 2px solid black;
+}
+.table thead th {
+  border: 2px solid black;
+}
+.table td, .table th {
+  padding: 8px 4px;
+}
+/* END OF CLIENTS TABLE */

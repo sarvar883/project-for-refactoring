@@ -337,31 +337,31 @@ exports.addClient = (req, res) => {
 
 exports.searchClients = (req, res) => {
   Client.find()
-    .populate({
-      path: 'orders',
-      model: 'Order',
-      populate: {
-        path: 'disinfectorId userCreated userAcceptedOrder disinfectors.user',
-        model: 'User'
-      }
-    })
-    .exec()
+    // .populate({
+    //   path: 'orders',
+    //   model: 'Order',
+    //   populate: {
+    //     path: 'disinfectorId userCreated userAcceptedOrder disinfectors.user',
+    //     model: 'User'
+    //   }
+    // })
+    // .exec()
     .then(clients => {
 
       clients = clients.filter(item => {
         if (req.body.object.method === 'name') {
-          return stringSimilarity.compareTwoStrings(item.name.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.50;
+          return stringSimilarity.compareTwoStrings(item.name.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.45;
         } else if (req.body.object.method === 'phone') {
           if (item.type === 'corporate') {
             return false;
           } else if (item.type === 'individual') {
-            return stringSimilarity.compareTwoStrings(item.phone, req.body.object.payload) > 0.75 || stringSimilarity.compareTwoStrings(item.phone2, req.body.object.payload) > 0.75;
+            return stringSimilarity.compareTwoStrings(item.phone, req.body.object.payload) > 0.5;
           }
         } else if (req.body.object.method === 'address') {
           if (item.type === 'corporate') {
             return false;
           } else if (item.type === 'individual') {
-            return stringSimilarity.compareTwoStrings(item.address.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.50;
+            return stringSimilarity.compareTwoStrings(item.address.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.45;
           }
         } else if (req.body.object.method === 'all') {
           return true;
@@ -372,6 +372,25 @@ exports.searchClients = (req, res) => {
     })
     .catch(err => {
       console.log('searchClients ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.clientById = (req, res) => {
+  Client.findById(req.body.id)
+    .populate({
+      path: 'orders',
+      model: 'Order',
+      populate: {
+        path: 'disinfectorId userCreated userAcceptedOrder disinfectors.user',
+        model: 'User'
+      }
+    })
+    .exec()
+    .then(client => res.json(client))
+    .catch(err => {
+      console.log('clientById ERROR', err);
       res.status(404).json(err);
     });
 };

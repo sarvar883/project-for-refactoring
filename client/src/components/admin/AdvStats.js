@@ -140,26 +140,28 @@ class AdvStats extends Component {
               item.completed++;
 
               if (order.clientType === 'corporate') {
-                if (order.operatorConfirmed && order.accountantConfirmed) {
+                if (order.completed && order.operatorConfirmed && order.accountantConfirmed) {
                   item.confirmed++;
                   item.totalSum += order.cost;
                   item.totalScore += order.score;
                 }
 
-                if (!order.operatorConfirmed || !order.accountantConfirmed) {
+                // if (!order.operatorConfirmed || !order.accountantConfirmed) {
+                if (order.completed && ((order.operatorDecided && !order.operatorConfirmed) || (order.accountantDecided && !order.accountantConfirmed))) {
                   item.rejected++;
                 }
 
               }
 
               if (order.clientType === 'individual') {
-                if (order.operatorConfirmed && order.adminConfirmed) {
+                if (order.completed && order.operatorConfirmed && order.adminConfirmed) {
                   item.confirmed++;
                   item.totalSum += order.cost;
                   item.totalScore += order.score;
                 }
 
-                if (!order.operatorConfirmed || !order.adminConfirmed) {
+                // if (!order.operatorConfirmed || !order.adminConfirmed) {
+                if (order.completed && ((order.operatorDecided && !order.operatorConfirmed) || (order.adminDecided && !order.adminConfirmed))) {
                   item.rejected++;
                 }
               }
