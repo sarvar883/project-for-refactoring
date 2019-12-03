@@ -3,6 +3,8 @@ import {
   GET_ORDER_BY_ID,
   GET_SORTED_ORDERS_SUBADMIN,
   ALL_DISINFECTORS,
+  GET_ALL_DISINFECTORS_FOR_ADMIN, // from admin's action
+  SET_LOADING_DISINFECTORS, // from admin's action
   GET_ALL_DISINFECTORS,
   SUBADMIN_ADDS_MATERIAL,
   SUBADMIN_MAT_COM_HISTORY,
@@ -62,6 +64,12 @@ export default function (state = initialState, action) {
         loading: true
       };
 
+    case SET_LOADING_DISINFECTORS: // from admin's action
+      return {
+        ...state,
+        loading: true
+      };
+
     case SUBADMIN_LOADING_STATS:
       return {
         ...state,
@@ -91,6 +99,14 @@ export default function (state = initialState, action) {
 
     // get all disinfectors only (not subadmins)
     case ALL_DISINFECTORS:
+      return {
+        ...state,
+        disinfectors: action.payload,
+        loading: false
+      };
+
+    // get all disinfectors AND subadmins(for subadmin)
+    case GET_ALL_DISINFECTORS_FOR_ADMIN: // from admin's action
       return {
         ...state,
         disinfectors: action.payload,

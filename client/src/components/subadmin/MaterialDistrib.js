@@ -5,7 +5,8 @@ import Spinner from '../common/Spinner';
 
 import materials from '../common/materials';
 
-import { getAllDisinfectors, getSubadminMaterials, addMaterialToDisinfector } from '../../actions/subadminActions';
+import { getSubadminMaterials, addMaterialToDisinfector } from '../../actions/subadminActions';
+import { getAllDisinfectorsAndSubadmins } from '../../actions/adminActions';
 
 class MaterialDistrib extends Component {
   state = {
@@ -22,7 +23,8 @@ class MaterialDistrib extends Component {
   };
 
   componentDidMount() {
-    this.props.getAllDisinfectors();
+    // this.props.getAllDisinfectors();
+    this.props.getAllDisinfectorsAndSubadmins();
     this.props.getSubadminMaterials(this.props.auth.user.id);
     window.scrollTo({ top: 0 });
   }
@@ -112,7 +114,7 @@ class MaterialDistrib extends Component {
         materials: this.state.materials
       };
       this.props.addMaterialToDisinfector(object, this.props.history);
-      this.props.getAllDisinfectors();
+      this.props.getAllDisinfectorsAndSubadmins();
     }
   }
 
@@ -183,9 +185,13 @@ class MaterialDistrib extends Component {
       { label: '-- Выберите пользователя --', value: "" }
     ];
 
-    this.props.subadmin.disinfectors.forEach(worker => disinfectorOptions.push({
-      label: `${worker.occupation} ${worker.name}`, value: worker._id
-    }));
+    this.props.subadmin.disinfectors.forEach(worker => {
+      if (worker._id !== this.props.auth.user.id) {
+        disinfectorOptions.push({
+          label: `${worker.occupation} ${worker.name}`, value: worker._id
+        });
+      }
+    });
 
     return (
       <div className="container-fluid">
@@ -255,4 +261,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getAllDisinfectors, getSubadminMaterials, addMaterialToDisinfector })(withRouter(MaterialDistrib));
+export default connect(mapStateToProps, { getAllDisinfectorsAndSubadmins, getSubadminMaterials, addMaterialToDisinfector })(withRouter(MaterialDistrib));

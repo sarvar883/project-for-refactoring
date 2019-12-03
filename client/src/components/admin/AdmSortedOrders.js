@@ -150,7 +150,6 @@ class AdmSortedOrders extends Component {
   }
 
   render() {
-    console.log('sortedOrders', this.state.sortedOrders);
     let array = [];
     for (let i = 0; i <= 23; i++) {
       array.push({ hour: i, elements: [] });
