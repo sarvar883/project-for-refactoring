@@ -51,7 +51,7 @@ class RepeatOrders extends Component {
             <div className="card order mt-2">
               <div className="card-body p-0">
                 <ul className="font-bold mb-0 list-unstyled">
-                  <li>Дезинфектор: {item.disinfectorId.name}</li>
+                  <li>Ответственный: {item.disinfectorId.occupation} {item.disinfectorId.name}</li>
 
                   {item.clientType === 'corporate' ?
                     <React.Fragment>
