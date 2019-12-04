@@ -93,6 +93,11 @@ exports.confirmCompleteOrder = (req, res) => {
 
 
 exports.getRepeatOrders = (req, res) => {
+  // Order.findById('5de5fb2a1d62970016344238')
+  // .then(order => {
+  //   console.log('order', order);
+  // });
+
   Order.find({ repeatedOrder: true, repeatedOrderDecided: false })
     .populate('disinfectors.user disinfectorId clientId userCreated userAcceptedOrder')
     .populate({
@@ -105,6 +110,9 @@ exports.getRepeatOrders = (req, res) => {
     })
     .exec()
     .then(orders => {
+      // some orders seem to have previousOrder of null. Possibly this is because the previous order is created and later deleted. In order to avoid bugs we filter out orders which have previousOrder field equal to null
+      orders = orders.filter(item => item.previousOrder !== null);
+
       orders = orders.sort((a, b) => new Date(a.timeOfRepeat) - new Date(b.timeOfRepeat));
       return res.json(orders);
     })

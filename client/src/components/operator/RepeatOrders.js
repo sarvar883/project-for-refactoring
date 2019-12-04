@@ -35,6 +35,7 @@ class RepeatOrders extends Component {
         });
       });
 
+
       let consumptionRender = consumptionArray.map((element, key) =>
         <li key={key}>
           <p className="mb-0">Пользователь: {element.user.occupation} {element.user.name}</p>
