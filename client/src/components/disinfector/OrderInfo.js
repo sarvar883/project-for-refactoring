@@ -58,7 +58,10 @@ class OrderInfo extends Component {
               {orderObject.phone2 !== '' ? (<li>Запасной номер: {orderObject.phone2}</li>) : ''}
               <li>Дата и Время выполнения: <Moment format="DD/MM/YYYY HH:mm">{orderObject.dateFrom}</Moment></li>
               <li>Адрес: {orderObject.address}</li>
+
+
               <li>Тип услуги: {orderObject.typeOfService}</li>
+
               <li>Комментарии Оператора: {orderObject.comment ? orderObject.comment : 'Нет комментариев'}</li>
               <li>Комментарии Дезинфектора: {this.state.disinfectorComment ? this.state.disinfectorComment : 'Нет комментариев'}</li>
               <li>Кто принял заказ: {orderObject.userAcceptedOrder.occupation} {orderObject.userAcceptedOrder.name}</li>

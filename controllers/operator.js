@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('../models/user');
 const Order = require('../models/order');
+const Client = require('../models/client');
 const io = require('../socket');
 
 const validateConfirmedOrder = require('../validation/confirmOrder');
@@ -97,6 +98,11 @@ exports.getRepeatOrders = (req, res) => {
   // .then(order => {
   //   console.log('order', order);
   // });
+
+  Client.find({ name: 'vlad' })
+    .then(order => {
+      console.log('order', order);
+    });
 
   Order.find({ repeatedOrder: true, repeatedOrderDecided: false })
     .populate('disinfectors.user disinfectorId clientId userCreated userAcceptedOrder')

@@ -13,7 +13,6 @@ module.exports = function validateOrderInput(data) {
   data.date = !isEmpty(data.date) ? data.date : '';
   data.timeFrom = !isEmpty(data.timeFrom) ? data.timeFrom : '';
   data.phone = !isEmpty(data.phone) ? data.phone : '';
-  data.typeOfService = !isEmpty(data.typeOfService) ? data.typeOfService : '';
   data.advertising = !isEmpty(data.advertising) ? data.advertising : '';
 
   if (Validator.isEmpty(data.disinfectorId)) {
@@ -49,10 +48,6 @@ module.exports = function validateOrderInput(data) {
 
   if (Validator.isEmpty(data.timeFrom)) {
     errors.timeFrom = 'Это поле обязательное';
-  }
-
-  if (Validator.isEmpty(data.typeOfService)) {
-    errors.typeOfService = 'Это поле обязательное';
   }
 
   if (Validator.isEmpty(data.advertising)) {

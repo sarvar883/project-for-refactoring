@@ -34,7 +34,7 @@ class CreateOrder extends Component {
       phone: '',
       hasSecondPhone: false,
       phone2: '',
-      typeOfService: '',
+      typeOfService: [],
       advertising: '',
       comment: '',
       errors: {}
@@ -45,6 +45,28 @@ class CreateOrder extends Component {
     this.props.getCorporateClients();
     this.props.getAllUsers();
     window.scrollTo({ top: 0 });
+
+    const orderTypes = [
+      { label: 'DF', value: 'DF' },
+      { label: 'DZ', value: 'DZ' },
+      { label: 'KL', value: 'KL' },
+      { label: 'TR', value: 'TR' },
+      { label: 'GR', value: 'GR' },
+      { label: 'MX', value: 'MX' },
+      { label: 'KOMP', value: 'KOMP' }
+    ];
+
+    let array = [];
+    orderTypes.forEach(object => {
+      array.push({
+        type: object.value,
+        selected: false
+      });
+    });
+
+    this.setState({
+      typeOfService: array
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -54,6 +76,19 @@ class CreateOrder extends Component {
   }
 
   onChange = (e) => this.setState({ [e.target.name]: e.target.value });
+
+  onChangeTypes = (e) => {
+    let array = [...this.state.typeOfService];
+    array.forEach(item => {
+      if (item.type === e.target.value) {
+        item.selected = e.target.checked;
+      }
+    });
+
+    this.setState({
+      typeOfService: array
+    });
+  }
 
   toggleSecondPhone = (e) => {
     e.preventDefault();
@@ -86,12 +121,26 @@ class CreateOrder extends Component {
       }
     }
 
+    let serviceTypeString = '', selectedItems = 0;
+    this.state.typeOfService.forEach(item => {
+      if (item.selected) {
+        selectedItems++;
+        if (selectedItems === 1) {
+          serviceTypeString = serviceTypeString + item.type;
+        } else {
+          serviceTypeString = serviceTypeString + ',' + item.type;
+        }
+      }
+    });
+
     if (this.state.phone.length !== 13 || (this.state.hasSecondPhone && this.state.phone2.length !== 13)) {
       alert('Телефонный номер должен содержать 13 символов. Введите в формате +998XXXXXXXXX');
     } else if (this.state.phone[0] !== '+' || (this.state.hasSecondPhone && this.state.phone2[0] !== '+')) {
       alert('Телефонный номер должен начинаться с "+". Введите в формате +998XXXXXXXXX');
     } else if (numberCharacters !== 12 || (this.state.hasSecondPhone && phone2Characters !== 12)) {
       alert('Телефонный номер должен содержать "+" и 12 цифр');
+    } else if (selectedItems === 0) {
+      alert('Выберите тип заказа');
     } else {
       const newOrder = {
         disinfectorId: this.state.disinfectorId,
@@ -104,7 +153,7 @@ class CreateOrder extends Component {
         timeFrom: this.state.timeFrom,
         phone: this.state.phone,
         phone2: this.state.phone2,
-        typeOfService: this.state.typeOfService,
+        typeOfService: serviceTypeString,
         advertising: this.state.advertising,
         comment: this.state.comment,
         userCreated: this.props.auth.user.id,
@@ -137,7 +186,7 @@ class CreateOrder extends Component {
     }));
 
     const orderTypes = [
-      { label: '-- Выберите тип заказа --', value: 0 },
+      // { label: '-- Выберите тип заказа --', value: 0 },
       { label: 'DF', value: 'DF' },
       { label: 'DZ', value: 'DZ' },
       { label: 'KL', value: 'KL' },
@@ -254,13 +303,24 @@ class CreateOrder extends Component {
                     onChange={this.onChange}
                     error={errors.timeFrom}
                   />
-                  <SelectListGroup
+                  {/* <SelectListGroup
                     name="typeOfService"
                     value={this.state.typeOfService}
                     onChange={this.onChange}
                     error={errors.typeOfService}
                     options={orderTypes}
-                  />
+                  /> */}
+
+                  <label htmlFor="">Выберите тип заказа (можно выбрать несколько):</label>
+                  {orderTypes.map((item, key) =>
+                    <div className="form-check" key={key}>
+                      <label className="form-check-label">
+                        <input type="checkbox" className="form-check-input" onChange={this.onChangeTypes} value={item.value} />{item.label}
+                      </label>
+                    </div>
+                  )}
+
+
                   <SelectListGroup
                     name="advertising"
                     value={this.state.advertising}

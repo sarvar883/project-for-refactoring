@@ -24,7 +24,7 @@ class EditOrder extends Component {
     phone: '',
     hasSecondPhone: false,
     phone2: '',
-    typeOfService: '',
+    typeOfService: [],
     advertising: '',
     comment: ''
   }
@@ -95,6 +95,40 @@ class EditOrder extends Component {
         defaultHourString = `${new Date(date).getHours()}:00`;
       }
 
+
+
+      const orderTypes = [
+        { label: 'DF', value: 'DF' },
+        { label: 'DZ', value: 'DZ' },
+        { label: 'KL', value: 'KL' },
+        { label: 'TR', value: 'TR' },
+        { label: 'GR', value: 'GR' },
+        { label: 'MX', value: 'MX' },
+        { label: 'KOMP', value: 'KOMP' }
+      ];
+
+      let array = [];
+      orderTypes.forEach(object => {
+        array.push({
+          type: object.value,
+          selected: false
+        });
+      });
+
+      // service type array
+      let arraySelectedItems = orderForEdit.typeOfService.split(',');
+
+      array.forEach(item => {
+        arraySelectedItems.forEach(element => {
+          if (item.type === element) {
+            item.selected = true;
+          }
+        });
+      });
+
+
+
+
       this.setState({
         _id: orderForEdit._id,
         disinfectorId: orderForEdit.disinfectorId._id,
@@ -107,7 +141,7 @@ class EditOrder extends Component {
         timeFrom: defaultHourString,
         phone: orderForEdit.phone,
         phone2: orderForEdit.phone2,
-        typeOfService: orderForEdit.typeOfService,
+        typeOfService: array,
         advertising: orderForEdit.advertising,
         comment: orderForEdit.comment
       });
@@ -115,6 +149,19 @@ class EditOrder extends Component {
   }
 
   onChange = (e) => this.setState({ [e.target.name]: e.target.value });
+
+  onChangeTypes = (e) => {
+    let array = [...this.state.typeOfService];
+    array.forEach(item => {
+      if (item.type === e.target.value) {
+        item.selected = e.target.checked;
+      }
+    });
+
+    this.setState({
+      typeOfService: array
+    });
+  }
 
   toggleSecondPhone = (e) => {
     e.preventDefault();
@@ -147,12 +194,26 @@ class EditOrder extends Component {
       }
     }
 
+    let serviceTypeString = '', selectedItems = 0;
+    this.state.typeOfService.forEach(item => {
+      if (item.selected) {
+        selectedItems++;
+        if (selectedItems === 1) {
+          serviceTypeString = serviceTypeString + item.type;
+        } else {
+          serviceTypeString = serviceTypeString + ',' + item.type;
+        }
+      }
+    });
+
     if (this.state.phone.length !== 13 || (this.state.hasSecondPhone && this.state.phone2.length !== 13)) {
       alert('Телефонный номер должен содержать 13 символов. Введите в формате +998XXXXXXXXX');
     } else if (this.state.phone[0] !== '+' || (this.state.hasSecondPhone && this.state.phone2[0] !== '+')) {
       alert('Телефонный номер должен начинаться с "+". Введите в формате +998XXXXXXXXX');
     } else if (numberCharacters !== 12 || (this.state.hasSecondPhone && phone2Characters !== 12)) {
       alert('Телефонный номер должен содержать "+" и 12 цифр');
+    } else if (selectedItems === 0) {
+      alert('Выберите тип заказа');
     } else {
       const order = {
         _id: this.state._id,
@@ -167,7 +228,7 @@ class EditOrder extends Component {
         timeFrom: this.state.timeFrom,
         phone: this.state.phone,
         phone2: this.state.phone2,
-        typeOfService: this.state.typeOfService,
+        typeOfService: serviceTypeString,
         advertising: this.state.advertising,
         comment: this.state.comment,
       };
@@ -195,17 +256,6 @@ class EditOrder extends Component {
       { label: `${worker.name}, ${worker.occupation}`, value: worker._id }
     ));
 
-    const orderTypes = [
-      { label: '-- Выберите тип заказа --', value: '' },
-      { label: 'DF', value: 'DF' },
-      { label: 'DZ', value: 'DZ' },
-      { label: 'KL', value: 'KL' },
-      { label: 'TR', value: 'TR' },
-      { label: 'GR', value: 'GR' },
-      { label: 'MX', value: 'MX' },
-      { label: 'KOMP', value: 'KOMP' }
-    ];
-
     const clientTypes = [
       { label: '-- Выберите тип клиента --', value: '' },
       { label: 'Корпоративный', value: 'corporate' },
@@ -232,6 +282,20 @@ class EditOrder extends Component {
         value: item.value
       });
     });
+
+    let renderServiceTypes = this.state.typeOfService.map((item, key) =>
+      <div className="form-check" key={key}>
+        <label className="form-check-label">
+          {item.selected ?
+            <React.Fragment>
+              <input type="checkbox" defaultChecked="checked" className="form-check-input" onChange={this.onChangeTypes} value={item.type} />{item.type}
+            </React.Fragment> :
+            <React.Fragment>
+              <input type="checkbox" className="form-check-input" onChange={this.onChangeTypes} value={item.type} />{item.type}
+            </React.Fragment>}
+        </label>
+      </div>
+    );
 
     return (
       <React.Fragment>
@@ -322,14 +386,17 @@ class EditOrder extends Component {
                         required
                       />
 
-                      <div className="form-group">
+                      {/* <div className="form-group">
                         <label htmlFor="typeOfService">Выберите Тип Заказа:</label>
                         <select className="form-control" value={this.state.typeOfService} name="typeOfService" onChange={this.onChange} required>
                           {orderTypes.map((item, index) =>
                             <option key={index} value={item.value}>{item.label}</option>
                           )}
                         </select>
-                      </div>
+                      </div> */}
+
+                      <label htmlFor="">Выберите тип заказа (можно выбрать несколько):</label>
+                      {renderServiceTypes}
 
                       <div className="form-group">
                         <label htmlFor="advertising">Откуда Узнали:</label>
