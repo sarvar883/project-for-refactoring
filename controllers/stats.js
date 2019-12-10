@@ -100,6 +100,54 @@ exports.weekStatsForDisinfector = async (req, res) => {
 };
 
 
+exports.dayStatsForDisinfector = async (req, res) => {
+  const id = req.body.object.id;
+  const day = req.body.object.day;
+  let acceptedOrders = [];
+
+  let addedMaterials = await AddMaterial.find({ disinfector: id }).populate('disinfector admin').exec();
+
+  addedMaterials = addedMaterials.filter(item =>
+    new Date(item.createdAt).setHours(0, 0, 0, 0) === new Date(day).setHours(0, 0, 0, 0)
+  );
+
+  Order.find()
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
+    .exec()
+    .then(orders => {
+      acceptedOrders = orders.filter(item =>
+        item.userAcceptedOrder._id.toString() === id &&
+        new Date(item.dateFrom).setHours(0, 0, 0, 0) === new Date(day).setHours(0, 0, 0, 0)
+      );
+
+      orders = orders.filter(item => {
+        let amongDisinfectors = 0;
+        item.disinfectors.forEach(element => {
+          if (element.user._id.toString() === id) amongDisinfectors++;
+        });
+        if (item.disinfectorId._id.toString() === id || amongDisinfectors > 0) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
+      orders = orders.filter(order =>
+        new Date(order.dateFrom).setHours(0, 0, 0, 0) === new Date(day).setHours(0, 0, 0, 0)
+      );
+      return res.json({
+        orders: orders,
+        acceptedOrders: acceptedOrders,
+        addedMaterials: addedMaterials
+      });
+    })
+    .catch(err => {
+      console.log('dayStatsForDisinfector ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
 exports.monthStatsForAdmin = (req, res) => {
   const month = Number(req.body.month);
   const year = Number(req.body.year);
@@ -136,6 +184,25 @@ exports.weekStatsForAdmin = (req, res) => {
     })
     .catch(err => {
       console.log('weekStatsForAdmin ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.dayStatsForAdmin = (req, res) => {
+  const day = req.body.day;
+
+  Order.find()
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
+    .exec()
+    .then(orders => {
+      orders = orders.filter(order =>
+        new Date(order.dateFrom).setHours(0, 0, 0, 0) === new Date(day).setHours(0, 0, 0, 0)
+      );
+      return res.json(orders);
+    })
+    .catch(err => {
+      console.log('dayStatsForAdmin ERROR', err);
       res.status(404).json(err);
     });
 };
@@ -224,6 +291,49 @@ exports.disinfWeekStatsForAdmin = (req, res) => {
 };
 
 
+exports.disinfDayStatsForAdmin = (req, res) => {
+  const disinfectorId = req.body.object.disinfectorId;
+  const day = req.body.object.day;
+  let acceptedOrders = [];
+
+  Order.find()
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
+    .exec()
+    .then(orders => {
+      acceptedOrders = orders.filter(item =>
+        item.userAcceptedOrder._id.toString() === disinfectorId &&
+        new Date(item.dateFrom).setHours(0, 0, 0, 0) === new Date(day).setHours(0, 0, 0, 0)
+      );
+
+      orders = orders.filter(item => {
+
+        let amongDisinfectors = 0;
+        item.disinfectors.forEach(element => {
+          if (element.user._id.toString() === disinfectorId) amongDisinfectors++;
+        });
+        if (item.disinfectorId._id.toString() === disinfectorId || amongDisinfectors > 0) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
+      orders = orders.filter(order =>
+        new Date(order.dateFrom).setHours(0, 0, 0, 0) === new Date(day).setHours(0, 0, 0, 0)
+      );
+      return res.json({
+        disinfectorId: disinfectorId,
+        orders: orders,
+        acceptedOrders: acceptedOrders
+      });
+    })
+    .catch(err => {
+      console.log('disinfDayStatsForAdmin ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
 exports.getAdvStats = (req, res) => {
   Order.find()
     .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
@@ -266,6 +376,10 @@ exports.getOperatorStats = (req, res) => {
         sortedOrders = orders.filter(order =>
           new Date(order.dateFrom) >= new Date(req.body.object.days[0]) &&
           new Date(order.dateFrom).setHours(0, 0, 0, 0) <= new Date(req.body.object.days[6])
+        );
+      } else if (req.body.object.type === 'day') {
+        sortedOrders = orders.filter(order =>
+          new Date(order.dateFrom).setHours(0, 0, 0, 0) === new Date(req.body.object.day).setHours(0, 0, 0, 0)
         );
       }
       return res.json({

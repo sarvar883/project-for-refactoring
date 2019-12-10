@@ -74,6 +74,10 @@ exports.getAccStats = (req, res) => {
           new Date(order.dateFrom) >= new Date(req.body.object.days[0]) &&
           new Date(order.dateFrom).setHours(0, 0, 0, 0) <= new Date(req.body.object.days[6])
         );
+      } else if (req.body.object.type === 'day') {
+        sortedOrders = orders.filter(order =>
+          new Date(order.dateFrom).setHours(0, 0, 0, 0) === new Date(req.body.object.day).setHours(0, 0, 0, 0)
+        );
       }
       return res.json({
         method: req.body.object.type,

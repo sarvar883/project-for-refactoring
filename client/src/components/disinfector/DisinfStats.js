@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Spinner from '../common/Spinner';
 import moment from 'moment';
 import Moment from 'react-moment';
-import { getMonthStats, getWeekStats } from '../../actions/disinfectorActions';
+import { getMonthStats, getWeekStats, getDayStats } from '../../actions/disinfectorActions';
 import ShowDisinfStats from './ShowDisinfStats';
 
 import DayPicker from 'react-day-picker';
@@ -41,10 +41,12 @@ class DisinfStats extends Component {
   state = {
     month: '',
     year: '',
+    day: '',
 
     // // to display month and year in heading h2
     headingMonth: '',
     headingYear: '',
+    headingDay: '',
 
     hoverRange: undefined,
     selectedDays: [],
@@ -68,6 +70,18 @@ class DisinfStats extends Component {
     this.setState({
       headingMonth: this.state.month,
       headingYear: this.state.year
+    });
+  }
+
+  getDayStats = (e) => {
+    e.preventDefault();
+    const object = {
+      id: this.props.auth.user.id,
+      day: this.state.day
+    };
+    this.props.getDayStats(object);
+    this.setState({
+      headingDay: this.state.day.split('-').reverse().join('-')
     });
   }
 
@@ -181,7 +195,18 @@ class DisinfStats extends Component {
             </form>
           </div>
 
-          <div className="col-lg-4 col-md-6 ml-auto weekly-stats">
+          <div className="col-lg-4 col-md-6">
+            <h2 className="text-center">Статистика по дням</h2>
+            <form onSubmit={this.getDayStats}>
+              <div className="form-group">
+                <label htmlFor="day"><strong>Выберите День:</strong></label>
+                <input type="date" name="day" className="form-control" onChange={this.onChange} required />
+              </div>
+              <button type="submit" className="btn btn-primary">Искать</button>
+            </form>
+          </div>
+
+          <div className="col-lg-4 col-md-6 weekly-stats">
             <div className="SelectedWeekExample">
               <h2 className="text-center">Статистика по неделям</h2>
               <DayPicker
@@ -208,9 +233,13 @@ class DisinfStats extends Component {
         <div className="row mt-2">
           <div className="col-12">
             {this.props.disinfector.method === 'week' ?
-              <h2 className="text-center pl-3 pr-3">Ваша Недельная статистика за <Moment format="DD/MM/YYYY">{this.state.selectedDays[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDays[6]}</Moment></h2> :
-              <h2 className="text-center pl-3 pr-3">Ваша Месячная Статистика за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2>
-            }
+              <h2 className="text-center pl-3 pr-3">Ваша Недельная статистика за <Moment format="DD/MM/YYYY">{this.state.selectedDays[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDays[6]}</Moment></h2> : ''}
+
+            {this.props.disinfector.method === 'month' ?
+              <h2 className="text-center pl-3 pr-3">Ваша Месячная Статистика за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2> : ''}
+
+            {this.props.disinfector.method === 'day' ?
+              <h2 className="text-center pl-3 pr-3">Ваша Дневная Статистика за {this.state.headingDay}</h2> : ''}
           </div>
         </div>
 
@@ -231,4 +260,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getMonthStats, getWeekStats })(withRouter(DisinfStats));
+export default connect(mapStateToProps, { getMonthStats, getWeekStats, getDayStats })(withRouter(DisinfStats));

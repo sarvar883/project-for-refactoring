@@ -12,13 +12,19 @@ router.post('/for-disinfector-month', passport.authenticate('jwt', { session: fa
 
 router.post('/for-disinfector-week', passport.authenticate('jwt', { session: false }), statsController.weekStatsForDisinfector);
 
+router.post('/for-disinfector-day', passport.authenticate('jwt', { session: false }), statsController.dayStatsForDisinfector);
+
 router.post('/for-admin-month', passport.authenticate('jwt', { session: false }), isAdmin, statsController.monthStatsForAdmin);
 
 router.post('/for-admin-week', passport.authenticate('jwt', { session: false }), isAdmin, statsController.weekStatsForAdmin);
 
+router.post('/for-admin-day', passport.authenticate('jwt', { session: false }), isAdmin, statsController.dayStatsForAdmin);
+
 router.post('/for-admin-disinf-stats-month', passport.authenticate('jwt', { session: false }), isAdmin, statsController.disinfMonthStatsForAdmin);
 
 router.post('/for-admin-disinf-stats-week', passport.authenticate('jwt', { session: false }), isAdmin, statsController.disinfWeekStatsForAdmin);
+
+router.post('/for-admin-disinf-stats-day', passport.authenticate('jwt', { session: false }), isAdmin, statsController.disinfDayStatsForAdmin);
 
 router.post('/adv-stats', passport.authenticate('jwt', { session: false }), isAdmin, statsController.getAdvStats);
 

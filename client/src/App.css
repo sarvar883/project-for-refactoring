@@ -280,7 +280,7 @@ button.edit-message, button.delete-message {
 /* END OF CALENDAR SELECT WEEKS */
 
 .weekly-stats {
-  border: 2px solid red;
+  /* border: 2px solid red; */
 }
 .border-bottom {
   border-bottom: 4px solid black;

@@ -15,6 +15,7 @@ import {
   GET_ORDER_QUERIES_FOR_ADMIN,
   GET_ADMIN_MONTH_STATS,
   GET_ADMIN_WEEK_STATS,
+  GET_ADMIN_DAY_STATS,
   GET_ADV_STATS,
   GET_OPERATOR_STATS,
   GET_ALL_DISINFECTORS_FOR_ADMIN,
@@ -23,6 +24,7 @@ import {
   GET_ADD_MAT_EVENTS_WEEK,
   DISINF_STATS_MONTH_ADMIN,
   DISINF_STATS_MONTH_WEEK,
+  DISINF_STATS_DAY_ADMIN,
   ADD_MAT_DISINFECTOR,
   GET_CURR_MAT_ADMIN,
   UPDATE_MAT_COMING,
@@ -107,6 +109,24 @@ export const getWeekStatsForAdmin = (days) => (dispatch) => {
     .then(res =>
       dispatch({
         type: GET_ADMIN_WEEK_STATS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
+export const getDayStatsForAdmin = (day) => (dispatch) => {
+  dispatch(loadingStats());
+  axios.post('/stats/for-admin-day', { day: day })
+    .then(res =>
+      dispatch({
+        type: GET_ADMIN_DAY_STATS,
         payload: res.data
       })
     )
@@ -270,6 +290,24 @@ export const getDisinfStatsWeekForAdmin = (id, days) => (dispatch) => {
     .then(res =>
       dispatch({
         type: DISINF_STATS_MONTH_WEEK,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
+export const getDisinfStatsDayForAdmin = (object) => (dispatch) => {
+  dispatch(loadingStats());
+  axios.post('/stats/for-admin-disinf-stats-day', { object: object })
+    .then(res =>
+      dispatch({
+        type: DISINF_STATS_DAY_ADMIN,
         payload: res.data
       })
     )

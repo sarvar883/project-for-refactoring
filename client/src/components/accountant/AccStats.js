@@ -42,10 +42,12 @@ class AccStats extends Component {
   state = {
     month: '',
     year: '',
+    day: '',
 
     // // to display month and year in heading h2
     headingMonth: '',
     headingYear: '',
+    headingDay: '',
 
     hoverRange: undefined,
     selectedDays: [],
@@ -85,6 +87,19 @@ class AccStats extends Component {
     });
   }
 
+  getDayStats = (e) => {
+    e.preventDefault();
+    const object = {
+      accountantId: this.props.auth.user.id,
+      type: 'day',
+      day: this.state.day
+    };
+    this.props.getAccStats(object);
+
+    this.setState({
+      headingDay: this.state.day.split('-').reverse().join('-')
+    });
+  }
 
 
   // weekly calendar
@@ -209,7 +224,18 @@ class AccStats extends Component {
             </form>
           </div>
 
-          <div className="col-lg-4 col-md-6 ml-auto weekly-stats">
+          <div className="col-lg-4 col-md-6">
+            <h2 className="text-center">Статистика по дням</h2>
+            <form onSubmit={this.getDayStats}>
+              <div className="form-group">
+                <label htmlFor="day"><strong>Выберите День:</strong></label>
+                <input type="date" name="day" className="form-control" onChange={this.onChange} required />
+              </div>
+              <button type="submit" className="btn btn-primary">Искать</button>
+            </form>
+          </div>
+
+          <div className="col-lg-4 col-md-6 weekly-stats">
             <div className="SelectedWeekExample">
               <h2 className="text-center">Статистика по неделям</h2>
               <DayPicker

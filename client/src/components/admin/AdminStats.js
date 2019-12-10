@@ -5,7 +5,7 @@ import Spinner from '../common/Spinner';
 import Moment from 'react-moment';
 import moment from 'moment';
 
-import { getMonthStatsForAdmin, getWeekStatsForAdmin } from '../../actions/adminActions';
+import { getDayStatsForAdmin, getMonthStatsForAdmin, getWeekStatsForAdmin } from '../../actions/adminActions';
 import ShowAdminStats from './ShowAdminStats';
 
 import DayPicker from 'react-day-picker';
@@ -42,10 +42,12 @@ class AdminStats extends Component {
   state = {
     month: '',
     year: '',
+    day: '',
 
     // to display month and year in heading h2
     headingMonth: '',
     headingYear: '',
+    headingDay: '',
 
     hoverRange: undefined,
     selectedDays: []
@@ -72,6 +74,13 @@ class AdminStats extends Component {
     });
   }
 
+  getDayStats = (e) => {
+    e.preventDefault();
+    this.props.getDayStatsForAdmin(this.state.day);
+    this.setState({
+      headingDay: this.state.day.split('-').reverse().join('-')
+    });
+  }
 
 
   // weekly calendar
@@ -174,7 +183,20 @@ class AdminStats extends Component {
             </form>
           </div>
 
-          <div className="col-lg-4 col-md-6 ml-auto weekly-stats">
+
+          <div className="col-lg-4 col-md-6">
+            <h2 className="text-center">Статистика по дням</h2>
+            <form onSubmit={this.getDayStats}>
+              <div className="form-group">
+                <label htmlFor="day"><strong>Выберите День:</strong></label>
+                <input type="date" name="day" className="form-control" onChange={this.onChange} required />
+              </div>
+              <button type="submit" className="btn btn-primary">Искать</button>
+            </form>
+          </div>
+
+
+          <div className="col-lg-4 col-md-6 weekly-stats">
             <div className="SelectedWeekExample">
               <h2 className="text-center">Статистика по неделям</h2>
               <DayPicker
@@ -195,9 +217,13 @@ class AdminStats extends Component {
         <div className="row mt-2">
           <div className="col-12">
             {this.props.admin.method === 'week' ?
-              <h2 className="text-center pl-3 pr-3">Недельная статистика за <Moment format="DD/MM/YYYY">{this.state.selectedDays[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDays[6]}</Moment></h2> :
-              <h2 className="text-center pl-3 pr-3">Месячная Статистика за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2>
-            }
+              <h2 className="text-center pl-3 pr-3">Недельная статистика за <Moment format="DD/MM/YYYY">{this.state.selectedDays[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDays[6]}</Moment></h2> : ''}
+
+            {this.props.admin.method === 'month' ?
+              <h2 className="text-center pl-3 pr-3">Месячная Статистика за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2> : ''}
+
+            {this.props.admin.method === 'day' ?
+              <h2 className="text-center pl-3 pr-3">Дневная Статистика за {this.state.headingDay}</h2> : ''}
           </div>
         </div>
 
@@ -217,4 +243,4 @@ const mapStateToProps = state => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getMonthStatsForAdmin, getWeekStatsForAdmin })(withRouter(AdminStats));
+export default connect(mapStateToProps, { getDayStatsForAdmin, getMonthStatsForAdmin, getWeekStatsForAdmin })(withRouter(AdminStats));

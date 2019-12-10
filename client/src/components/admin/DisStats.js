@@ -6,7 +6,7 @@ import Moment from 'react-moment';
 import moment from 'moment';
 
 import ShowDisStats from './ShowDisStats';
-import { getAllDisinfectorsAndSubadmins, getDisinfStatsWeekForAdmin, getDisinfStatsMonthForAdmin } from '../../actions/adminActions';
+import { getAllDisinfectorsAndSubadmins, getDisinfStatsDayForAdmin, getDisinfStatsWeekForAdmin, getDisinfStatsMonthForAdmin } from '../../actions/adminActions';
 
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
@@ -42,10 +42,12 @@ class DisStats extends Component {
   state = {
     month: '',
     year: '',
+    day: '',
 
     // // to display month and year in heading h2
     headingMonth: '',
     headingYear: '',
+    headingDay: '',
 
     hoverRange: undefined,
     selectedDays: [],
@@ -53,6 +55,7 @@ class DisStats extends Component {
 
     disinfectorIdMonth: '',
     disinfectorIdWeek: '',
+    disinfectorIdDay: '',
     disinfectorName: '',
     occupation: ''
   };
@@ -96,6 +99,24 @@ class DisStats extends Component {
     }
   }
 
+  getDayStats = (e) => {
+    e.preventDefault();
+    const object = {
+      disinfectorId: this.state.disinfectorIdDay,
+      day: this.state.day
+    };
+
+    this.props.admin.disinfectors.forEach(person => {
+      if (person._id.toString() === this.state.disinfectorIdDay.toString()) {
+        this.setState({
+          headingDay: this.state.day.split('-').reverse().join('-'),
+          disinfectorName: person.name,
+          occupation: person.occupation
+        });
+      }
+    });
+    this.props.getDisinfStatsDayForAdmin(object);
+  }
 
 
   // weekly calendar
@@ -219,7 +240,24 @@ class DisStats extends Component {
             </form>
           </div>
 
-          <div className="col-lg-4 col-md-6 ml-auto weekly-stats">
+          <div className="col-lg-4 col-md-6">
+            <h4 className="text-center">Статистика по дням</h4>
+            <form onSubmit={this.getDayStats}>
+              <div className="form-group">
+                <label htmlFor="disinfectorIdDay"><strong>Выберите Пользователя:</strong></label>
+                <select name="disinfectorIdDay" className="form-control" onChange={this.onChange} required>
+                  {renderDisinfectorOptions}
+                </select>
+              </div>
+              <div className="form-group">
+                <label htmlFor="day"><strong>Выберите День:</strong></label>
+                <input type="date" name="day" className="form-control" onChange={this.onChange} required />
+              </div>
+              <button type="submit" className="btn btn-primary">Искать</button>
+            </form>
+          </div>
+
+          <div className="col-lg-4 col-md-6 weekly-stats">
             <div className="SelectedWeekExample">
               <h4 className="text-center">Статистика по неделям</h4>
               <DayPicker
@@ -254,6 +292,9 @@ class DisStats extends Component {
 
             {this.props.admin.method === 'month' && this.state.disinfectorName && this.state.month && this.state.year ?
               <h2 className="text-center pl-3 pr-3">Месячная Статистика {this.state.occupation}  {this.state.disinfectorName} за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2> : ''}
+
+            {this.props.admin.method === 'day' && this.state.disinfectorName && this.state.day ?
+              <h2 className="text-center pl-3 pr-3">Дневная Статистика {this.state.occupation}  {this.state.disinfectorName} за {this.state.headingDay}</h2> : ''}
           </div>
         </div>
 
@@ -273,4 +314,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getAllDisinfectorsAndSubadmins, getDisinfStatsWeekForAdmin, getDisinfStatsMonthForAdmin })(withRouter(DisStats));
+export default connect(mapStateToProps, { getAllDisinfectorsAndSubadmins, getDisinfStatsDayForAdmin, getDisinfStatsWeekForAdmin, getDisinfStatsMonthForAdmin })(withRouter(DisStats));

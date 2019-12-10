@@ -5,6 +5,7 @@ import {
   GET_DISINFECTOR_MATERIALS,
   GET_DISINF_MONTH_STATS,
   GET_DISINF_WEEK_STATS,
+  GET_DISINF_DAY_STATS,
   GET_ADD_MATERIAL_EVENTS,
   LOADING_DISINF_STATS,
   SET_LOADING_DISINFECTORS,
@@ -40,6 +41,24 @@ export const getWeekStats = (id, days) => (dispatch) => {
     .then(res =>
       dispatch({
         type: GET_DISINF_WEEK_STATS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
+export const getDayStats = (object) => (dispatch) => {
+  dispatch(loadingDisinfStats());
+  axios.post('/stats/for-disinfector-day', { object: object })
+    .then(res =>
+      dispatch({
+        type: GET_DISINF_DAY_STATS,
         payload: res.data
       })
     )

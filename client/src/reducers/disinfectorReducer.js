@@ -2,6 +2,7 @@ import {
   GET_ALL_DISINFECTORS,
   GET_DISINF_MONTH_STATS,
   GET_DISINF_WEEK_STATS,
+  GET_DISINF_DAY_STATS,
   GET_ADD_MATERIAL_EVENTS,
   LOADING_DISINF_STATS,
   SET_LOADING_DISINFECTORS,
@@ -66,6 +67,19 @@ export default function (state = initialState, action) {
       return {
         ...state,
         method: 'week',
+        stats: {
+          ...state.stats,
+          orders: action.payload.orders,
+          acceptedOrders: action.payload.acceptedOrders,
+          addedMaterials: action.payload.addedMaterials
+        },
+        loadingDisinfStats: false
+      };
+
+    case GET_DISINF_DAY_STATS:
+      return {
+        ...state,
+        method: 'day',
         stats: {
           ...state.stats,
           orders: action.payload.orders,

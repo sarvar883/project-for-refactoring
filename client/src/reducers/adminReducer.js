@@ -13,6 +13,7 @@ import {
   GET_ORDER_QUERIES_FOR_ADMIN,
   GET_ADMIN_MONTH_STATS,
   GET_ADMIN_WEEK_STATS,
+  GET_ADMIN_DAY_STATS,
   GET_ADV_STATS,
   GET_OPERATOR_STATS,
   GET_ALL_DISINFECTORS_FOR_ADMIN,
@@ -21,6 +22,7 @@ import {
   GET_ADD_MAT_EVENTS_WEEK,
   DISINF_STATS_MONTH_ADMIN,
   DISINF_STATS_MONTH_WEEK,
+  DISINF_STATS_DAY_ADMIN,
   ADD_MAT_DISINFECTOR,
   GET_CURR_MAT_ADMIN,
   UPDATE_MAT_COMING,
@@ -153,6 +155,17 @@ export default function (state = initialState, action) {
         loadingStats: false
       };
 
+    case GET_ADMIN_DAY_STATS:
+      return {
+        ...state,
+        method: 'day',
+        stats: {
+          ...state.stats,
+          orders: action.payload
+        },
+        loadingStats: false
+      };
+
     case DISINF_STATS_MONTH_ADMIN:
       return {
         ...state,
@@ -170,6 +183,19 @@ export default function (state = initialState, action) {
       return {
         ...state,
         method: 'week',
+        stats: {
+          ...state.stats,
+          disinfectorId: action.payload.disinfectorId,
+          orders: action.payload.orders,
+          acceptedOrders: action.payload.acceptedOrders
+        },
+        loadingStats: false
+      };
+
+    case DISINF_STATS_DAY_ADMIN:
+      return {
+        ...state,
+        method: 'day',
         stats: {
           ...state.stats,
           disinfectorId: action.payload.disinfectorId,

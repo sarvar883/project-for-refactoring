@@ -43,10 +43,12 @@ class OperStats extends Component {
   state = {
     month: '',
     year: '',
+    day: '',
 
     // // to display month and year in heading h2
     headingMonth: '',
     headingYear: '',
+    headingDay: '',
 
     hoverRange: undefined,
     selectedDays: [],
@@ -104,6 +106,23 @@ class OperStats extends Component {
     }
   }
 
+  getDayStats = (e) => {
+    e.preventDefault();
+    this.props.admin.operators.forEach(person => {
+      if (person._id.toString() === this.state.operatorId.toString()) {
+        this.setState({
+          headingDay: this.state.day.split('-').reverse().join('-'),
+          operatorName: person.name
+        });
+      }
+    });
+    const object = {
+      type: 'day',
+      operatorId: this.state.operatorId,
+      day: this.state.day
+    };
+    this.props.getOperatorStats(object);
+  }
 
 
 
@@ -228,7 +247,24 @@ class OperStats extends Component {
             </form>
           </div>
 
-          <div className="col-lg-4 col-md-6 ml-auto weekly-stats">
+          <div className="col-lg-4 col-md-6">
+            <h4 className="text-center">Статистика по дням</h4>
+            <form onSubmit={this.getDayStats}>
+              <div className="form-group">
+                <label htmlFor="operatorId"><strong>Выберите Оператора:</strong></label>
+                <select name="operatorId" className="form-control" onChange={this.onChange} required>
+                  {renderOperatorOptions}
+                </select>
+              </div>
+              <div className="form-group">
+                <label htmlFor="day"><strong>Выберите День:</strong></label>
+                <input type="date" name="day" className="form-control" onChange={this.onChange} required />
+              </div>
+              <button type="submit" className="btn btn-primary">Искать</button>
+            </form>
+          </div>
+
+          <div className="col-lg-4 col-md-6 weekly-stats">
             <div className="SelectedWeekExample">
               <h4 className="text-center">Статистика по неделям</h4>
               <DayPicker
@@ -263,6 +299,9 @@ class OperStats extends Component {
 
             {this.props.admin.method === 'month' && this.state.operatorName && this.state.headingMonth && this.state.headingYear ?
               <h2 className="text-center pl-3 pr-3">Месячная Статистика Оператора {this.state.operatorName} за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2> : ''}
+
+            {this.props.admin.method === 'day' && this.state.operatorName && this.state.headingDay ?
+              <h2 className="text-center pl-3 pr-3">Дневная Статистика Оператора {this.state.operatorName} за {this.state.headingDay}</h2> : ''}
           </div>
         </div>
 

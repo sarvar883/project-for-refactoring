@@ -42,10 +42,12 @@ class OperatorStats extends Component {
   state = {
     month: '',
     year: '',
+    day: '',
 
     // // to display month and year in heading h2
     headingMonth: '',
     headingYear: '',
+    headingDay: '',
 
     hoverRange: undefined,
     selectedDays: [],
@@ -85,6 +87,19 @@ class OperatorStats extends Component {
     });
   }
 
+  getDayStats = (e) => {
+    e.preventDefault();
+    const object = {
+      operatorId: this.props.auth.user.id,
+      type: 'day',
+      day: this.state.day
+    };
+    this.props.getStatsForOperator(object);
+
+    this.setState({
+      headingDay: this.state.day.split('-').reverse().join('-')
+    });
+  }
 
 
   // weekly calendar
@@ -209,7 +224,18 @@ class OperatorStats extends Component {
             </form>
           </div>
 
-          <div className="col-lg-4 col-md-6 ml-auto weekly-stats">
+          <div className="col-lg-4 col-md-6">
+            <h2 className="text-center">Статистика по дням</h2>
+            <form onSubmit={this.getDayStats}>
+              <div className="form-group">
+                <label htmlFor="day"><strong>Выберите День:</strong></label>
+                <input type="date" name="day" className="form-control" onChange={this.onChange} required />
+              </div>
+              <button type="submit" className="btn btn-primary">Искать</button>
+            </form>
+          </div>
+
+          <div className="col-lg-4 col-md-6 weekly-stats">
             <div className="SelectedWeekExample">
               <h2 className="text-center">Статистика по неделям</h2>
               <DayPicker
@@ -230,9 +256,13 @@ class OperatorStats extends Component {
         <div className="row mt-2">
           <div className="col-12">
             {this.props.operator.stats.method === 'week' ?
-              <h2 className="text-center pl-3 pr-3">Ваша Недельная статистика за <Moment format="DD/MM/YYYY">{this.state.selectedDays[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDays[6]}</Moment></h2> :
-              <h2 className="text-center pl-3 pr-3">Ваша Месячная Статистика за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2>
-            }
+              <h2 className="text-center pl-3 pr-3">Ваша Недельная статистика за <Moment format="DD/MM/YYYY">{this.state.selectedDays[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDays[6]}</Moment></h2> : ''}
+
+            {this.props.operator.stats.method === 'month' ?
+              <h2 className="text-center pl-3 pr-3">Ваша Месячная Статистика за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2> : ''}
+
+            {this.props.operator.stats.method === 'day' ?
+              <h2 className="text-center pl-3 pr-3">Ваша Дневная Статистика за {this.state.headingDay}</h2> : ''}
           </div>
         </div>
 
