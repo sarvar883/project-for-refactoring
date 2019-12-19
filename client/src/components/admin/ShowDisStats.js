@@ -138,15 +138,31 @@ class ShowDisStats extends Component {
                   </React.Fragment>
                   : ''}
 
-                {order.completed && order.clientType === 'corporate' ?
-                  <li>Номер Договора: {order.contractNumber}</li>
-                  : ''}
+                {order.completed && order.clientType === 'corporate' ? (
+                  <React.Fragment>
+                    {order.paymentMethod === 'cash' ? (
+                      <React.Fragment>
+                        <li>Тип Платежа: Наличный</li>
+                        <li>Общая Сумма: {order.cost.toLocaleString()} UZS (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
+                      </React.Fragment>
+                    ) : (
+                        <React.Fragment>
+                          <li>Тип Платежа: Безналичный</li>
+                          <li>Номер Договора: {order.contractNumber}</li>
+                        </React.Fragment>
+                      )}
+                  </React.Fragment>
+                ) : ''}
+
 
                 {order.completed && order.clientType === 'individual' ?
                   <li>Общая Сумма: {order.cost.toLocaleString()} UZS (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
                   : ''}
 
-                <li>Заказ принял: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>
+                {order.userAcceptedOrder ? (
+                  <li>Заказ принял: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>
+                ) : ''}
+
                 <li>Заказ добавил: {order.userCreated.occupation} {order.userCreated.name} (<Moment format="DD/MM/YYYY HH:mm">{order.createdAt}</Moment>)</li>
 
                 {order.completed ?
@@ -198,17 +214,6 @@ class ShowDisStats extends Component {
       }
 
       if (order.clientType === 'corporate') {
-        // if (order.completed && order.operatorConfirmed && order.accountantConfirmed) {
-        //   confirmedOrders.push(order);
-        //   totalSum += order.cost / order.disinfectors.length;
-        //   totalScore += order.score;
-        // }
-        // if (order.completed && ((order.operatorDecided && !order.operatorConfirmed) || (order.accountantDecided && !order.accountantConfirmed))) {
-        //   rejectedOrders.push(order);
-        // }
-
-
-
         if (order.paymentMethod === 'cash') {
           if (order.operatorConfirmed && order.adminConfirmed) {
             confirmedOrders.push(order);

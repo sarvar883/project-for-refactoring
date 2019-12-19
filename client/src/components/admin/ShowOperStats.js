@@ -43,16 +43,46 @@ class ShowOperStats extends Component {
         completedOrders.push(order);
 
         if (order.clientType === 'corporate') {
-          if (order.operatorConfirmed && order.accountantConfirmed) {
-            confirmedOrders.push(order);
-            totalSum += order.cost;
-            totalScore += order.score;
+          // if (order.operatorConfirmed && order.accountantConfirmed) {
+          //   confirmedOrders.push(order);
+          //   totalSum += order.cost;
+          //   totalScore += order.score;
 
-            corporateClientOrders.orders++;
-            corporateClientOrders.sum += order.cost;
+          //   corporateClientOrders.orders++;
+          //   corporateClientOrders.sum += order.cost;
+          // }
+          // if ((order.operatorDecided && !order.operatorConfirmed) || (order.accountantDecided && !order.accountantConfirmed)) {
+          //   rejectedOrders.push(order);
+          // }
+
+
+          if (order.paymentMethod === 'cash') {
+            if (order.operatorConfirmed && order.adminConfirmed) {
+              confirmedOrders.push(order);
+              totalSum += order.cost;
+              totalScore += order.score;
+
+              corporateClientOrders.orders++;
+              corporateClientOrders.sum += order.cost;
+            }
+
+            if ((order.operatorDecided && !order.operatorConfirmed) || (order.adminDecided && !order.adminConfirmed)) {
+              rejectedOrders.push(order);
+            }
           }
-          if ((order.operatorDecided && !order.operatorConfirmed) || (order.accountantDecided && !order.accountantConfirmed)) {
-            rejectedOrders.push(order);
+
+          if (order.paymentMethod === 'notCash') {
+            if (order.operatorConfirmed && order.accountantConfirmed) {
+              confirmedOrders.push(order);
+              totalSum += order.cost;
+              totalScore += order.score;
+
+              corporateClientOrders.orders++;
+              corporateClientOrders.sum += order.cost;
+            }
+            if ((order.operatorDecided && !order.operatorConfirmed) || (order.accountantDecided && !order.accountantConfirmed)) {
+              rejectedOrders.push(order);
+            }
           }
         }
 
@@ -185,15 +215,30 @@ class ShowOperStats extends Component {
                   </React.Fragment>
                 ) : ''}
 
-                {item.completed && item.clientType === 'corporate' ?
-                  <li>Номер Договора: {item.contractNumber}</li>
-                  : ''}
+                {item.completed && item.clientType === 'corporate' ? (
+                  <React.Fragment>
+                    {item.paymentMethod === 'cash' ? (
+                      <React.Fragment>
+                        <li>Тип Платежа: Наличный</li>
+                        <li>Общая Сумма: {item.cost.toLocaleString()} UZS (каждому по {(item.cost / item.disinfectors.length).toLocaleString()} UZS)</li>
+                      </React.Fragment>
+                    ) : (
+                        <React.Fragment>
+                          <li>Тип Платежа: Безналичный</li>
+                          <li>Номер Договора: {item.contractNumber}</li>
+                        </React.Fragment>
+                      )}
+                  </React.Fragment>
+                ) : ''}
 
                 {item.completed && item.clientType === 'individual' ?
                   <li>Общая Сумма: {item.cost.toLocaleString()} UZS, (каждому по {(item.cost / item.disinfectors.length).toLocaleString()} UZS)</li>
                   : ''}
 
-                <li>Заказ принял: {item.userAcceptedOrder.occupation} {item.userAcceptedOrder.name}</li>
+                {item.userAcceptedOrder ? (
+                  <li>Заказ принял: {item.userAcceptedOrder.occupation} {item.userAcceptedOrder.name}</li>
+                ) : ''}
+
                 <li>Заказ добавил: {item.userCreated.occupation} {item.userCreated.name} (<Moment format="DD/MM/YYYY HH:mm">{item.createdAt}</Moment>)</li>
 
                 {item.completed ? <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{item.completedAt}</Moment></li> : ''}

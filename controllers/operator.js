@@ -99,11 +99,6 @@ exports.getRepeatOrders = (req, res) => {
   //   console.log('order', order);
   // });
 
-  Client.find({ name: 'vlad' })
-    .then(order => {
-      console.log('order', order);
-    });
-
   Order.find({ repeatedOrder: true, repeatedOrderDecided: false })
     .populate('disinfectors.user disinfectorId clientId userCreated userAcceptedOrder')
     .populate({

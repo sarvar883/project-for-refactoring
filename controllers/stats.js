@@ -218,7 +218,7 @@ exports.disinfMonthStatsForAdmin = (req, res) => {
     .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(orders => {
-      acceptedOrders = orders.filter(item => item.userAcceptedOrder._id.toString() === id && new Date(item.dateFrom).getMonth() === month && new Date(item.dateFrom).getFullYear() === year);
+      acceptedOrders = orders.filter(item => item.userAcceptedOrder && item.userAcceptedOrder._id.toString() === id && new Date(item.dateFrom).getMonth() === month && new Date(item.dateFrom).getFullYear() === year);
 
       orders = orders.filter(item => {
 
@@ -259,7 +259,7 @@ exports.disinfWeekStatsForAdmin = (req, res) => {
     .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(orders => {
-      acceptedOrders = orders.filter(item => item.userAcceptedOrder._id.toString() === id && new Date(item.dateFrom) >= new Date(days[0]) && new Date(item.dateFrom).setHours(0, 0, 0, 0) <= new Date(days[6]));
+      acceptedOrders = orders.filter(item => item.userAcceptedOrder && item.userAcceptedOrder._id.toString() === id && new Date(item.dateFrom) >= new Date(days[0]) && new Date(item.dateFrom).setHours(0, 0, 0, 0) <= new Date(days[6]));
 
       orders = orders.filter(item => {
 
@@ -301,6 +301,7 @@ exports.disinfDayStatsForAdmin = (req, res) => {
     .exec()
     .then(orders => {
       acceptedOrders = orders.filter(item =>
+        item.userAcceptedOrder &&
         item.userAcceptedOrder._id.toString() === disinfectorId &&
         new Date(item.dateFrom).setHours(0, 0, 0, 0) === new Date(day).setHours(0, 0, 0, 0)
       );

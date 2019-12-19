@@ -141,9 +141,21 @@ class ClientId extends Component {
                   </React.Fragment>
                 ) : ''}
 
-                {item.completed && item.clientType === 'corporate' ?
-                  <li>Номер Договора: {item.contractNumber}</li>
-                  : ''}
+                {item.completed && item.clientType === 'corporate' ? (
+                  <React.Fragment>
+                    {item.paymentMethod === 'cash' ? (
+                      <React.Fragment>
+                        <li>Тип Платежа: Наличный</li>
+                        <li>Общая Сумма: {item.cost.toLocaleString()} UZS (каждому по {(item.cost / item.disinfectors.length).toLocaleString()} UZS)</li>
+                      </React.Fragment>
+                    ) : (
+                        <React.Fragment>
+                          <li>Тип Платежа: Безналичный</li>
+                          <li>Номер Договора: {item.contractNumber}</li>
+                        </React.Fragment>
+                      )}
+                  </React.Fragment>
+                ) : ''}
 
                 {item.completed && item.clientType === 'individual' ?
                   <li>Общая Сумма: {item.cost.toLocaleString()} UZS, (каждому по {(item.cost / item.disinfectors.length).toLocaleString()} UZS)</li>
