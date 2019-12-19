@@ -10,12 +10,14 @@ const io = require('../socket');
 exports.getQueries = (req, res) => {
   Order.find({
     completed: true,
-    clientType: 'corporate',
     accountantDecided: false
   })
     .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
-    .then(orders => res.json(orders))
+    .then(orders => {
+      orders = orders.filter(order => order.clientType === 'corporate' && order.paymentMethod === 'notCash');
+      return res.json(orders);
+    })
     .catch(err => {
       console.log('Accountant getQueries ERROR', err);
       res.status(400).json(err);

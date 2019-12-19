@@ -42,18 +42,40 @@ class ShowAdminStats extends Component {
         completedOrders.push(order);
 
         if (order.clientType === 'corporate') {
-          if (order.operatorConfirmed && order.accountantConfirmed) {
-            confirmedOrders.push(order);
-            totalSum += order.cost;
-            totalScore += order.score;
 
-            corporateClientOrders.orders++;
-            corporateClientOrders.sum += order.cost;
+          if (order.paymentMethod === 'cash') {
+            if (order.operatorConfirmed && order.adminConfirmed) {
+              confirmedOrders.push(order);
+              totalSum += order.cost;
+              totalScore += order.score;
+
+              corporateClientOrders.orders++;
+              corporateClientOrders.sum += order.cost;
+            }
+
+            if ((order.operatorDecided && !order.operatorConfirmed) || (order.adminDecided && !order.adminConfirmed)) {
+              rejectedOrders.push(order);
+            }
           }
-          if ((order.operatorDecided && !order.operatorConfirmed) || (order.accountantDecided && !order.accountantConfirmed)) {
-            rejectedOrders.push(order);
+
+          if (order.paymentMethod === 'notCash') {
+            if (order.operatorConfirmed && order.accountantConfirmed) {
+              confirmedOrders.push(order);
+              totalSum += order.cost;
+              totalScore += order.score;
+
+              corporateClientOrders.orders++;
+              corporateClientOrders.sum += order.cost;
+            }
+            if ((order.operatorDecided && !order.operatorConfirmed) || (order.accountantDecided && !order.accountantConfirmed)) {
+              rejectedOrders.push(order);
+            }
           }
         }
+
+
+
+
 
         if (order.clientType === 'individual') {
           if (order.operatorConfirmed && order.adminConfirmed) {
@@ -126,9 +148,9 @@ class ShowAdminStats extends Component {
                   </React.Fragment>
                 ) : <li>Оператор еще не рассмотрел заявку</li>}
 
-                {order.clientType === 'corporate' && !order.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
+                {order.clientType === 'corporate' && order.paymentMethod === 'notCash' && !order.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
 
-                {order.clientType === 'corporate' && order.accountantDecided ?
+                {order.clientType === 'corporate' && order.paymentMethod === 'notCash' && order.accountantDecided ?
                   <React.Fragment>
                     <li>Бухгалтер рассмотрел заявку</li>
                     {order.accountantConfirmed ? (
@@ -140,6 +162,17 @@ class ShowAdminStats extends Component {
                     ) : <li className="text-danger">Бухгалтер Отклонил (<Moment format="DD/MM/YYYY HH:mm">{order.accountantCheckedAt}</Moment>)</li>}
                   </React.Fragment>
                   : ''}
+
+                {order.clientType === 'corporate' && order.paymentMethod === 'cash' && !order.adminDecided ? <li>Админ еще не рассмотрел заявку</li> : ''}
+
+                {order.clientType === 'corporate' && order.paymentMethod === 'cash' && order.adminDecided ? (
+                  <React.Fragment>
+                    <li>Админ рассмотрел заявку</li>
+                    {order.adminConfirmed ? (
+                      <li className="text-success">Админ Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{order.adminCheckedAt}</Moment>)</li>
+                    ) : <li className="text-danger">Админ Отклонил (<Moment format="DD/MM/YYYY HH:mm">{order.adminCheckedAt}</Moment>)</li>}
+                  </React.Fragment>
+                ) : ''}
 
                 {order.clientType === 'individual' && !order.adminDecided ? <li>Админ еще не рассмотрел заявку</li> : ''}
                 {order.clientType === 'individual' && order.adminDecided ? (
@@ -177,9 +210,22 @@ class ShowAdminStats extends Component {
                   {renderOrderConsumption}
                 </ul>
 
-                {order.clientType === 'corporate' ?
-                  <li>Номер Договора: {order.contractNumber}</li>
-                  : ''}
+                {order.clientType === 'corporate' ? (
+                  <React.Fragment>
+                    {order.paymentMethod === 'cash' ? (
+                      <React.Fragment>
+                        <li>Тип Платежа: Наличный</li>
+                        <li>Общая Сумма: {order.cost.toLocaleString()} UZS (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
+                      </React.Fragment>
+                    ) : (
+                        <React.Fragment>
+                          <li>Тип Платежа: Безналичный</li>
+                          <li>Номер Договора: {order.contractNumber}</li>
+                        </React.Fragment>
+                      )}
+                  </React.Fragment>
+                ) : ''}
+
 
                 {order.clientType === 'individual' ?
                   <li>Общая Сумма: {order.cost.toLocaleString()} UZS (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>

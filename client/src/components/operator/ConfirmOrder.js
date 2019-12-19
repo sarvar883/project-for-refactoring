@@ -38,8 +38,7 @@ class ConfirmOrder extends Component {
     this.props.confirmCompleteOrder(object, this.props.history);
   }
 
-  reject = (e) => {
-    e.preventDefault();
+  reject = () => {
     const object = {
       orderId: this.props.operator.orderToConfirm._id,
       decision: 'reject',
@@ -82,9 +81,9 @@ class ConfirmOrder extends Component {
                   <ul className="font-bold mb-0">
                     <li>Ответственный: {completeOrder.disinfectorId.occupation} {completeOrder.disinfectorId.name}</li>
 
-                    {completeOrder.clientType === 'corporate' && !completeOrder.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
+                    {completeOrder.clientType === 'corporate' && completeOrder.paymentMethod === 'notCash' && !completeOrder.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
 
-                    {completeOrder.clientType === 'corporate' && completeOrder.accountantDecided ?
+                    {completeOrder.clientType === 'corporate' && completeOrder.paymentMethod === 'notCash' && completeOrder.accountantDecided ?
                       <React.Fragment>
                         <li>Бухгалтер рассмотрел заявку</li>
                         {completeOrder.accountantConfirmed ? (
@@ -96,6 +95,17 @@ class ConfirmOrder extends Component {
                         ) : <li className="text-danger">Бухгалтер Отклонил (<Moment format="DD/MM/YYYY HH:mm">{completeOrder.accountantCheckedAt}</Moment>)</li>}
                       </React.Fragment>
                       : ''}
+
+                    {completeOrder.clientType === 'corporate' && completeOrder.paymentMethod === 'cash' && !completeOrder.adminDecided ? <li>Админ еще не рассмотрел заявку</li> : ''}
+
+                    {completeOrder.clientType === 'corporate' && completeOrder.paymentMethod === 'cash' && completeOrder.adminDecided ? (
+                      <React.Fragment>
+                        <li>Админ рассмотрел заявку</li>
+                        {completeOrder.adminConfirmed ? (
+                          <li className="text-success">Админ Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{completeOrder.adminCheckedAt}</Moment>)</li>
+                        ) : <li className="text-danger">Админ Отклонил (<Moment format="DD/MM/YYYY HH:mm">{completeOrder.adminCheckedAt}</Moment>)</li>}
+                      </React.Fragment>
+                    ) : ''}
 
                     {completeOrder.clientType === 'corporate' ?
                       <React.Fragment>
@@ -121,9 +131,22 @@ class ConfirmOrder extends Component {
                       {consumptionRender}
                     </ul>
 
-                    {completeOrder.clientType === 'corporate' ?
-                      <li>Номер Договора: {completeOrder.contractNumber}</li>
-                      : ''}
+                    {completeOrder.clientType === 'corporate' ? (
+                      <React.Fragment>
+                        {completeOrder.paymentMethod === 'cash' ? (
+                          <React.Fragment>
+                            <li>Тип Платежа: Наличный</li>
+                            <li>Общая Сумма: {completeOrder.cost.toLocaleString()} UZS (каждому по {(completeOrder.cost / completeOrder.disinfectors.length).toLocaleString()} UZS)</li>
+                          </React.Fragment>
+                        ) : (
+                            <React.Fragment>
+                              <li>Тип Платежа: Безналичный</li>
+                              <li>Номер Договора: {completeOrder.contractNumber}</li>
+                            </React.Fragment>
+                          )}
+                      </React.Fragment>
+                    ) : ''}
+
                     {completeOrder.clientType === 'individual' ?
                       <li>Общая Сумма: {completeOrder.cost.toLocaleString()} UZS (каждому по {(completeOrder.cost / completeOrder.disinfectors.length).toLocaleString()} UZS)</li>
                       : ''}
@@ -132,7 +155,7 @@ class ConfirmOrder extends Component {
                     <li>Заказ добавил: {completeOrder.userCreated.occupation} {completeOrder.userCreated.name}</li>
                     <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{completeOrder.completedAt}</Moment></li>
                   </ul>
-                  <button className="btn btn-danger" onClick={this.reject}>Отменить Выполнение Заказа</button>
+                  <button className="btn btn-danger" onClick={() => { if (window.confirm('Вы уверены отменить заказ?')) { this.reject() } }}>Отменить Выполнение Заказа</button>
                 </div>
               </div>
             </div>

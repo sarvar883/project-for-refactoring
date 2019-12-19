@@ -205,7 +205,12 @@ class CreateOrder extends Component {
     const corporateClients = [
       { label: '-- Выберите корпоративного клиента --', value: '' }
     ];
-    this.props.order.corporateClients.forEach(item => {
+    // sort corporate clients by name
+    let corpClients = this.props.order.corporateClients.sort((a, b) => {
+      return a.name === b.name ? 0 : a.name < b.name ? -1 : 1;
+    });
+
+    corpClients.forEach(item => {
       corporateClients.push({
         label: item.name,
         value: item._id

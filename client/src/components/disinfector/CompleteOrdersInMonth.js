@@ -98,9 +98,21 @@ class CompleteOrdersInMonth extends Component {
                   {consumptionRender}
                 </ul>
 
-                {order.clientType === 'corporate' ?
-                  <li>Номер Договора: {order.contractNumber}</li>
-                  : ''}
+                {order.clientType === 'corporate' ? (
+                  <React.Fragment>
+                    {order.paymentMethod === 'cash' ? (
+                      <React.Fragment>
+                        <li>Тип Платежа: Наличный</li>
+                        <li>Общая Сумма: {order.cost.toLocaleString()} UZS (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
+                      </React.Fragment>
+                    ) : (
+                        <React.Fragment>
+                          <li>Тип Платежа: Безналичный</li>
+                          <li>Номер Договора: {order.contractNumber}</li>
+                        </React.Fragment>
+                      )}
+                  </React.Fragment>
+                ) : ''}
 
                 {order.clientType === 'individual' ?
                   <li>Общая Сумма: {order.cost.toLocaleString()} UZS  (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>

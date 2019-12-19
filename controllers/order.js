@@ -368,9 +368,15 @@ exports.submitCompleteOrder = (req, res) => {
 
       foundOrder.disinfectors = newArray;
       foundOrder.guarantee = Number(order.guarantee);
+      foundOrder.paymentMethod = order.paymentMethod;
 
       if (order.clientType === 'corporate') {
-        foundOrder.contractNumber = order.contractNumber;
+        if (order.paymentMethod === 'cash') {
+          foundOrder.contractNumber = '';
+          foundOrder.cost = Number(order.cost);
+        } else if (order.paymentMethod === 'notCash') {
+          foundOrder.contractNumber = order.contractNumber;
+        }
       } else if (order.clientType === 'individual') {
         foundOrder.cost = Number(order.cost);
       }

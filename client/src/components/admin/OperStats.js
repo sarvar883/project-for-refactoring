@@ -222,7 +222,7 @@ class OperStats extends Component {
     return (
       <div className="container-fluid" >
         <div className="row">
-          <div className="col-lg-4 col-md-6">
+          <div className="col-lg-4 col-md-6 mt-3">
             <h4 className="text-center">Статистика по месяцам</h4>
             <form onSubmit={this.getMonthStats}>
               <div className="form-group">
@@ -247,7 +247,7 @@ class OperStats extends Component {
             </form>
           </div>
 
-          <div className="col-lg-4 col-md-6">
+          <div className="col-lg-4 col-md-6 mt-3">
             <h4 className="text-center">Статистика по дням</h4>
             <form onSubmit={this.getDayStats}>
               <div className="form-group">
@@ -264,7 +264,7 @@ class OperStats extends Component {
             </form>
           </div>
 
-          <div className="col-lg-4 col-md-6 weekly-stats">
+          <div className="col-lg-4 col-md-6 weekly-stats mt-3">
             <div className="SelectedWeekExample">
               <h4 className="text-center">Статистика по неделям</h4>
               <DayPicker

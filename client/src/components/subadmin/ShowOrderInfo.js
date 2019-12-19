@@ -37,6 +37,7 @@ class ShowOrderInfo extends Component {
     const { orderObject } = this.props;
     const { errors } = this.state;
 
+    console.log('orderObject', orderObject);
     let currentTime = new Date();
 
     return (
@@ -61,7 +62,11 @@ class ShowOrderInfo extends Component {
               <li>Тип услуги: {orderObject.typeOfService}</li>
               <li>Комментарии Оператора: {orderObject.comment ? orderObject.comment : 'Нет комментариев'}</li>
               <li>Комментарии Дезинфектора: {this.state.disinfectorComment ? this.state.disinfectorComment : 'Нет комментариев'}</li>
-              <li>Кто принял заказ: {orderObject.userAcceptedOrder.occupation} {orderObject.userAcceptedOrder.name}</li>
+
+              {orderObject.userAcceptedOrder ? (
+                <li>Кто принял заказ: {orderObject.userAcceptedOrder.occupation} {orderObject.userAcceptedOrder.name}</li>
+              ) : ''}
+
               <li>Заказ Добавлен: {orderObject.userCreated.occupation} {orderObject.userCreated.name} <Moment format="DD/MM/YYYY HH:mm">{orderObject.createdAt}</Moment></li>
             </ul>
             {this.state.addComment ? (

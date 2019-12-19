@@ -176,7 +176,7 @@ class DisinfStats extends Component {
     return (
       <div className="container-fluid" >
         <div className="row">
-          <div className="col-lg-4 col-md-6">
+          <div className="col-lg-4 col-md-6 mt-3">
             <h2 className="text-center">Статистика по месяцам</h2>
             <form onSubmit={this.getMonthStats}>
               <div className="form-group">
@@ -195,7 +195,7 @@ class DisinfStats extends Component {
             </form>
           </div>
 
-          <div className="col-lg-4 col-md-6">
+          <div className="col-lg-4 col-md-6 mt-3">
             <h2 className="text-center">Статистика по дням</h2>
             <form onSubmit={this.getDayStats}>
               <div className="form-group">
@@ -206,7 +206,7 @@ class DisinfStats extends Component {
             </form>
           </div>
 
-          <div className="col-lg-4 col-md-6 weekly-stats">
+          <div className="col-lg-4 col-md-6 weekly-stats mt-3">
             <div className="SelectedWeekExample">
               <h2 className="text-center">Статистика по неделям</h2>
               <DayPicker

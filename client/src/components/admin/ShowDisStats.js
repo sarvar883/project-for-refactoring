@@ -173,6 +173,16 @@ class ShowDisStats extends Component {
       confirmedOrders = [],
       rejectedOrders = [];
 
+    let corporateClientOrders = {
+      sum: 0,
+      orders: 0
+    };
+
+    let indivClientOrders = {
+      sum: 0,
+      orders: 0
+    };
+
     materials.forEach(item => {
       const emptyObject = {
         material: item.material,
@@ -188,21 +198,58 @@ class ShowDisStats extends Component {
       }
 
       if (order.clientType === 'corporate') {
-        if (order.completed && order.operatorConfirmed && order.accountantConfirmed) {
-          confirmedOrders.push(order);
-          totalSum += order.cost / order.disinfectors.length;
-          totalScore += order.score;
+        // if (order.completed && order.operatorConfirmed && order.accountantConfirmed) {
+        //   confirmedOrders.push(order);
+        //   totalSum += order.cost / order.disinfectors.length;
+        //   totalScore += order.score;
+        // }
+        // if (order.completed && ((order.operatorDecided && !order.operatorConfirmed) || (order.accountantDecided && !order.accountantConfirmed))) {
+        //   rejectedOrders.push(order);
+        // }
+
+
+
+        if (order.paymentMethod === 'cash') {
+          if (order.operatorConfirmed && order.adminConfirmed) {
+            confirmedOrders.push(order);
+            totalSum += order.cost;
+            totalScore += order.score;
+
+            corporateClientOrders.orders++;
+            corporateClientOrders.sum += order.cost;
+          }
+
+          if ((order.operatorDecided && !order.operatorConfirmed) || (order.adminDecided && !order.adminConfirmed)) {
+            rejectedOrders.push(order);
+          }
         }
-        if (order.completed && ((order.operatorDecided && !order.operatorConfirmed) || (order.accountantDecided && !order.accountantConfirmed))) {
-          rejectedOrders.push(order);
+
+        if (order.paymentMethod === 'notCash') {
+          if (order.operatorConfirmed && order.accountantConfirmed) {
+            confirmedOrders.push(order);
+            totalSum += order.cost;
+            totalScore += order.score;
+
+            corporateClientOrders.orders++;
+            corporateClientOrders.sum += order.cost;
+          }
+          if ((order.operatorDecided && !order.operatorConfirmed) || (order.accountantDecided && !order.accountantConfirmed)) {
+            rejectedOrders.push(order);
+          }
         }
       }
+
+
+
 
       if (order.clientType === 'individual') {
         if (order.completed && order.operatorConfirmed && order.adminConfirmed) {
           confirmedOrders.push(order);
           totalSum += order.cost / order.disinfectors.length;
           totalScore += order.score;
+
+          indivClientOrders.orders++;
+          indivClientOrders.sum += order.cost;
         }
         if (order.completed && ((order.operatorDecided && !order.operatorConfirmed) || (order.adminDecided && !order.adminConfirmed))) {
           rejectedOrders.push(order);
@@ -226,8 +273,16 @@ class ShowDisStats extends Component {
     this.state.acceptedOrders.forEach(order => {
 
       if (order.clientType === 'corporate') {
-        if (order.completed && order.operatorConfirmed && order.accountantConfirmed) {
-          totalSumOfAcceptedOrders += order.cost;
+        if (order.paymentMethod === 'cash') {
+          if (order.operatorConfirmed && order.adminConfirmed) {
+            totalSumOfAcceptedOrders += order.cost;
+          }
+        }
+
+        if (order.paymentMethod === 'notCash') {
+          if (order.operatorConfirmed && order.accountantConfirmed) {
+            totalSumOfAcceptedOrders += order.cost;
+          }
         }
       }
 
@@ -273,6 +328,13 @@ class ShowDisStats extends Component {
                 <ul className="font-bold mb-0 pl-3">
                   <li>Пользователь принял заказов: {this.state.acceptedOrders.length}</li>
                   <li>Общая сумма принятых заказов: {totalSumOfAcceptedOrders.toLocaleString()} UZS</li>
+
+                  <h4 className="text-center mt-2">Корпоративные клиенты</h4>
+                  <li>Количество подтвержденных заказов: {corporateClientOrders.orders}</li>
+                  <li>На общую сумму: {corporateClientOrders.sum.toLocaleString()} UZS</li>
+                  <h4 className="text-center">Физические клиенты</h4>
+                  <li>Количество подтвержденных заказов: {indivClientOrders.orders}</li>
+                  <li>На общую сумму: {indivClientOrders.sum.toLocaleString()} UZS</li>
                 </ul>
               </div>
             </div>

@@ -88,6 +88,7 @@ class AdmClients extends Component {
   }
 
   render() {
+
     let renderClients = this.state.clients.map((client, index) => {
 
       let totalSum = 0,

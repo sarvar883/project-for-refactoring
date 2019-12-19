@@ -57,7 +57,16 @@ class ShowQueriesForAdmin extends Component {
               <ul className="font-bold mb-0 pl-3">
                 <li>Ответственный: {order.disinfectorId.occupation} {order.disinfectorId.name}</li>
 
-                <li>Физический Клиент: {order.client}</li>
+                {order.clientType === 'corporate' ?
+                  <React.Fragment>
+                    <li>Корпоративный Клиент: {order.clientId.name}</li>
+                    <li>Имя клиента: {order.client}</li>
+                  </React.Fragment>
+                  : ''}
+
+                {order.clientType === 'individual' ?
+                  <li>Физический Клиент: {order.client}</li>
+                  : ''}
 
                 <li>Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
                 <li>Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment> ПО <Moment format="HH:mm">{order.completedAt}</Moment></li>
@@ -71,6 +80,22 @@ class ShowQueriesForAdmin extends Component {
                 <ul className="font-bold mb-0">
                   {renderConsumptionOfOrder}
                 </ul>
+
+                {order.clientType === 'corporate' ? (
+                  <React.Fragment>
+                    {order.paymentMethod === 'cash' ? (
+                      <React.Fragment>
+                        <li>Тип Платежа: Наличный</li>
+                        <li>Общая Сумма: {order.cost.toLocaleString()} UZS (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
+                      </React.Fragment>
+                    ) : (
+                        <React.Fragment>
+                          <li>Тип Платежа: Безналичный</li>
+                          <li>Номер Договора: {order.contractNumber}</li>
+                        </React.Fragment>
+                      )}
+                  </React.Fragment>
+                ) : ''}
 
                 {order.clientType === 'individual' ?
                   <li>Общая Сумма: {order.cost.toLocaleString()} Сум (каждому по {(order.cost / order.disinfectors.length).toFixed(2).toLocaleString()} Сум)</li>
@@ -94,8 +119,8 @@ class ShowQueriesForAdmin extends Component {
               </ul>
 
               <div className="btn-group">
-                <button className="btn btn-danger mr-2" onClick={this.adminConfirmsOrderQuery.bind(this, order._id, false)}>Отменить</button>
-                <button className="btn btn-success" onClick={this.adminConfirmsOrderQuery.bind(this, order._id, true)}>Подтвердить</button>
+                <button className="btn btn-danger mr-2" onClick={() => { if (window.confirm('Вы уверены отменить заказ?')) { this.adminConfirmsOrderQuery(order._id, false) } }}>Отменить</button>
+                <button className="btn btn-success" onClick={() => { if (window.confirm('Вы уверены подтвердить заказ?')) { this.adminConfirmsOrderQuery(order._id, true) } }}>Подтвердить</button>
               </div>
             </div>
           </div>

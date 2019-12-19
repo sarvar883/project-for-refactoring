@@ -70,9 +70,9 @@ class ShowDisinfStats extends Component {
                   </React.Fragment>
                 ) : <li>Оператор еще не рассмотрел заявку</li>}
 
-                {order.clientType === 'corporate' && !order.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
+                {order.clientType === 'corporate' && order.paymentMethod === 'notCash' && !order.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
 
-                {order.clientType === 'corporate' && order.accountantDecided ?
+                {order.clientType === 'corporate' && order.paymentMethod === 'notCash' && order.accountantDecided ?
                   <React.Fragment>
                     <li>Бухгалтер рассмотрел заявку</li>
                     {order.accountantConfirmed ? (
@@ -84,6 +84,17 @@ class ShowDisinfStats extends Component {
                     ) : <li className="text-danger">Бухгалтер Отклонил (<Moment format="DD/MM/YYYY HH:mm">{order.accountantCheckedAt}</Moment>)</li>}
                   </React.Fragment>
                   : ''}
+
+                {order.clientType === 'corporate' && order.paymentMethod === 'cash' && !order.adminDecided ? <li>Админ еще не рассмотрел заявку</li> : ''}
+
+                {order.clientType === 'corporate' && order.paymentMethod === 'cash' && order.adminDecided ? (
+                  <React.Fragment>
+                    <li>Админ рассмотрел заявку</li>
+                    {order.adminConfirmed ? (
+                      <li className="text-success">Админ Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{order.adminCheckedAt}</Moment>)</li>
+                    ) : <li className="text-danger">Админ Отклонил (<Moment format="DD/MM/YYYY HH:mm">{order.adminCheckedAt}</Moment>)</li>}
+                  </React.Fragment>
+                ) : ''}
 
                 {order.clientType === 'individual' && !order.adminDecided ? <li>Админ еще не рассмотрел заявку</li> : ''}
                 {order.clientType === 'individual' && order.adminDecided ? (
@@ -138,9 +149,21 @@ class ShowDisinfStats extends Component {
                   </React.Fragment>
                   : ''}
 
-                {order.completed && order.clientType === 'corporate' ?
-                  <li>Номер Договора: {order.contractNumber}</li>
-                  : ''}
+                {order.clientType === 'corporate' ? (
+                  <React.Fragment>
+                    {order.paymentMethod === 'cash' ? (
+                      <React.Fragment>
+                        <li>Тип Платежа: Наличный</li>
+                        <li>Общая Сумма: {order.cost.toLocaleString()} UZS (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
+                      </React.Fragment>
+                    ) : (
+                        <React.Fragment>
+                          <li>Тип Платежа: Безналичный</li>
+                          <li>Номер Договора: {order.contractNumber}</li>
+                        </React.Fragment>
+                      )}
+                  </React.Fragment>
+                ) : ''}
 
                 {order.completed && order.clientType === 'individual' ?
                   <li>Общая Сумма: {order.cost.toLocaleString()} UZS (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
@@ -434,15 +457,15 @@ class ShowDisinfStats extends Component {
           </React.Fragment>
         ) : ''}
 
-        <div className="row m-0">
-          <div className="col-12">
+        <div className="row">
+          <div className="col-12 mt-3">
             <h2 className="text-center pl-3 pr-3">Подтвержденные Заказы</h2>
           </div>
           {confirmedOrders.length > 0 ? (renderConfirmedOrders) : <h2>Нет подтвержденных заказов</h2>}
         </div>
 
-        <div className="row mt-2">
-          <div className="col-12">
+        <div className="row">
+          <div className="col-12 mt-3">
             <h2 className="text-center pl-3 pr-3">Принятые Заказы Пользователя</h2>
           </div>
           {this.state.acceptedOrders.length > 0 ? (renderAcceptedOrders) : <h2>Нет заказов</h2>}

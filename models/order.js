@@ -103,6 +103,9 @@ const orderSchema = new Schema({
     type: Boolean,
     default: false
   },
+  paymentMethod: {
+    type: String
+  },
   guarantee: {
     type: Number // in months
   },

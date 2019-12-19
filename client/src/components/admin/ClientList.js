@@ -87,7 +87,13 @@ class ClientList extends Component {
   }
 
   render() {
-    let clients = this.state.clients.sort((a, b) => a.name - b.name);
+    // sort clients alphabetically
+    let clients = this.state.clients.sort((a, b) => {
+      if (a.name < b.name) { return -1; }
+      if (a.name > b.name) { return 1; }
+      return 0;
+    });
+
     let renderClients = clients.map((client, index) =>
       <tr key={index}>
         <td>{client.name}</td>

@@ -17,6 +17,19 @@ exports.getSortedOrders = (req, res) => {
   const month = date.getMonth();
   const year = date.getFullYear();
 
+  // Order.find()
+  //   .then(orders => {
+  //     orders.forEach(order => {
+  //       if (order.clientType === 'individual') {
+  //         order.paymentMethod = 'cash';
+  //       } else if (order.clientType === 'corporate') {
+  //         order.paymentMethod = 'notCash';
+  //       }
+  //       order.save();
+  //     });
+  //   });
+
+
   Order.find()
     .populate('disinfectorId userCreated clientId userAcceptedOrder')
     .exec()
@@ -38,12 +51,14 @@ exports.getSortedOrders = (req, res) => {
 exports.getOrderQueriesForAdmin = (req, res) => {
   Order.find({
     completed: true,
-    adminDecided: false,
-    clientType: 'individual'
+    adminDecided: false
   })
-    .populate('disinfectorId userCreated userAcceptedOrder disinfectors.user')
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
-    .then(orderQueries => res.json(orderQueries))
+    .then(orderQueries => {
+      orderQueries = orderQueries.filter(order => order.clientType === 'individual' || order.paymentMethod === 'cash');
+      return res.json(orderQueries);
+    })
     .catch(err => {
       console.log('getOrderQueriesForAdmin ERROR', err);
       return res.status(400).json(err);
