@@ -24,6 +24,7 @@ class SubOrderForm extends Component {
     array: [],
 
     disinfectorAmount: 1,
+    paymentMethod: '',
     cost: '',
     contractNumber: '',
     guarantee: '',
@@ -308,10 +309,18 @@ class SubOrderForm extends Component {
       alert('У дезинфекторов недостаточно материалов');
     } else {
 
+      let paymentMethod;
+      if (this.props.order.orderById.clientType === 'individual') {
+        paymentMethod = 'cash';
+      } else if (this.props.order.orderById.clientType === 'corporate') {
+        paymentMethod = this.state.paymentMethod;
+      }
+
       let newArray = [this.state.loggedDisinf, ...this.state.array];
       let order = {
         clientType: this.props.order.orderById.clientType,
         orderId: this.props.match.params.id,
+        paymentMethod: paymentMethod,
         cost: this.state.cost,
         guarantee: this.state.guarantee,
         contractNumber: this.state.contractNumber,
@@ -567,14 +576,25 @@ class SubOrderForm extends Component {
                         <input type="number" min="0" step="1" className="form-control" name="guarantee" onChange={this.onChange} required />
                       </div>
 
-                      {order.clientType === 'individual' ?
+                      {order.clientType === 'corporate' ?
+                        <div className="form-group">
+                          <label htmlFor="paymentMethod">Тип платежа:</label>
+                          <select name='paymentMethod' className="form-control" onChange={this.onChange} required>
+                            <option value="">-- Выберите Тип Платежа --</option>
+                            <option value="cash">Наличный</option>
+                            <option value="notCash">Безналичный</option>
+                          </select>
+                        </div>
+                        : ''}
+
+                      {order.clientType === 'individual' || this.state.paymentMethod === 'cash' ?
                         <div className="form-group">
                           <label htmlFor="cost">Сумма Заказа: (в сумах)</label>
                           <input type="number" step="1" className="form-control" name='cost' onChange={this.onChange} required />
                         </div>
                         : ''}
 
-                      {order.clientType === 'corporate' ?
+                      {order.clientType === 'corporate' && this.state.paymentMethod !== 'cash' ?
                         <div className="form-group">
                           <label htmlFor="contractNumber">Номер Договора:</label>
                           <input type="text" className="form-control" name='contractNumber' onChange={this.onChange} required />
