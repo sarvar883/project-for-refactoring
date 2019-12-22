@@ -186,7 +186,9 @@ class ShowAdminStats extends Component {
 
                 {order.clientType === 'corporate' ?
                   <React.Fragment>
-                    <li>Корпоративный Клиент: {order.clientId.name}</li>
+                    {order.clientId ? (
+                      <li>Корпоративный Клиент: {order.clientId.name}</li>
+                    ) : <li>Корпоративный Клиент</li>}
                     <li>Имя клиента: {order.client}</li>
                   </React.Fragment>
                   : ''}

@@ -11,6 +11,12 @@ class CompleteOrdersInMonth extends Component {
   render() {
     let completeOrders = this.state.orders.map((order, index) => {
 
+      if (order.clientType === 'corporate') {
+        if (!order.clientId) {
+          console.log('order', order);
+        }
+      }
+
       let consumptionArray = [];
       order.disinfectors.forEach(item => {
         consumptionArray.push({
@@ -75,7 +81,9 @@ class CompleteOrdersInMonth extends Component {
 
                 {order.clientType === 'corporate' ?
                   <React.Fragment>
-                    <li>Корпоративный Клиент: {order.clientId.name}</li>
+                    {order.clientId ? (
+                      <li>Корпоративный Клиент: {order.clientId.name}</li>
+                    ) : <li>Корпоративный Клиент</li>}
                     <li>Имя клиента: {order.client}</li>
                   </React.Fragment>
                   : ''}
@@ -118,7 +126,10 @@ class CompleteOrdersInMonth extends Component {
                   <li>Общая Сумма: {order.cost.toLocaleString()} UZS  (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
                   : ''}
 
-                <li>Заказ принял: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>
+                {order.userAcceptedOrder ? (
+                  <li>Заказ принял: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>
+                ) : ''}
+
                 <li>Заказ добавил: {order.userCreated.occupation} {order.userCreated.name}</li>
                 <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{order.completedAt}</Moment></li>
               </ul>

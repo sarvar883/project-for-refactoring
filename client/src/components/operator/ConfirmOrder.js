@@ -109,7 +109,9 @@ class ConfirmOrder extends Component {
 
                     {completeOrder.clientType === 'corporate' ?
                       <React.Fragment>
-                        <li>Корпоративный Клиент: {completeOrder.clientId.name}</li>
+                        {completeOrder.clientId ? (
+                          <li>Корпоративный Клиент: {completeOrder.clientId.name}</li>
+                        ) : <li>Корпоративный Клиент</li>}
                         <li>Имя клиента: {completeOrder.client}</li>
                       </React.Fragment>
                       : ''}
@@ -151,7 +153,10 @@ class ConfirmOrder extends Component {
                       <li>Общая Сумма: {completeOrder.cost.toLocaleString()} UZS (каждому по {(completeOrder.cost / completeOrder.disinfectors.length).toLocaleString()} UZS)</li>
                       : ''}
 
-                    <li>Заказ принял: {completeOrder.userAcceptedOrder.occupation} {completeOrder.userAcceptedOrder.name}</li>
+                    {completeOrder.userAcceptedOrder ? (
+                      <li>Заказ принял: {completeOrder.userAcceptedOrder.occupation} {completeOrder.userAcceptedOrder.name}</li>
+                    ) : ''}
+
                     <li>Заказ добавил: {completeOrder.userCreated.occupation} {completeOrder.userCreated.name}</li>
                     <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{completeOrder.completedAt}</Moment></li>
                   </ul>

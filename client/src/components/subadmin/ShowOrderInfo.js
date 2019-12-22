@@ -37,7 +37,6 @@ class ShowOrderInfo extends Component {
     const { orderObject } = this.props;
     const { errors } = this.state;
 
-    console.log('orderObject', orderObject);
     let currentTime = new Date();
 
     return (
@@ -48,7 +47,9 @@ class ShowOrderInfo extends Component {
               <li>Дезинфектор: {orderObject.disinfectorId.name}</li>
               {orderObject.clientType === 'corporate' ?
                 <React.Fragment>
-                  <li>Корпоративный Клиент: {orderObject.clientId.name}</li>
+                  {orderObject.clientId ? (
+                    <li>Корпоративный Клиент: {orderObject.clientId.name}</li>
+                  ) : <li>Корпоративный Клиент</li>}
                   <li>Имя клиента: {orderObject.client}</li>
                 </React.Fragment>
                 : ''}

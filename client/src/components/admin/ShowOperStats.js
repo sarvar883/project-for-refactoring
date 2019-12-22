@@ -185,7 +185,9 @@ class ShowOperStats extends Component {
 
                 {item.clientType === 'corporate' ?
                   <React.Fragment>
-                    <li>Корпоративный Клиент: {item.clientId.name}</li>
+                    {item.clientId ? (
+                      <li>Корпоративный Клиент: {item.clientId.name}</li>
+                    ) : <li>Корпоративный Клиент</li>}
                     <li>Имя клиента: {item.client}</li>
                   </React.Fragment>
                   : ''}

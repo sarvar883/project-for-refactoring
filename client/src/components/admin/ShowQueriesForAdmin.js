@@ -59,7 +59,9 @@ class ShowQueriesForAdmin extends Component {
 
                 {order.clientType === 'corporate' ?
                   <React.Fragment>
-                    <li>Корпоративный Клиент: {order.clientId.name}</li>
+                    {order.clientId ? (
+                      <li>Корпоративный Клиент: {order.clientId.name}</li>
+                    ) : <li>Корпоративный Клиент</li>}
                     <li>Имя клиента: {order.client}</li>
                   </React.Fragment>
                   : ''}
@@ -102,7 +104,10 @@ class ShowQueriesForAdmin extends Component {
                   : ''}
 
                 <li>Добавил Заказ: {order.userCreated.occupation} {order.userCreated.name}</li>
-                <li>Принял Заказ: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>
+
+                {order.userAcceptedOrder ? (
+                  <li>Заказ принял: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>
+                ) : ''}
 
                 {order.operatorDecided ? (
                   <React.Fragment>

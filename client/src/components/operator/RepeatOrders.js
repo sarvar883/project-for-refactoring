@@ -55,7 +55,9 @@ class RepeatOrders extends Component {
 
                   {item.clientType === 'corporate' ?
                     <React.Fragment>
-                      <li>Корпоративный Клиент: {item.clientId.name}</li>
+                      {item.clientId ? (
+                        <li>Корпоративный Клиент: {item.clientId.name}</li>
+                      ) : <li>Корпоративный Клиент</li>}
                       <li>Имя клиента: {item.client}</li>
                     </React.Fragment>
                     : ''}
@@ -88,7 +90,9 @@ class RepeatOrders extends Component {
 
                     {item.clientType === 'corporate' ?
                       <React.Fragment>
-                        <li>Корпоративный Клиент: {item.clientId.name}</li>
+                        {item.clientId ? (
+                          <li>Корпоративный Клиент: {item.clientId.name}</li>
+                        ) : <li>Корпоративный Клиент</li>}
                         <li>Имя клиента: {item.client}</li>
                         <li>Номер договора: {item.previousOrder.contractNumber}</li>
                       </React.Fragment>
@@ -108,7 +112,11 @@ class RepeatOrders extends Component {
                     <li>Срок гарантии (в месяцах): {item.previousOrder.guarantee}</li>
                     <li>Комментарии Оператора: {item.previousOrder.comment ? item.previousOrder.comment : '--'}</li>
                     <li>Комментарии Дезинфектора: {item.previousOrder.disinfectorComment ? item.previousOrder.disinfectorComment : '--'}</li>
-                    <li>Принял Заказ: {item.userAcceptedOrder.occupation} {item.userAcceptedOrder.name}</li>
+
+                    {item.userAcceptedOrder ? (
+                      <li>Заказ принял: {item.userAcceptedOrder.occupation} {item.userAcceptedOrder.name}</li>
+                    ) : ''}
+
                     <li>Заказ Добавлен: {item.userCreated.occupation} {item.userCreated.name} (время: <Moment format="DD/MM/YYYY HH:mm">{item.createdAt}</Moment>)</li>
 
                     <li>Расход Материалов:</li>

@@ -108,7 +108,9 @@ class ShowDisinfStats extends Component {
 
                 {order.clientType === 'corporate' ?
                   <React.Fragment>
-                    <li>Корпоративный Клиент: {order.clientId.name}</li>
+                    {order.clientId ? (
+                      <li>Корпоративный Клиент: {order.clientId.name}</li>
+                    ) : <li>Корпоративный Клиент</li>}
                     <li>Имя клиента: {order.client}</li>
                   </React.Fragment>
                   : ''}
@@ -169,7 +171,10 @@ class ShowDisinfStats extends Component {
                   <li>Общая Сумма: {order.cost.toLocaleString()} UZS (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
                   : ''}
 
-                <li>Заказ принял: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>
+                {order.userAcceptedOrder ? (
+                  <li>Заказ принял: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>
+                ) : ''}
+
                 <li>Заказ добавил: {order.userCreated.occupation} {order.userCreated.name} (<Moment format="DD/MM/YYYY HH:mm">{order.createdAt}</Moment>)</li>
 
                 {order.completed ?

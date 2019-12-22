@@ -498,7 +498,9 @@ class OrderComplete extends Component {
 
                       {order.clientType === 'corporate' ?
                         <React.Fragment>
-                          <li>Корпоративный Клиент: {order.clientId.name}</li>
+                          {order.clientId ? (
+                            <li>Корпоративный Клиент: {order.clientId.name}</li>
+                          ) : <li>Корпоративный Клиент</li>}
                           <li>Имя клиента: {order.client}</li>
                         </React.Fragment>
                         : ''}
@@ -522,7 +524,11 @@ class OrderComplete extends Component {
                       <li>Тип услуги: {order.typeOfService}</li>
                       <li>Комментарии Оператора: {order.comment ? order.comment : 'Нет комментариев'}</li>
                       <li>Комментарии Дезинфектора: {order.disinfectorComment ? order.disinfectorComment : 'Нет комментариев'}</li>
-                      <li>Кто принял заказ: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>
+
+                      {order.userAcceptedOrder ? (
+                        <li>Заказ принял: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>
+                      ) : ''}
+
                       <li>Заказ Добавлен: {order.userCreated.occupation} {order.userCreated.name} <Moment format="DD/MM/YYYY HH:mm">{order.createdAt}</Moment></li>
                     </ul>
                   </div>

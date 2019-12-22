@@ -47,7 +47,9 @@ class OrderInfo extends Component {
               <li>Дезинфектор: {orderObject.disinfectorId.name}</li>
               {orderObject.clientType === 'corporate' ?
                 <React.Fragment>
-                  <li>Корпоративный Клиент: {orderObject.clientId.name}</li>
+                  {orderObject.clientId ? (
+                    <li>Корпоративный Клиент: {orderObject.clientId.name}</li>
+                  ) : <li>Корпоративный Клиент</li>}
                   <li>Имя клиента: {orderObject.client}</li>
                 </React.Fragment>
                 : ''}
@@ -64,7 +66,11 @@ class OrderInfo extends Component {
 
               <li>Комментарии Оператора: {orderObject.comment ? orderObject.comment : 'Нет комментариев'}</li>
               <li>Комментарии Дезинфектора: {this.state.disinfectorComment ? this.state.disinfectorComment : 'Нет комментариев'}</li>
-              <li>Кто принял заказ: {orderObject.userAcceptedOrder.occupation} {orderObject.userAcceptedOrder.name}</li>
+
+              {orderObject.userAcceptedOrder ? (
+                <li>Заказ принял: {orderObject.userAcceptedOrder.occupation} {orderObject.userAcceptedOrder.name}</li>
+              ) : ''}
+
               <li>Заказ Добавлен: {orderObject.userCreated.occupation} {orderObject.userCreated.name} <Moment format="DD/MM/YYYY HH:mm">{orderObject.createdAt}</Moment></li>
             </ul>
             {this.state.addComment ? (
