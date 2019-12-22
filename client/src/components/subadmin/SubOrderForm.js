@@ -28,6 +28,7 @@ class SubOrderForm extends Component {
     cost: '',
     contractNumber: '',
     guarantee: '',
+    disinfectorComment: this.props.subadmin.orderById.disinfectorComment,
 
     allDisinfectors: []
   };
@@ -324,6 +325,7 @@ class SubOrderForm extends Component {
         cost: this.state.cost,
         guarantee: this.state.guarantee,
         contractNumber: this.state.contractNumber,
+        disinfectorComment: this.state.disinfectorComment,
         disinfectors: newArray
       };
       this.props.submitCompleteOrder(order, this.props.history, this.props.auth.user.occupation);
@@ -570,6 +572,11 @@ class SubOrderForm extends Component {
                       <div className="border-bottom"></div>
 
                       {renderDisinfForms}
+
+                      <div className="form-group">
+                        <label htmlFor="disinfectorComment">Комментарии Дезинфектора:</label>
+                        <textarea className="form-control" name="disinfectorComment" placeholder="Ваш комментарий" onChange={this.onChange} rows="3" defaultValue={order.disinfectorComment}></textarea>
+                      </div>
 
                       <div className="form-group">
                         <label htmlFor="guarantee">Гарантийный срок (в месяцах):</label>

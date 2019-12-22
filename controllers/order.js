@@ -369,6 +369,7 @@ exports.submitCompleteOrder = (req, res) => {
       foundOrder.disinfectors = newArray;
       foundOrder.guarantee = Number(order.guarantee);
       foundOrder.paymentMethod = order.paymentMethod;
+      foundOrder.disinfectorComment = order.disinfectorComment;
 
       if (order.clientType === 'corporate') {
         if (order.paymentMethod === 'cash') {
