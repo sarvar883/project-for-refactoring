@@ -7,7 +7,7 @@ import moment from 'moment';
 
 import ShowOperStats from './ShowOperStats';
 
-import { getAllOperators, getOperatorStats } from '../../actions/adminActions';
+import { getAllOperatorsAndAmins, getOperatorStats } from '../../actions/adminActions';
 
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
@@ -55,11 +55,12 @@ class OperStats extends Component {
     selectedDaysAfterSubmit: [],
 
     operatorId: '',
-    operatorName: ''
+    operatorName: '',
+    occupation: ''
   };
 
   componentDidMount() {
-    this.props.getAllOperators();
+    this.props.getAllOperatorsAndAmins();
   }
 
   onChange = (e) => this.setState({ [e.target.name]: e.target.value });
@@ -71,7 +72,8 @@ class OperStats extends Component {
         this.setState({
           headingMonth: this.state.month,
           headingYear: this.state.year,
-          operatorName: person.name
+          operatorName: person.name,
+          occupation: person.occupation
         });
       }
     });
@@ -93,7 +95,8 @@ class OperStats extends Component {
         if (person._id.toString() === this.state.operatorId.toString()) {
           this.setState({
             selectedDaysAfterSubmit: this.state.selectedDays,
-            operatorName: person.name
+            operatorName: person.name,
+            occupation: person.occupation
           });
         }
       });
@@ -112,7 +115,8 @@ class OperStats extends Component {
       if (person._id.toString() === this.state.operatorId.toString()) {
         this.setState({
           headingDay: this.state.day.split('-').reverse().join('-'),
-          operatorName: person.name
+          operatorName: person.name,
+          occupation: person.occupation
         });
       }
     });
@@ -184,12 +188,12 @@ class OperStats extends Component {
     );
 
     let operatorOptions = [{
-      label: "-- Выберите Оператора -- ", value: ""
+      label: "-- Выберите Оператора/Админа -- ", value: ""
     }];
 
     this.props.admin.operators.forEach(person => {
       operatorOptions.push({
-        label: person.name, value: person._id
+        label: `${person.occupation} ${person.name}`, value: person._id
       });
     });
 
@@ -294,14 +298,14 @@ class OperStats extends Component {
         <div className="row mt-2">
           <div className="col-12">
             {this.props.admin.method === 'week' && this.state.operatorName && this.state.selectedDays ?
-              <h2 className="text-center pl-3 pr-3">Недельная статистика Оператора {this.state.operatorName} за <Moment format="DD/MM/YYYY">{this.state.selectedDaysAfterSubmit[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDaysAfterSubmit[6]}</Moment></h2> : ''
+              <h2 className="text-center pl-3 pr-3">Недельная статистика {this.state.occupation} {this.state.operatorName} за <Moment format="DD/MM/YYYY">{this.state.selectedDaysAfterSubmit[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDaysAfterSubmit[6]}</Moment></h2> : ''
             }
 
             {this.props.admin.method === 'month' && this.state.operatorName && this.state.headingMonth && this.state.headingYear ?
-              <h2 className="text-center pl-3 pr-3">Месячная Статистика Оператора {this.state.operatorName} за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2> : ''}
+              <h2 className="text-center pl-3 pr-3">Месячная Статистика {this.state.occupation} {this.state.operatorName} за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2> : ''}
 
             {this.props.admin.method === 'day' && this.state.operatorName && this.state.headingDay ?
-              <h2 className="text-center pl-3 pr-3">Дневная Статистика Оператора {this.state.operatorName} за {this.state.headingDay}</h2> : ''}
+              <h2 className="text-center pl-3 pr-3">Дневная Статистика {this.state.occupation} {this.state.operatorName} за {this.state.headingDay}</h2> : ''}
           </div>
         </div>
 
@@ -321,4 +325,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getAllOperators, getOperatorStats })(withRouter(OperStats));
+export default connect(mapStateToProps, { getAllOperatorsAndAmins, getOperatorStats })(withRouter(OperStats));

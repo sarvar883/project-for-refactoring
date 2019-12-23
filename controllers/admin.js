@@ -103,6 +103,17 @@ exports.getOperators = (req, res) => {
 };
 
 
+exports.getOperatorsAndAdmins = (req, res) => {
+  User.find()
+    .or([{ occupation: 'operator' }, { occupation: 'admin' }])
+    .then(users => res.json(users))
+    .catch(err => {
+      console.log('getOperators ERROR', err);
+      return res.status(404).json(err);
+    });
+};
+
+
 exports.addMaterialToDisinfector = (req, res) => {
   User.findById(req.body.object.disinfector)
     .then(user => {

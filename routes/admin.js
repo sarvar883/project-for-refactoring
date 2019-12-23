@@ -16,6 +16,8 @@ router.post('/get-all-disinfectors-and-subadmins', passport.authenticate('jwt', 
 
 router.post('/get-all-operators', passport.authenticate('jwt', { session: false }), isAdmin, adminController.getOperators);
 
+router.post('/get-all-operators-and-admins', passport.authenticate('jwt', { session: false }), isAdmin, adminController.getOperatorsAndAdmins);
+
 router.post('/add-materials-to-disinfector', passport.authenticate('jwt', { session: false }), isAdminOrSubadmin, adminController.addMaterialToDisinfector);
 
 router.post('/get-add-material-events-month', passport.authenticate('jwt', { session: false }), isAdmin, adminController.addMatEventsMonth);

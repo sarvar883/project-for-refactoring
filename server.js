@@ -44,6 +44,7 @@ app.use('/admin', adminRoutes);
 app.use('/subadmin', subadminRoutes);
 app.use('/accountant', accountantRoutes);
 
+
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {
   // Set static folder

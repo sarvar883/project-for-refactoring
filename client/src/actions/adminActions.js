@@ -20,6 +20,7 @@ import {
   GET_OPERATOR_STATS,
   GET_ALL_DISINFECTORS_FOR_ADMIN,
   GET_ALL_OPERATORS_FOR_ADMIN,
+  GET_ALL_OPERATORS_AND_ADMINS_FOR_ADMIN,
   GET_ADD_MAT_EVENTS_MONTH,
   GET_ADD_MAT_EVENTS_WEEK,
   DISINF_STATS_MONTH_ADMIN,
@@ -211,6 +212,25 @@ export const getAllOperators = () => (dispatch) => {
       })
     );
 };
+
+
+export const getAllOperatorsAndAmins = () => (dispatch) => {
+  dispatch(loadingOperators());
+  axios.post('/admin/get-all-operators-and-admins')
+    .then(res =>
+      dispatch({
+        type: GET_ALL_OPERATORS_AND_ADMINS_FOR_ADMIN,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
 
 export const addMaterialToDisinfector = (object, occupation, history) => (dispatch) => {
   axios.post('/admin/add-materials-to-disinfector', { object: object })

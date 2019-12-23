@@ -259,7 +259,7 @@ class ShowOperStats extends Component {
             <div className="card order mt-2">
               <div className="card-body p-0">
                 <ul className="font-bold mb-0 list-unstyled">
-                  <li>Оператор принял Заказов: {orders.length}</li>
+                  <li>Пользователь принял Заказов: {orders.length}</li>
                   <li>Выполнено Заказов: {completedOrders.length}</li>
                   <li>Подтверждено Заказов: {confirmedOrders.length}</li>
                   <li>Общая Сумма: {totalSum.toLocaleString()} UZS</li>
@@ -298,7 +298,7 @@ class ShowOperStats extends Component {
 
         <div className="row mt-2">
           <div className="col-12">
-            <h2 className="text-center pl-3 pr-3">Заказы, которые принял Оператор</h2>
+            <h2 className="text-center pl-3 pr-3">Заказы, которые принял Пользователь</h2>
           </div>
           {orders.length > 0 ? (renderOrders) : <h2>Нет заказов</h2>}
         </div>

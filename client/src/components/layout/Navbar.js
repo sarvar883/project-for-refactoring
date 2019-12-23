@@ -192,7 +192,7 @@ class Navbar extends Component {
               <Link className="nav-link" to="/admin/disinf-stats">Статистика Дезинфекторов</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/operator-stats">Статистика Операторов</Link>
+              <Link className="nav-link" to="/admin/operator-stats">Стат. Оператора / Админа</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/admin/adv-stats">Статистика Рекламы</Link>

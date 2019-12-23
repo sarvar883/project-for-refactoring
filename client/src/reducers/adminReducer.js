@@ -18,6 +18,7 @@ import {
   GET_OPERATOR_STATS,
   GET_ALL_DISINFECTORS_FOR_ADMIN,
   GET_ALL_OPERATORS_FOR_ADMIN,
+  GET_ALL_OPERATORS_AND_ADMINS_FOR_ADMIN,
   GET_ADD_MAT_EVENTS_MONTH,
   GET_ADD_MAT_EVENTS_WEEK,
   DISINF_STATS_MONTH_ADMIN,
@@ -234,6 +235,13 @@ export default function (state = initialState, action) {
       };
 
     case GET_ALL_OPERATORS_FOR_ADMIN:
+      return {
+        ...state,
+        operators: action.payload,
+        loadingOperators: false
+      };
+
+    case GET_ALL_OPERATORS_AND_ADMINS_FOR_ADMIN:
       return {
         ...state,
         operators: action.payload,
