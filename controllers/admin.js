@@ -363,15 +363,15 @@ exports.addClient = (req, res) => {
 
 exports.searchClients = (req, res) => {
   Client.find()
-    .populate({
-      path: 'orders',
-      model: 'Order',
-      populate: {
-        path: 'disinfectorId userCreated userAcceptedOrder disinfectors.user',
-        model: 'User'
-      }
-    })
-    .exec()
+    // .populate({
+    //   path: 'orders',
+    //   model: 'Order',
+    //   populate: {
+    //     path: 'disinfectorId userCreated userAcceptedOrder disinfectors.user',
+    //     model: 'User'
+    //   }
+    // })
+    // .exec()
     .then(clients => {
 
       clients = clients.filter(item => {
