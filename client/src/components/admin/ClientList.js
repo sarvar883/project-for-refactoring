@@ -89,8 +89,8 @@ class ClientList extends Component {
   render() {
     // sort clients alphabetically
     let clients = this.state.clients.sort((a, b) => {
-      if (a.name < b.name) { return -1; }
-      if (a.name > b.name) { return 1; }
+      if (a.name.toUppercase() < b.name.toUppercase()) { return -1; }
+      if (a.name.toUppercase() > b.name.toUppercase()) { return 1; }
       return 0;
     });
 
