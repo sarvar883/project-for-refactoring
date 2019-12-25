@@ -1,7 +1,1 @@
-self.addEventListener('install', (event) => {
-  console.log('SW install');
-});
-
-self.addEventListener('activate', (event) => {
-  return self.clients.claim();
-});
+importScripts("https://cdn.pushalert.co/sw-17175.js");
