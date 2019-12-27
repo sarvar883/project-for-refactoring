@@ -151,7 +151,7 @@ class App extends Component {
               <AdminRoute exact path="/admin/material-history" component={MaterialHistory} />
             </Switch>
             <Switch>
-              <AdminRoute exact path="/edit-order/:orderId" component={EditOrder} />
+              <PrivateRoute exact path="/edit-order/:orderId" component={EditOrder} />
             </Switch>
             <Switch>
               <AdminRoute exact path="/admin/users" component={Users} />

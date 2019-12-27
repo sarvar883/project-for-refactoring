@@ -34,6 +34,7 @@ class EditOrder extends Component {
     this.props.getDisinfectors();
     this.props.getCorporateClients();
     this.props.getAllUsers();
+    // window.location.reload();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -49,7 +50,7 @@ class EditOrder extends Component {
       orderForEdit.disinfectorId = !isEmpty(orderForEdit.disinfectorId) ? orderForEdit.disinfectorId : '';
 
       // orderForEdit.userAcceptedOrder = !isEmpty(orderForEdit.userAcceptedOrder) ? orderForEdit.userAcceptedOrder : '';
-      orderForEdit.userAcceptedOrder = orderForEdit.userAcceptedOrder ? orderForEdit.userAcceptedOrder._id : '';
+      orderForEdit.userAcceptedOrder = orderForEdit.userAcceptedOrder ? orderForEdit.userAcceptedOrder : '';
 
       orderForEdit.clientType = !isEmpty(orderForEdit.clientType) ? orderForEdit.clientType : '';
       orderForEdit.clientId = !isEmpty(orderForEdit.clientId) ? orderForEdit.clientId._id : '';
@@ -127,12 +128,10 @@ class EditOrder extends Component {
       });
 
 
-
-
       this.setState({
         _id: orderForEdit._id,
         disinfectorId: orderForEdit.disinfectorId._id,
-        userAcceptedOrder: orderForEdit.userAcceptedOrder,
+        userAcceptedOrder: orderForEdit.userAcceptedOrder._id,
         clientType: orderForEdit.clientType,
         client: orderForEdit.client,
         clientId: orderForEdit.clientId,
@@ -237,6 +236,7 @@ class EditOrder extends Component {
   }
 
   render() {
+
     let allUsers = this.props.order.allUsers ? this.props.order.allUsers.sort((x, y) => x.name - y.name) : [];
     const userOptions = [
       { label: '-- Кто принял заказ? --', value: '' }

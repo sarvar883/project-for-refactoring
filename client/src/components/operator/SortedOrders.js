@@ -158,7 +158,8 @@ class SortedOrders extends Component {
                 <li>Телефон Клиента: {element.phone}</li>
                 <li>Адрес: {element.address}</li>
               </ul>
-              <Link to={`/order-details/${element._id}`} className="btn btn-warning">Подробнее</Link>
+              <Link to={`/order-details/${element._id}`} className="btn btn-primary mr-1">Подробнее</Link>
+              <Link to={`/edit-order/${element._id}`} className="btn btn-warning mr-1">Редактировать</Link>
             </div>
           </div>
         </div>

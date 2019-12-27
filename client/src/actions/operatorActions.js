@@ -71,7 +71,7 @@ export const getCompleteOrderById = (id) => (dispatch) => {
 // operator confirms completed order
 export const confirmCompleteOrder = (object, history) => (dispatch) => {
   axios.post('/operator/confirm-complete-order', { object: object })
-    .then(() => history.push('/operator'))
+    .then(() => history.push('/operator/order-queries'))
     .catch(err =>
       dispatch({
         type: GET_ERRORS,

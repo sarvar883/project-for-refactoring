@@ -76,7 +76,7 @@ export const getQueriesForAdmin = () => (dispatch) => {
 
 export const adminConfirmsOrderQuery = (object, history) => (dispatch) => {
   axios.post('/admin/admin-confirms-order-query', { object: object })
-    .then(() => history.push('/admin'))
+    .then(() => history.push('/admin/order-queries'))
     .catch(err =>
       dispatch({
         type: GET_ERRORS,

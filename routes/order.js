@@ -20,7 +20,7 @@ router.get('/get-all-disinfectors', passport.authenticate('jwt', { session: fals
 router.post('/create-order', passport.authenticate('jwt', { session: false }), orderController.createOrder);
 
 // edit order
-router.post('/edit', passport.authenticate('jwt', { session: false }), isAdmin, orderController.editOrder);
+router.post('/edit', passport.authenticate('jwt', { session: false }), orderController.editOrder);
 
 // delete order
 router.post('/delete-order', passport.authenticate('jwt', { session: false }), isAdmin, orderController.deleteOrder);
