@@ -8,6 +8,8 @@ const materialsArray = [
   { material: 'Хлор', unit: 'шт' },
   { material: 'Dry Smoke', unit: 'гр' },
   { material: 'Ароматизатор', unit: 'гр' },
-  { material: 'Гель Тр', unit: 'шт' }
+  { material: 'Гель Тр', unit: 'шт' },
+  { material: 'Agita', unit: 'гр' },
+  { material: 'SP', unit: 'гр' }
 ];
 module.exports = materialsArray;
