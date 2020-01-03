@@ -104,7 +104,10 @@ class ConfirmQueryForm extends Component {
                       </React.Fragment>
                     ) : <li>Оператор еще не рассмотрел заявку</li>}
 
-                    <li>Корпоративный Клиент: {query.clientId.name}</li>
+                    {query.clientId ? (
+                      <li>Корпоративный Клиент: {query.clientId.name}</li>
+                    ) : <li>Корпоративный Клиент</li>}
+
                     <li>Имя клиента: {query.client}</li>
 
                     <li>Телефон клиента: {query.phone}</li>
@@ -123,7 +126,10 @@ class ConfirmQueryForm extends Component {
 
                     <li>Номер Договора: {query.contractNumber}</li>
 
-                    <li>Заказ принял: {query.userAcceptedOrder.occupation} {query.userAcceptedOrder.name}</li>
+                    {query.userAcceptedOrder ? (
+                      <li>Заказ принял: {query.userAcceptedOrder.occupation} {query.userAcceptedOrder.name}</li>
+                    ) : ''}
+
                     <li>Заказ добавил: {query.userCreated.occupation} {query.userCreated.name}</li>
                     <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{query.completedAt}</Moment></li>
                   </ul>
