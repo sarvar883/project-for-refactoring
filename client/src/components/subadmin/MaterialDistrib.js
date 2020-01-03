@@ -100,6 +100,7 @@ class MaterialDistrib extends Component {
           return;
         }
       });
+      
     });
     if (emptyFields > 0) {
       alert('Заполните Поле "Выберите Материал и Количество"');

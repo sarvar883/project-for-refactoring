@@ -27,6 +27,10 @@ class Queries extends Component {
     const { queries } = this.state;
 
     let renderQueries = queries.map((item, key) => {
+      if (!item.clientId) {
+        console.log('queries', item);
+      }
+
       let consumptionArray = [];
       item.disinfectors.forEach(element => {
         consumptionArray.push({
@@ -65,7 +69,11 @@ class Queries extends Component {
                 ) : <li>Оператор еще не рассмотрел заявку</li>}
 
                 <li>Номер Договора: {item.contractNumber}</li>
-                <li>Корпоративный Клиент: {item.clientId.name}</li>
+
+                {item.clientId ? (
+                  <li>Корпоративный Клиент: {item.clientId.name}</li>
+                ) : <li>Корпоративный Клиент</li>}
+
                 <li>Имя клиента: {item.client}</li>
                 <li>Телефон Клиента: {item.phone}</li>
                 {item.phone2 ? <li>Другой номер: {item.phone2}</li> : ''}
