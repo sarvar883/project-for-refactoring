@@ -330,7 +330,6 @@ button.edit-message, button.delete-message {
   left: 0;
   bottom: 0;
   width: 100%;
-  border: 2px solid red;
 }
 .footer button {
   margin: 5px 0;
