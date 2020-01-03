@@ -19,6 +19,7 @@ import DisinfectorRoute from './components/common/DisinfectorRoute';
 
 // Components
 import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
 
 import Admin from './components/admin/Admin';
 import AdminStats from './components/admin/AdminStats';
@@ -269,6 +270,8 @@ class App extends Component {
               <PrivateRoute exact path="/chat/:chatId" component={ChatRoom} />
             </Switch>
 
+            {/* Footer */}
+            <Footer />
           </div>
         </Router>
       </Provider>

@@ -320,3 +320,20 @@ button.edit-message, button.delete-message {
   padding: 8px 4px;
 }
 /* END OF CLIENTS TABLE */
+
+
+
+
+/* FOOTER */
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  border: 2px solid red;
+}
+.footer button {
+  margin: 5px 0;
+  font-size: 18px;
+}
+/* END OF FOOTER */
