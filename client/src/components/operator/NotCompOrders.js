@@ -48,7 +48,9 @@ class NotCompOrders extends Component {
     return (
       <div className="container-fluid">
         <div className="row m-0">
-          <h2 className="m-auto">Невыполненные заказы</h2>
+          <div className="col-12">
+            <h2 className="text-center">Невыполненные заказы</h2>
+          </div>
         </div>
         {this.props.operator.loadingSortedOrders ? <Spinner /> : (
           <div className="row m-0">
