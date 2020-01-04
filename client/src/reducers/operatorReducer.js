@@ -1,5 +1,6 @@
 import {
   GET_SORTED_ORDERS,
+  GET_NOT_COMPLETED_ORDERS,
   GET_COMPLETE_ORDERS,
   GET_COMPLETE_ORDER_BY_ID,
   GOT_STATS_FOR_OPERATOR,
@@ -55,6 +56,13 @@ export default function (state = initialState, action) {
         ...state,
         sortedOrders: action.payload,
         date: action.date,
+        loadingSortedOrders: false
+      };
+
+    case GET_NOT_COMPLETED_ORDERS:
+      return {
+        ...state,
+        sortedOrders: action.payload,
         loadingSortedOrders: false
       };
 

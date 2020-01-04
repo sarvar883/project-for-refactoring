@@ -2,6 +2,7 @@ import axios from 'axios';
 import {
   GET_ERRORS,
   GET_SORTED_ORDERS,
+  GET_NOT_COMPLETED_ORDERS,
   GET_COMPLETE_ORDERS,
   GET_COMPLETE_ORDER_BY_ID,
   GOT_STATS_FOR_OPERATOR,
@@ -137,6 +138,24 @@ export const getStatsForOperator = (object) => (dispatch) => {
     .then(res =>
       dispatch({
         type: GOT_STATS_FOR_OPERATOR,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
+export const getNotCompOrders = () => (dispatch) => {
+  dispatch(setLoadingSortedOrders());
+  axios.post('/operator/get-not-comp-orders')
+    .then(res =>
+      dispatch({
+        type: GET_NOT_COMPLETED_ORDERS,
         payload: res.data
       })
     )

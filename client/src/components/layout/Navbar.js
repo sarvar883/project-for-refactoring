@@ -84,6 +84,9 @@ class Navbar extends Component {
               <Link className="nav-link" to="/operator/repeat-orders">Повторные заказы</Link>
             </li>
             <li className="nav-item">
+              <Link className="nav-link" to="/not-completed-orders">Невып. Заказы</Link>
+            </li>
+            <li className="nav-item">
               <Link className="nav-link" to="/search-orders">Поиск заказов</Link>
             </li>
             <li className="nav-item">
@@ -182,8 +185,9 @@ class Navbar extends Component {
 
     const adminLinks = (
       <div className="adminLinks">
+
         <div className="dropdown">
-          <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Функции</button>
+          <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Стат.</button>
           <div className="dropdown-menu">
             <li className="nav-item">
               <Link className="nav-link" to="/admin/stats">Общая Статистика</Link>
@@ -197,11 +201,20 @@ class Navbar extends Component {
             <li className="nav-item">
               <Link className="nav-link" to="/admin/adv-stats">Статистика Рекламы</Link>
             </li>
+          </div>
+        </div>
+
+        <div className="dropdown">
+          <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Функции</button>
+          <div className="dropdown-menu">
             <li className="nav-item">
               <Link className="nav-link" to="/admin/order-queries">Запросы</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/clients">Клиенты</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/not-completed-orders">Невып. Заказы</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/search-orders">Поиск заказов</Link>

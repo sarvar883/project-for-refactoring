@@ -7,6 +7,8 @@ const isOperatorOrAdmin = require('../middleware/isOperatorOrAdmin');
 
 router.post('/get-sorted-orders', passport.authenticate('jwt', { session: false }), isOperatorOrAdmin, operatorController.getSortedOrders);
 
+router.post('/get-not-comp-orders', passport.authenticate('jwt', { session: false }), operatorController.getNotCompOrders);
+
 router.post('/get-complete-orders', passport.authenticate('jwt', { session: false }), isOperatorOrAdmin, operatorController.getCompleteOrders);
 
 router.post('/get-complete-order-by-id/:id', passport.authenticate('jwt', { session: false }), isOperatorOrAdmin, operatorController.getCompleteOrderById);

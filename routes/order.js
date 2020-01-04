@@ -23,7 +23,7 @@ router.post('/create-order', passport.authenticate('jwt', { session: false }), o
 router.post('/edit', passport.authenticate('jwt', { session: false }), orderController.editOrder);
 
 // delete order
-router.post('/delete-order', passport.authenticate('jwt', { session: false }), isAdmin, orderController.deleteOrder);
+router.post('/delete-order', passport.authenticate('jwt', { session: false }), orderController.deleteOrder);
 
 router.post('/create-repeat-order', passport.authenticate('jwt', { session: false }), isOperatorOrAdmin, orderController.createRepeatOrder);
 

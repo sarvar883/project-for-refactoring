@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Moment from 'react-moment';
+import { deleteOrder } from '../../actions/orderActions';
 
 // socket.io
 import openSocket from 'socket.io-client';
@@ -128,6 +129,19 @@ class SortedOrders extends Component {
     });
   };
 
+  deleteOrder = (id, clientType, clientPhone, clientId, orderDateFrom) => {
+    const object = {
+      id: id,
+      clientType: clientType,
+      clientPhone: clientPhone,
+      clientId: clientId,
+      orderDateFrom: orderDateFrom,
+    };
+    this.props.deleteOrder(object, this.props.history, this.props.auth.user.occupation);
+    this.props.getSortedOrders(this.state.date);
+    window.location.reload();
+  }
+
   componentWillUnmount() {
     this._isMounted = false;
   }
@@ -158,8 +172,22 @@ class SortedOrders extends Component {
                 <li>Телефон Клиента: {element.phone}</li>
                 <li>Адрес: {element.address}</li>
               </ul>
-              <Link to={`/order-details/${element._id}`} className="btn btn-primary mr-1">Подробнее</Link>
-              <Link to={`/edit-order/${element._id}`} className="btn btn-warning mr-1">Редактировать</Link>
+              <div className="btn-group">
+                <Link to={`/order-details/${element._id}`} className="btn btn-primary mr-1">Подробнее</Link>
+                <Link to={`/edit-order/${element._id}`} className="btn btn-warning mr-1">Редактировать</Link>
+
+                {this.props.date > new Date().setHours(0, 0, 0, 0) ? (
+                  <button className="btn btn-danger" onClick={() => {
+                    if (window.confirm('Вы уверены?')) {
+                      if (element.clientType === 'corporate') {
+                        this.deleteOrder(element._id, element.clientType, element.phone, element.clientId._id, element.dateFrom);
+                      } else if (element.clientType === 'individual') {
+                        this.deleteOrder(element._id, element.clientType, element.phone, '', element.dateFrom);
+                      }
+                    }
+                  }}>Удалить</button>
+                ) : ''}
+              </div>
             </div>
           </div>
         </div>
@@ -190,4 +218,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps)(withRouter(SortedOrders));
+export default connect(mapStateToProps, { deleteOrder })(withRouter(SortedOrders));

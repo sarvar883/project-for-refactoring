@@ -65,6 +65,7 @@ import Queries from './components/accountant/Queries';
 import ConfirmQueryForm from './components/accountant/ConfirmQueryForm';
 import AccStats from './components/accountant/AccStats';
 
+import NotCompOrders from './components/operator/NotCompOrders';
 import SearchOrders from './components/operator/SearchOrders';
 import Chat from './components/chat/Chat';
 import ChatRoom from './components/chat/ChatRoom';
@@ -114,6 +115,10 @@ class App extends Component {
 
             <Switch>
               <PrivateRoute exact path="/anons" component={Anons} />
+            </Switch>
+
+            <Switch>
+              <PrivateRoute exact path="/not-completed-orders" component={NotCompOrders} />
             </Switch>
 
 

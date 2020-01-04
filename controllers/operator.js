@@ -1,8 +1,4 @@
-const mongoose = require('mongoose');
-const User = require('../models/user');
 const Order = require('../models/order');
-const Client = require('../models/client');
-const io = require('../socket');
 
 const validateConfirmedOrder = require('../validation/confirmOrder');
 
@@ -25,6 +21,21 @@ exports.getSortedOrders = (req, res) => {
     })
     .catch(err => {
       console.log('getSortedOrders ERROR', err);
+      return res.status(400).json(err);
+    });
+};
+
+
+exports.getNotCompOrders = (req, res) => {
+  Order.find({
+    completed: false,
+    dateFrom: { '$lt': new Date() }
+  })
+    .populate('disinfectorId clientId')
+    .exec()
+    .then(orders => res.json(orders))
+    .catch(err => {
+      console.log('getNotCompOrders ERROR', err);
       return res.status(400).json(err);
     });
 };

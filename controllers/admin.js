@@ -6,7 +6,6 @@ const AddMaterial = require('../models/addMaterial');
 const ComingMaterial = require('../models/comingMaterial');
 const CurrentMaterial = require('../models/currentMaterial');
 const stringSimilarity = require('string-similarity');
-const io = require('../socket');
 
 const materials = require('../client/src/components/common/materials');
 
