@@ -31,7 +31,9 @@ class Admin extends Component {
     return (
       <div className="container-fluid mt-1">
         <div className="row">
-          <h2 className="m-auto">Страница Админа {this.props.auth.user.name}</h2>
+          <div className="col-12">
+            <h2 className="text-center">Страница Админа {this.props.auth.user.name}</h2>
+          </div>
         </div>
 
         <div className="row">
