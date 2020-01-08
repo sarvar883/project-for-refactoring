@@ -22,7 +22,7 @@ class Disinfector extends Component {
         <div className="container">
           <div className="row">
             <div className="col-12">
-              <h1 className="text-center">Страница Дезинфектора {this.props.auth.user.name}</h1>
+              <h2 className="text-center">Страница Дезинфектора {this.props.auth.user.name}</h2>
             </div>
           </div>
 
@@ -32,7 +32,7 @@ class Disinfector extends Component {
                 <h3 className="text-center">Ваши имеющиеся материалы</h3>
               </div>
 
-              <div className="col-md-6 mx-auto mt-3">
+              <div className="col-lg-6 col-md-8 mx-auto mt-3">
                 <div className="card order">
                   <div className="card-body p-0">
                     <ul className="font-bold mb-0 pl-3">

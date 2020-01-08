@@ -9,7 +9,7 @@ exports.getSortedOrders = (req, res) => {
   const year = date.getFullYear();
 
   Order.find()
-    .populate('disinfectorId')
+    .populate('disinfectorId clientId')
     .exec()
     .then(orders => {
       let sortedOrders = orders.filter(item =>

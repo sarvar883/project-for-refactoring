@@ -12,13 +12,13 @@ router.post('/get-order-queries-for-admin', passport.authenticate('jwt', { sessi
 
 router.post('/admin-confirms-order-query', passport.authenticate('jwt', { session: false }), isAdmin, adminController.confirmOrderQuery);
 
-router.post('/get-all-disinfectors-and-subadmins', passport.authenticate('jwt', { session: false }), isAdminOrSubadmin, adminController.getDisinfectorsAndSubadmins);
+router.post('/get-all-disinfectors-and-subadmins', passport.authenticate('jwt', { session: false }), adminController.getDisinfectorsAndSubadmins);
 
 router.post('/get-all-operators', passport.authenticate('jwt', { session: false }), isAdmin, adminController.getOperators);
 
 router.post('/get-all-operators-and-admins', passport.authenticate('jwt', { session: false }), isAdmin, adminController.getOperatorsAndAdmins);
 
-router.post('/add-materials-to-disinfector', passport.authenticate('jwt', { session: false }), isAdminOrSubadmin, adminController.addMaterialToDisinfector);
+router.post('/add-materials-to-disinfector', passport.authenticate('jwt', { session: false }), adminController.addMaterialToDisinfector);
 
 router.post('/get-add-material-events-month', passport.authenticate('jwt', { session: false }), isAdmin, adminController.addMatEventsMonth);
 

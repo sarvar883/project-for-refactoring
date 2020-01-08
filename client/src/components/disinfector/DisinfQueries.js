@@ -77,7 +77,9 @@ class DisinfQueries extends Component {
     return (
       <div className="container-fluid">
         <div className="row">
-          <h2 className="mx-auto pl-3 pr-3">Ваши Отправленные Запросы за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2>
+          <div className="col-12">
+            <h2 className="text-center pl-3 pr-3">Ваши Отправленные Запросы за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2>
+          </div>
         </div>
 
         <div className="row">

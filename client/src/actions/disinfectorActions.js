@@ -125,6 +125,32 @@ export const getAddedMaterialEvents = (id) => (dispatch) => {
 };
 
 
+// disinfector adds material to other user/disinfector
+export const disAddMatToOther = (object, occupation, history) => (dispatch) => {
+  axios.post('/order/dis-add-mat-to-other-user', { object: object })
+    .then(() => history.push(`/${occupation}`))
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
+export const getUserMatComing = (object) => (dispatch) => {
+  dispatch(loadingDisinfStats());
+  axios.post('/stats/get-user-mat-coming', { object: object })
+    .then(res => console.log('res', res))
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
 export const loadingDisinfStats = () => {
   return {
     type: LOADING_DISINF_STATS

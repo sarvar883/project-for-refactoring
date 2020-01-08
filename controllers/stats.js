@@ -394,3 +394,26 @@ exports.getOperatorStats = (req, res) => {
       res.status(404).json(err);
     });
 };
+
+
+function getLstDayOfMonFnc(date) {
+  return new Date(date.getFullYear(), date.getMonth(), 0).getDate()
+}
+
+exports.getUserMatComing = (req, res) => {
+  // helper date and also first day of month
+  let helperDate = new Date(`${req.body.object.year}-${req.body.object.month}-1`);
+  let lastDate = getLstDayOfMonFnc(helperDate);
+
+  AddMaterial.find({
+    disinfector: req.body.object.userId,
+    createdAt: { $gte: helperDate, $lte: lastDate }
+  })
+    .populate('admin')
+    .exec()
+    .then(objects => res.json(objects))
+    .catch(err => {
+      console.log('getUserMatComing ERROR', err);
+      res.status(404).json(err);
+    });
+};

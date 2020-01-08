@@ -50,6 +50,7 @@ import Disinfector from './components/disinfector/Disinfector';
 import DisinfQueries from './components/disinfector/DisinfQueries';
 import DisinfStats from './components/disinfector/DisinfStats';
 import OrderComplete from './components/disinfector/OrderComplete';
+import DisMaterials from './components/disinfector/DisMaterials';
 
 import Operator from './components/operator/Operator';
 import CreateOrder from './components/operator/CreateOrder';
@@ -219,6 +220,15 @@ class App extends Component {
             </Switch>
             <Switch>
               <DisinfectorRoute exact path="/disinfector/stats" component={DisinfStats} />
+            </Switch>
+            <Switch>
+              <DisinfectorRoute exact path="/disinfector/distrib-materials" component={DisMaterials} />
+            </Switch>
+            <Switch>
+              <DisinfectorRoute exact path="/disinfector/mat-com-history" component={DisMaterials} />
+            </Switch>
+            <Switch>
+              <DisinfectorRoute exact path="/disinfector/mat-distrib-history" component={DisMaterials} />
             </Switch>
 
 

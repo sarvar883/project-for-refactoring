@@ -247,9 +247,6 @@ button.edit-message, button.delete-message {
   outline: none;
   border: 1px solid transparent;
 }
-.SelectedWeekExample .DayPicker-Day--hoverRange {
-  /* background-color: #EFEFEF !important; */
-}
 
 .SelectedWeekExample .DayPicker-Day--selectedRange {
   background-color: #fff7ba !important;
@@ -279,9 +276,7 @@ button.edit-message, button.delete-message {
 }
 /* END OF CALENDAR SELECT WEEKS */
 
-.weekly-stats {
-  /* border: 2px solid red; */
-}
+
 .border-bottom {
   border-bottom: 4px solid black;
   margin-top: 8px;
@@ -334,7 +329,7 @@ body {
   width: 100%;
 }
 .footer button {
-  margin: 5px 0;
+  margin: 2px 0;
   font-size: 18px;
 }
 /* END OF FOOTER */

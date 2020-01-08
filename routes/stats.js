@@ -30,4 +30,6 @@ router.post('/adv-stats', passport.authenticate('jwt', { session: false }), isAd
 
 router.post('/operator-stats', passport.authenticate('jwt', { session: false }), isAdmin, statsController.getOperatorStats);
 
+router.post('/get-user-mat-coming', passport.authenticate('jwt', { session: false }), statsController.getUserMatComing);
+
 module.exports = router;

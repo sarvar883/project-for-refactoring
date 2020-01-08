@@ -46,4 +46,6 @@ router.post('/get-complete-order-in-month', passport.authenticate('jwt', { sessi
 // get events when materials were added to disinfector
 router.post('/get-add-material-events', passport.authenticate('jwt', { session: false }), orderController.getAddMaterialsEvents);
 
+router.post('/dis-add-mat-to-other-user', passport.authenticate('jwt', { session: false }), orderController.disAddMatToOtherDis);
+
 module.exports = router;

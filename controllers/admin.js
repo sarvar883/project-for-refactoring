@@ -28,9 +28,8 @@ exports.getSortedOrders = (req, res) => {
   //     });
   //   });
 
-
   Order.find()
-    .populate('disinfectorId')
+    .populate('disinfectorId clientId')
     .exec()
     .then(orders => {
       let sortedOrders = orders.filter(item =>

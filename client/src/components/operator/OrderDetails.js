@@ -29,22 +29,23 @@ class OrderDetails extends Component {
                     {order.clientType === 'corporate' ?
                       <React.Fragment>
                         {order.clientId ? (
-                          <li>Корпоративный Клиент: {order.clientId.name}</li>
-                        ) : <li>Корпоративный Клиент</li>}
-                        <li>Имя клиента: {order.client}</li>
+                          <li className="text-danger">Корпоративный Клиент: {order.clientId.name}</li>
+                        ) : <li className="text-danger">Корпоративный Клиент</li>}
+                        <li className="text-danger">Имя клиента: {order.client}</li>
                       </React.Fragment>
                       : ''}
 
                     {order.clientType === 'individual' ?
-                      <li>Физический Клиент: {order.client}</li>
+                      <li className="text-danger">Физический Клиент: {order.client}</li>
                       : ''}
 
-                    <li>Телефон клиента: {order.phone}</li>
+                    <li className="text-danger">Телефон клиента: {order.phone}</li>
                     {order.phone2 !== '' ? (<li>Запасной номер: {order.phone2}</li>) : ''}
+                    <li className="text-danger">Адрес: {order.address}</li>
+                    <li className="text-danger">Тип услуги: {order.typeOfService}</li>
+
                     <li>Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
                     <li>Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment></li>
-                    <li>Адрес: {order.address}</li>
-                    <li>Тип услуги: {order.typeOfService}</li>
                     <li>Комментарии Оператора: {order.comment ? order.comment : 'Нет комментариев'}</li>
                     <li>Комментарии Дезинфектора: {order.disinfectorComment ? order.disinfectorComment : 'Нет комментариев'}</li>
 

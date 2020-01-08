@@ -87,7 +87,7 @@ class ShowAddMatEvents extends Component {
                 <div className="card-body p-0">
                   <ul className="font-bold mb-0 pl-3">
                     <li>Когда Получено: <Moment format="DD/MM/YYYY HH:mm">{event.createdAt}</Moment></li>
-                    <li>Админ: {event.admin.name}</li>
+                    <li>Кто раздал: {event.admin.occupation} {event.admin.name}</li>
                     <p className="mb-0">Материалы</p>
                     {renderEventsInDisinfArray}
                   </ul>

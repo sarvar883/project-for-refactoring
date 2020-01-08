@@ -166,11 +166,18 @@ class SortedOrders extends Component {
           <div className={`card mt-2 order order-bg-${element.disinfectorId.color}`}>
             <div className="card-body p-0">
               <ul className="font-bold mb-0 list-unstyled">
-                <li>Время: <Moment format="HH:mm">{element.dateFrom}</Moment></li>
-                <li>Ответственный: {element.disinfectorId.occupation} {element.disinfectorId.name}</li>
+                {element.clientType === 'corporate' ? (
+                  <React.Fragment>
+                    {element.clientId ? (<li>Корпоративный клиент: {element.clientId.name}</li>) : <li>Корпоративный клиент </li>}
+                  </React.Fragment>
+                ) : ''}
 
-                <li>Телефон Клиента: {element.phone}</li>
+                {element.clientType === 'individual' ? (
+                  <li>Физический Клиент: {element.client}</li>
+                ) : ''}
+                <li>Тел клиента: {element.phone}</li>
                 <li>Адрес: {element.address}</li>
+                <li>Тип Заказа: {element.typeOfService}</li>
               </ul>
               <div className="btn-group">
                 <Link to={`/order-details/${element._id}`} className="btn btn-primary mr-1">Подробнее</Link>

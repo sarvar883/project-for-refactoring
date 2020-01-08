@@ -470,3 +470,40 @@ exports.getAddMaterialsEvents = (req, res) => {
       res.status(400).json(err);
     });
 };
+
+
+exports.disAddMatToOtherDis = (req, res) => {
+  // add material to recipient
+  User.findById(req.body.object.disinfector)
+    .then(user => {
+      req.body.object.materials.forEach(mat => {
+        user.materials.forEach(item => {
+          if (item.material === mat.material && item.unit === mat.unit) {
+            item.amount += Number(mat.amount);
+            return;
+          }
+        });
+      });
+      user.save();
+    });
+
+  // subtract material from donor
+  User.findById(req.body.object.admin)
+    .then(user => {
+      user.subtractConsumptionMaterials(req.body.object.materials);
+    });
+
+  const newObject = new AddMaterial({
+    disinfector: req.body.object.disinfector,
+    admin: req.body.object.admin,
+    materials: req.body.object.materials,
+    createdAt: new Date()
+  });
+
+  newObject.save()
+    .then(obj => res.json(obj))
+    .catch(err => {
+      console.log('disAddMatToOtherDis ERROR', err);
+      return res.status(400).json(err);
+    });
+};

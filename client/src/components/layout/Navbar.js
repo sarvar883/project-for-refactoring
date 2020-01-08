@@ -65,6 +65,21 @@ class Navbar extends Component {
             </li>
           </div>
         </div>
+
+        <div className="dropdown">
+          <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Материалы</button>
+          <div className="dropdown-menu">
+            <li className="nav-item">
+              <Link className="nav-link" to="/disinfector/distrib-materials">Раздать пользователям</Link>
+            </li>
+            {/* <li className="nav-item">
+              <Link className="nav-link" to="/disinfector/mat-com-history">Ваши приходы</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/disinfector/mat-distrib-history">Ваши раздачи</Link>
+            </li> */}
+          </div>
+        </div>
       </div>
     );
 
