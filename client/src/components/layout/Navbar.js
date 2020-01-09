@@ -72,12 +72,12 @@ class Navbar extends Component {
             <li className="nav-item">
               <Link className="nav-link" to="/disinfector/distrib-materials">Раздать пользователям</Link>
             </li>
-            {/* <li className="nav-item">
+            <li className="nav-item">
               <Link className="nav-link" to="/disinfector/mat-com-history">Ваши приходы</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/disinfector/mat-distrib-history">Ваши раздачи</Link>
-            </li> */}
+            </li>
           </div>
         </div>
       </div>

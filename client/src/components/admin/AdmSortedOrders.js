@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import Moment from 'react-moment';
 
 import { getSortedOrders } from '../../actions/adminActions';
 import { deleteOrder } from '../../actions/orderActions';

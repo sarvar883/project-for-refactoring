@@ -396,24 +396,58 @@ exports.getOperatorStats = (req, res) => {
 };
 
 
-function getLstDayOfMonFnc(date) {
-  return new Date(date.getFullYear(), date.getMonth(), 0).getDate()
-}
 
 exports.getUserMatComing = (req, res) => {
-  // helper date and also first day of month
-  let helperDate = new Date(`${req.body.object.year}-${req.body.object.month}-1`);
-  let lastDate = getLstDayOfMonFnc(helperDate);
-
   AddMaterial.find({
-    disinfector: req.body.object.userId,
-    createdAt: { $gte: helperDate, $lte: lastDate }
+    disinfector: req.body.object.userId
   })
     .populate('admin')
     .exec()
-    .then(objects => res.json(objects))
+    .then(objects => {
+      let sortedOrders = [];
+      if (req.body.object.type === 'month') {
+        sortedOrders = objects.filter(item =>
+          new Date(item.createdAt).getMonth() === req.body.object.month &&
+          new Date(item.createdAt).getFullYear() === req.body.object.year
+        );
+      } else if (req.body.object.type === 'week') {
+        sortedOrders = objects.filter(item =>
+          new Date(item.createdAt) >= new Date(req.body.object.days[0]) &&
+          new Date(item.createdAt).setHours(0, 0, 0, 0) <= new Date(req.body.object.days[6])
+        );
+      }
+      return res.json(sortedOrders);
+    })
     .catch(err => {
       console.log('getUserMatComing ERROR', err);
+      res.status(404).json(err);
+    });
+};
+
+
+exports.getUserMatDistrib = (req, res) => {
+  AddMaterial.find({
+    admin: req.body.object.userId
+  })
+    .populate('disinfector')
+    .exec()
+    .then(objects => {
+      let sortedOrders = [];
+      if (req.body.object.type === 'month') {
+        sortedOrders = objects.filter(item =>
+          new Date(item.createdAt).getMonth() === req.body.object.month &&
+          new Date(item.createdAt).getFullYear() === req.body.object.year
+        );
+      } else if (req.body.object.type === 'week') {
+        sortedOrders = objects.filter(item =>
+          new Date(item.createdAt) >= new Date(req.body.object.days[0]) &&
+          new Date(item.createdAt).setHours(0, 0, 0, 0) <= new Date(req.body.object.days[6])
+        );
+      }
+      return res.json(sortedOrders);
+    })
+    .catch(err => {
+      console.log('getUserMatDistrib ERROR', err);
       res.status(404).json(err);
     });
 };

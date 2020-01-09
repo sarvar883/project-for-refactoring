@@ -7,6 +7,8 @@ import {
   GET_DISINF_WEEK_STATS,
   GET_DISINF_DAY_STATS,
   GET_ADD_MATERIAL_EVENTS,
+  DISINF_MAT_COMINGS,
+  DISINF_MAT_DISTRIBS,
   LOADING_DISINF_STATS,
   SET_LOADING_DISINFECTORS,
   LOADING_CURRENT_DISINFECTOR,
@@ -141,7 +143,30 @@ export const disAddMatToOther = (object, occupation, history) => (dispatch) => {
 export const getUserMatComing = (object) => (dispatch) => {
   dispatch(loadingDisinfStats());
   axios.post('/stats/get-user-mat-coming', { object: object })
-    .then(res => console.log('res', res))
+    .then(res =>
+      dispatch({
+        type: DISINF_MAT_COMINGS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
+
+export const getUserMatDistrib = (object) => (dispatch) => {
+  dispatch(loadingDisinfStats());
+  axios.post('/stats/get-user-mat-distrib', { object: object })
+    .then(res =>
+      dispatch({
+        type: DISINF_MAT_DISTRIBS,
+        payload: res.data
+      })
+    )
     .catch(err =>
       dispatch({
         type: GET_ERRORS,

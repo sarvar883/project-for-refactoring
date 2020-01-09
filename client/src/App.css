@@ -1,3 +1,10 @@
+body {
+  /* because of the Back button at the bottom of the screen */
+  margin-bottom: 50px;
+}
+
+
+
 /* NAVBAR */
 nav.navbar .navbar-brand {
   background-color: white;
@@ -318,9 +325,7 @@ button.edit-message, button.delete-message {
 
 
 
-body {
-  margin-bottom: 50px;
-}
+
 /* FOOTER */
 .footer {
   position: fixed;

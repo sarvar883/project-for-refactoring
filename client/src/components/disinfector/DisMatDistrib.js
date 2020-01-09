@@ -5,9 +5,9 @@ import Spinner from '../common/Spinner';
 import Moment from 'react-moment';
 import moment from 'moment';
 
-import ShowDisMatComings from './ShowDisMatComings';
+import ShowDisMatDistribs from './ShowDisMatDistribs';
 
-import { getUserMatComing } from '../../actions/disinfectorActions';
+import { getUserMatDistrib } from '../../actions/disinfectorActions';
 
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
@@ -40,7 +40,7 @@ function getWeekRange(date) {
 
 
 
-class DisMatCom extends Component {
+class DisMatDistrib extends Component {
   state = {
     month: '',
     year: '',
@@ -64,7 +64,7 @@ class DisMatCom extends Component {
       month: thisMonth,
       year: thisYear
     };
-    this.props.getUserMatComing(object);
+    this.props.getUserMatDistrib(object);
     this.setState({
       headingMonth: thisMonth,
       headingYear: thisYear,
@@ -83,7 +83,7 @@ class DisMatCom extends Component {
       month: this.state.month,
       year: this.state.year
     };
-    this.props.getUserMatComing(object);
+    this.props.getUserMatDistrib(object);
 
     this.setState({
       headingMonth: this.state.month,
@@ -101,7 +101,7 @@ class DisMatCom extends Component {
       type: 'week',
       days: getWeekDays(getWeekRange(date).from)
     };
-    this.props.getUserMatComing(object);
+    this.props.getUserMatDistrib(object);
 
     this.setState({
       selectedDays: getWeekDays(getWeekRange(date).from),
@@ -127,7 +127,7 @@ class DisMatCom extends Component {
       type: 'week',
       days: getWeekDays(getWeekDays(getWeekRange(days[0]).from))
     };
-    this.props.getUserMatComing(object);
+    this.props.getUserMatDistrib(object);
 
     this.setState({
       selectedDays: getWeekDays(getWeekRange(days[0]).from),
@@ -200,7 +200,7 @@ class DisMatCom extends Component {
       <div className="container-fluid" >
         <div className="row">
           <div className="col-lg-4 col-md-6">
-            <h3 className="text-center">Приход Материалов по месяцам</h3>
+            <h3 className="text-center">Раздача Материалов по месяцам</h3>
             <form onSubmit={this.getMonthStats}>
               <div className="form-group">
                 <label htmlFor="year"><strong>Выберите Год:</strong></label>
@@ -220,7 +220,7 @@ class DisMatCom extends Component {
 
           <div className="col-lg-4 col-md-6 ml-auto weekly-stats">
             <div className="SelectedWeekExample">
-              <h3 className="text-center">Приход Материалов по неделям</h3>
+              <h3 className="text-center">Раздача Материалов по неделям</h3>
               <DayPicker
                 selectedDays={selectedDays}
                 showWeekNumbers
@@ -239,15 +239,15 @@ class DisMatCom extends Component {
         <div className="row mt-2">
           <div className="col-12">
             {this.state.method === 'week' ?
-              <h2 className="text-center pl-3 pr-3">Ваш Недельный Приход Материалов за <Moment format="DD/MM/YYYY">{this.state.selectedDays[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDays[6]}</Moment></h2> :
-              <h2 className="text-center pl-3 pr-3">Ваш Месячный Приход Материалов за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2>
+              <h2 className="text-center pl-3 pr-3">Ваша Недельная Раздача Материалов за <Moment format="DD/MM/YYYY">{this.state.selectedDays[0]}</Moment> - <Moment format="DD/MM/YYYY">{this.state.selectedDays[6]}</Moment></h2> :
+              <h2 className="text-center pl-3 pr-3">Ваша Месячная Раздача Материалов за {monthsNames[this.state.headingMonth]}, {this.state.headingYear}</h2>
             }
           </div>
         </div>
 
         <div className="row">
           <div className="col-12">
-            {this.props.disinfector.loadingDisinfStats ? <Spinner /> : <ShowDisMatComings />}
+            {this.props.disinfector.loadingDisinfStats ? <Spinner /> : <ShowDisMatDistribs />}
           </div>
         </div>
       </div>
@@ -263,4 +263,4 @@ const mapStateToProps = (state) => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getUserMatComing })(withRouter(DisMatCom));
+export default connect(mapStateToProps, { getUserMatDistrib })(withRouter(DisMatDistrib));

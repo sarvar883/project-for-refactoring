@@ -4,6 +4,8 @@ import {
   GET_DISINF_WEEK_STATS,
   GET_DISINF_DAY_STATS,
   GET_ADD_MATERIAL_EVENTS,
+  DISINF_MAT_COMINGS,
+  DISINF_MAT_DISTRIBS,
   LOADING_DISINF_STATS,
   SET_LOADING_DISINFECTORS,
   LOADING_ADD_MATERIAL_EVENTS
@@ -16,6 +18,8 @@ const initialState = {
     acceptedOrders: [],
     addedMaterials: []
   },
+  matComing: [],
+  matDistrib: [],
   method: '',
   addMaterialEvents: [],
   loadingDisinfectors: false,
@@ -94,6 +98,20 @@ export default function (state = initialState, action) {
         ...state,
         addMaterialEvents: action.payload,
         loadingEvents: false
+      };
+
+    case DISINF_MAT_COMINGS:
+      return {
+        ...state,
+        matComing: action.payload,
+        loadingDisinfStats: false
+      };
+
+    case DISINF_MAT_DISTRIBS:
+      return {
+        ...state,
+        matDistrib: action.payload,
+        loadingDisinfStats: false
       };
 
     default:

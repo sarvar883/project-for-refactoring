@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import Moment from 'react-moment';
 import { deleteOrder } from '../../actions/orderActions';
 
 // socket.io

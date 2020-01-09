@@ -32,4 +32,6 @@ router.post('/operator-stats', passport.authenticate('jwt', { session: false }),
 
 router.post('/get-user-mat-coming', passport.authenticate('jwt', { session: false }), statsController.getUserMatComing);
 
+router.post('/get-user-mat-distrib', passport.authenticate('jwt', { session: false }), statsController.getUserMatDistrib);
+
 module.exports = router;
