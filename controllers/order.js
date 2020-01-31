@@ -307,7 +307,7 @@ exports.addDisinfectorComment = (req, res) => {
 
 exports.getOrderById = (req, res) => {
   Order.findById(req.body.id)
-    .populate('disinfectorId userCreated clientId userAcceptedOrder')
+    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(order => res.json(order))
     .catch(err => {
@@ -504,6 +504,24 @@ exports.disAddMatToOtherDis = (req, res) => {
     .then(obj => res.json(obj))
     .catch(err => {
       console.log('disAddMatToOtherDis ERROR', err);
+      return res.status(400).json(err);
+    });
+};
+
+
+exports.getReturnedQueries = (req, res) => {
+  Order.find({
+    disinfectorId: req.body.id,
+    completed: true,
+    returnedBack: true,
+    returnHandled: false,
+    adminDecided: false
+  })
+    .populate('clientId')
+    .exec()
+    .then(queries => res.json(queries))
+    .catch(err => {
+      console.log('getReturnedQueries ERROR', err);
       return res.status(400).json(err);
     });
 };

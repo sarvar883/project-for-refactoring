@@ -28,6 +28,16 @@ exports.getSortedOrders = (req, res) => {
   //     });
   //   });
 
+  // Order.find()
+  //   .then(orders => {
+  //     orders.forEach(order => {
+  //       order.adminDecidedReturn = false;
+  //       order.returnedBack = false;
+  //       order.returnHandled = false;
+  //       order.save();
+  //     });
+  //   });
+
   Order.find()
     .populate('disinfectorId clientId')
     .exec()
@@ -49,6 +59,7 @@ exports.getSortedOrders = (req, res) => {
 exports.getOrderQueriesForAdmin = (req, res) => {
   Order.find({
     completed: true,
+    adminDecidedReturn: false,
     adminDecided: false
   })
     .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
@@ -67,9 +78,26 @@ exports.getOrderQueriesForAdmin = (req, res) => {
 exports.confirmOrderQuery = (req, res) => {
   Order.findById(req.body.object.orderId)
     .then(order => {
-      order.adminDecided = true;
-      order.adminConfirmed = req.body.object.response;
-      order.adminCheckedAt = new Date();
+      if (req.body.object.response === 'back') {
+        order.returnedBack = true;
+        order.returnHandled = false;
+        order.adminDecidedReturn = true;
+
+        order.operatorDecided = false;
+        order.operatorConfirmed = false;
+
+        order.accountantDecided = false;
+        order.accountantConfirmed = false;
+      } else {
+        order.adminDecided = true;
+        order.adminCheckedAt = new Date();
+
+        if (req.body.object.response === 'true') {
+          order.adminConfirmed = true;
+        } else if (req.body.object.response === 'false') {
+          order.adminConfirmed = false;
+        }
+      }
       return order.save();
     })
     .then(savedOrder => res.json(savedOrder))

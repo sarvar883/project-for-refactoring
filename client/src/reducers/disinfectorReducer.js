@@ -6,6 +6,7 @@ import {
   GET_ADD_MATERIAL_EVENTS,
   DISINF_MAT_COMINGS,
   DISINF_MAT_DISTRIBS,
+  GET_RETURNED_QUERIES,
   LOADING_DISINF_STATS,
   SET_LOADING_DISINFECTORS,
   LOADING_ADD_MATERIAL_EVENTS
@@ -18,6 +19,7 @@ const initialState = {
     acceptedOrders: [],
     addedMaterials: []
   },
+  queries: [],
   matComing: [],
   matDistrib: [],
   method: '',
@@ -112,6 +114,12 @@ export default function (state = initialState, action) {
         ...state,
         matDistrib: action.payload,
         loadingDisinfStats: false
+      };
+
+    case GET_RETURNED_QUERIES:
+      return {
+        ...state,
+        queries: action.payload
       };
 
     default:

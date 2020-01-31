@@ -9,6 +9,7 @@ import {
   GET_ADD_MATERIAL_EVENTS,
   DISINF_MAT_COMINGS,
   DISINF_MAT_DISTRIBS,
+  GET_RETURNED_QUERIES,
   LOADING_DISINF_STATS,
   SET_LOADING_DISINFECTORS,
   LOADING_CURRENT_DISINFECTOR,
@@ -174,6 +175,24 @@ export const getUserMatDistrib = (object) => (dispatch) => {
       })
     );
 };
+
+
+export const getReturnedQueries = (id) => (dispatch) => {
+  axios.post('/order/get-returned-queries', { id: id })
+    .then(res =>
+      dispatch({
+        type: GET_RETURNED_QUERIES,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      })
+    );
+};
+
 
 
 export const loadingDisinfStats = () => {

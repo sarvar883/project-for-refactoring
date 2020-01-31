@@ -11,11 +11,11 @@ class CompleteOrdersInMonth extends Component {
   render() {
     let completeOrders = this.state.orders.map((order, index) => {
 
-      if (order.clientType === 'corporate') {
-        if (!order.clientId) {
-          console.log('order', order);
-        }
-      }
+      // if (order.clientType === 'corporate') {
+      //   if (!order.clientId) {
+      //     console.log('order', order);
+      //   }
+      // }
 
       let consumptionArray = [];
       order.disinfectors.forEach(item => {

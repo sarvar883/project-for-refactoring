@@ -124,8 +124,9 @@ class ShowQueriesForAdmin extends Component {
               </ul>
 
               <div className="btn-group">
-                <button className="btn btn-danger mr-2" onClick={() => { if (window.confirm('Вы уверены отменить заказ?')) { this.adminConfirmsOrderQuery(order._id, false) } }}>Отменить</button>
-                <button className="btn btn-success" onClick={() => { if (window.confirm('Вы уверены подтвердить заказ?')) { this.adminConfirmsOrderQuery(order._id, true) } }}>Подтвердить</button>
+                <button className="btn btn-danger mr-2" onClick={() => { if (window.confirm('Вы уверены отменить заказ?')) { this.adminConfirmsOrderQuery(order._id, 'false') } }}>Отменить</button>
+                <button className="btn btn-success mr-2" onClick={() => { if (window.confirm('Вы уверены подтвердить заказ?')) { this.adminConfirmsOrderQuery(order._id, 'true') } }}>Подтвердить</button>
+                <button className="btn btn-dark" onClick={() => { if (window.confirm('Вы уверены отправить заказ обратно дезинфектору?')) { this.adminConfirmsOrderQuery(order._id, 'back') } }}>Обратно</button>
               </div>
             </div>
           </div>

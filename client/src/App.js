@@ -53,6 +53,7 @@ import OrderComplete from './components/disinfector/OrderComplete';
 import DisMaterials from './components/disinfector/DisMaterials';
 import DisMatCom from './components/disinfector/DisMatCom';
 import DisMatDistrib from './components/disinfector/DisMatDistrib';
+import ReturnedQueries from "./components/disinfector/ReturnedQueries";
 
 import Operator from './components/operator/Operator';
 import CreateOrder from './components/operator/CreateOrder';
@@ -231,6 +232,9 @@ class App extends Component {
             </Switch>
             <Switch>
               <DisinfectorRoute exact path="/disinfector/mat-distrib-history" component={DisMatDistrib} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/returned-queries" component={ReturnedQueries} />
             </Switch>
 
 

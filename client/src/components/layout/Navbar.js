@@ -63,6 +63,9 @@ class Navbar extends Component {
             <li className="nav-item">
               <Link className="nav-link" to="/disinfector/queries">Запросы</Link>
             </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/returned-queries">Возвращенные Запросы</Link>
+            </li>
           </div>
         </div>
 
@@ -161,6 +164,9 @@ class Navbar extends Component {
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/subadmin/queries">Запросы</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/returned-queries">Возвращенные Запросы</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/search-orders">Поиск заказов</Link>

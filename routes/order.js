@@ -48,4 +48,6 @@ router.post('/get-add-material-events', passport.authenticate('jwt', { session: 
 
 router.post('/dis-add-mat-to-other-user', passport.authenticate('jwt', { session: false }), orderController.disAddMatToOtherDis);
 
+router.post('/get-returned-queries', passport.authenticate('jwt', { session: false }), orderController.getReturnedQueries);
+
 module.exports = router;

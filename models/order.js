@@ -167,6 +167,22 @@ const orderSchema = new Schema({
   adminConfirmed: {
     type: Boolean,
     default: false
+  },
+
+  // if admin decided to return the query back to disinfector
+  adminDecidedReturn: {
+    type: Boolean,
+    default: false
+  },
+  // query is filled incorrectly, so admin returns the query to disinfector to refill the form
+  returnedBack: {
+    type: Boolean,
+    default: false
+  },
+  // disinfector refilled the returned query
+  returnHandled: {
+    type: Boolean,
+    default: false
   }
 });
 
