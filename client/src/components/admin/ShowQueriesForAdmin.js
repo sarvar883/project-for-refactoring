@@ -16,12 +16,14 @@ class ShowQueriesForAdmin extends Component {
     this._isMounted = true;
   }
 
-  adminConfirmsOrderQuery = (orderId, response) => {
+  adminConfirmsOrderQuery = (orderId, response, disinfectors) => {
     const object = {
       orderId: orderId,
-      response: response
+      response: response,
+      disinfectors: disinfectors
     };
     this.props.adminConfirmsOrderQuery(object, this.props.history);
+    window.location.reload();
   };
 
   componentWillUnmount() {
@@ -55,6 +57,10 @@ class ShowQueriesForAdmin extends Component {
           <div className="card order mt-2">
             <div className="card-body p-0">
               <ul className="font-bold mb-0 pl-3">
+                {order.returnedBack ? (
+                  <li className="text-danger">Это возвращенный заказ</li>
+                ) : ''}
+
                 <li>Ответственный: {order.disinfectorId.occupation} {order.disinfectorId.name}</li>
 
                 {order.clientType === 'corporate' ?
@@ -126,7 +132,7 @@ class ShowQueriesForAdmin extends Component {
               <div className="btn-group">
                 <button className="btn btn-danger mr-2" onClick={() => { if (window.confirm('Вы уверены отменить заказ?')) { this.adminConfirmsOrderQuery(order._id, 'false') } }}>Отменить</button>
                 <button className="btn btn-success mr-2" onClick={() => { if (window.confirm('Вы уверены подтвердить заказ?')) { this.adminConfirmsOrderQuery(order._id, 'true') } }}>Подтвердить</button>
-                {/* <button className="btn btn-dark" onClick={() => { if (window.confirm('Вы уверены отправить заказ обратно дезинфектору?')) { this.adminConfirmsOrderQuery(order._id, 'back') } }}>Обратно</button> */}
+                <button className="btn btn-dark" onClick={() => { if (window.confirm('Вы уверены отправить заказ обратно дезинфектору?')) { this.adminConfirmsOrderQuery(order._id, 'back', order.disinfectors) } }}>Обратно</button>
               </div>
             </div>
           </div>

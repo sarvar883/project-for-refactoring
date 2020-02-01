@@ -9,6 +9,7 @@ import CreateMessage from './CreateMessage';
 
 // socket.io
 import openSocket from 'socket.io-client';
+import socketLink from '../common/socketLink';
 
 class ShowChat extends Component {
   _isMounted = false;
@@ -28,8 +29,8 @@ class ShowChat extends Component {
     document.getElementById('navbar').classList.add('fixed-top');
 
     // const socket = openSocket('http://localhost:5000');
-    const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
-    // const socket = openSocket(window.location.origin);
+    // const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
+    const socket = openSocket(socketLink);
 
     socket.on(`createMessageInChat${this.props.match.params.chatId}`, data => {
       this.addMessageToDOM(data.message);

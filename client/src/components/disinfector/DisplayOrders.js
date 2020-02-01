@@ -7,6 +7,7 @@ import OrderInfo from './OrderInfo';
 
 // socket.io
 import openSocket from 'socket.io-client';
+import socketLink from '../common/socketLink';
 
 class DisplayOrders extends Component {
   _isMounted = false;
@@ -19,7 +20,8 @@ class DisplayOrders extends Component {
     this._isMounted = true;
 
     // const socket = openSocket('http://localhost:5000');
-    const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
+    // const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
+    const socket = openSocket(socketLink);
 
     socket.on('createOrder', data => {
       if (this.props.auth.user.id === data.disinfectorId) {

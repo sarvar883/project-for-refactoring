@@ -117,7 +117,13 @@ class ReturnedQueries extends Component {
 
               <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{order.completedAt}</Moment></li>
 
-              <Link to={`/order-complete-form/${order._id}`} className="btn btn-primary">Заполнить форму выполнения заново</Link>
+              {this.props.auth.user.occupation === 'subadmin' ? (
+                <Link to={`/subadmin/order-complete-form/${order._id}`} className="btn btn-primary">Заполнить форму выполнения заново</Link>
+              ) : ''}
+
+              {this.props.auth.user.occupation === 'disinfector' ? (
+                <Link to={`/order-complete-form/${order._id}`} className="btn btn-primary">Заполнить форму выполнения заново</Link>
+              ) : ''}
             </ul>
           </div>
         </div>

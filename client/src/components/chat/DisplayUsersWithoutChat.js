@@ -6,6 +6,7 @@ import { getAllUsers, createChat, getAllChatsOfUser } from '../../actions/chatAc
 
 // socket.io
 import openSocket from 'socket.io-client';
+import socketLink from '../common/socketLink';
 
 class DisplayUsersWithoutChat extends Component {
   _isMounted = false;
@@ -18,7 +19,8 @@ class DisplayUsersWithoutChat extends Component {
     this._isMounted = true;
 
     // const socket = openSocket('http://localhost:5000');
-    const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
+    // const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
+    const socket = openSocket(socketLink);
 
     socket.on('createChat', data => {
       if (this.props.auth.user.id === data.user1._id.toString()) {

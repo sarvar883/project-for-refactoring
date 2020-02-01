@@ -7,6 +7,7 @@ import { deleteOrder } from '../../actions/orderActions';
 
 // socket.io
 import openSocket from 'socket.io-client';
+import socketLink from '../common/socketLink';
 
 class AdmSortedOrders extends Component {
   _isMounted = false;
@@ -20,7 +21,8 @@ class AdmSortedOrders extends Component {
     this._isMounted = true;
 
     // const socket = openSocket('http://localhost:5000');
-    const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
+    // const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
+    const socket = openSocket(socketLink);
 
     socket.on('createOrder', data => {
       // check if today

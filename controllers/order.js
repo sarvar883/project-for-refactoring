@@ -358,6 +358,11 @@ exports.submitCompleteOrder = (req, res) => {
     .then(foundOrder => {
       foundOrder.completed = true;
 
+      if (foundOrder.returnedBack && !foundOrder.returnHandled) {
+        foundOrder.returnHandled = true;
+        foundOrder.adminDecidedReturn = false;
+      }
+
       let newArray = [];
       order.disinfectors.forEach(item => {
         newArray.push({
@@ -394,24 +399,36 @@ exports.submitCompleteOrder = (req, res) => {
     .then(newCompleteOrder => {
       let date = new Date(newCompleteOrder.dateFrom);
 
-      const repeatOrder = new Order({
-        disinfectorId: newCompleteOrder.disinfectorId,
-        clientType: newCompleteOrder.clientType,
-        client: newCompleteOrder.client,
-        clientId: newCompleteOrder.clientId,
-        address: newCompleteOrder.address,
-        phone: newCompleteOrder.phone,
-        phone2: newCompleteOrder.phone2,
-        typeOfService: newCompleteOrder.typeOfService,
-        advertising: newCompleteOrder.advertising,
-        userCreated: newCompleteOrder.userCreated,
-        userAcceptedOrder: newCompleteOrder.userAcceptedOrder,
-        repeatedOrder: true,
-        // add several months to date
-        timeOfRepeat: new Date(date.setMonth(date.getMonth() + newCompleteOrder.guarantee)),
-        previousOrder: newCompleteOrder._id
-      });
-      repeatOrder.save();
+      // if the query has been previously returned, it means that repeat order has already been created
+      if (newCompleteOrder.returnedBack) {
+        Order.findOne({ previousOrder: newCompleteOrder._id })
+          .then(repOrder => {
+            if (repOrder) {
+              // add several months to date
+              repOrder.timeOfRepeat = new Date(date.setMonth(date.getMonth() + newCompleteOrder.guarantee));
+              repOrder.save();
+            }
+          });
+      } else {
+        const repeatOrder = new Order({
+          disinfectorId: newCompleteOrder.disinfectorId,
+          clientType: newCompleteOrder.clientType,
+          client: newCompleteOrder.client,
+          clientId: newCompleteOrder.clientId,
+          address: newCompleteOrder.address,
+          phone: newCompleteOrder.phone,
+          phone2: newCompleteOrder.phone2,
+          typeOfService: newCompleteOrder.typeOfService,
+          advertising: newCompleteOrder.advertising,
+          userCreated: newCompleteOrder.userCreated,
+          userAcceptedOrder: newCompleteOrder.userAcceptedOrder,
+          repeatedOrder: true,
+          // add several months to date
+          timeOfRepeat: new Date(date.setMonth(date.getMonth() + newCompleteOrder.guarantee)),
+          previousOrder: newCompleteOrder._id
+        });
+        repeatOrder.save();
+      }
 
       io.getIO().emit('submitCompleteOrder', {
         completeOrder: newCompleteOrder

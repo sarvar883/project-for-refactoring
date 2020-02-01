@@ -519,6 +519,8 @@ class OrderComplete extends Component {
                   {consumptionRender}
                 </ul>
 
+                <li>Срок гарантии (в месяцах): {order.guarantee}</li>
+
                 {order.clientType === 'corporate' ? (
                   <React.Fragment>
                     {order.paymentMethod === 'cash' ? (
@@ -582,6 +584,7 @@ class OrderComplete extends Component {
                       {order.phone2 !== '' ? <li>Запасной Телефон Клиента: {order.phone2}</li> : ''}
                       <li>Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
                       <li>Время выполнения: <Moment format="HH:mm">{order.dateFrom}</Moment></li>
+                      <li>Адрес: {order.address}</li>
                     </ul>
                   </div>
                 </div>
@@ -591,7 +594,6 @@ class OrderComplete extends Component {
                 <div className="card order mt-2">
                   <div className="card-body p-0">
                     <ul className="font-bold mb-0 list-unstyled">
-                      <li>Адрес: {order.address}</li>
                       <li>Тип услуги: {order.typeOfService}</li>
                       <li>Комментарии Оператора: {order.comment ? order.comment : 'Нет комментариев'}</li>
                       <li>Комментарии Дезинфектора: {order.disinfectorComment ? order.disinfectorComment : 'Нет комментариев'}</li>

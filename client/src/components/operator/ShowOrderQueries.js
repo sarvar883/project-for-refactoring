@@ -5,6 +5,7 @@ import Moment from 'react-moment';
 
 // socket.io
 import openSocket from 'socket.io-client';
+import socketLink from '../common/socketLink';
 
 class ShowOrderQueries extends Component {
   _isMounted = false;
@@ -17,7 +18,8 @@ class ShowOrderQueries extends Component {
     this._isMounted = true;
 
     // const socket = openSocket('http://localhost:5000');
-    const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
+    // const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
+    const socket = openSocket(socketLink);
 
     socket.on('submitCompleteOrder', data => {
       this.addOrderToDOM(data.completeOrder);
@@ -46,6 +48,10 @@ class ShowOrderQueries extends Component {
         <div className="card order mt-2">
           <div className="card-body p-0">
             <ul className="font-bold mb-0 pl-3">
+              {order.returnedBack ? (
+                <li className="text-danger">Это возвращенный заказ</li>
+              ) : ''}
+
               <li>Ответственный: {order.disinfectorId.occupation} {order.disinfectorId.name}</li>
               {order.clientType === 'corporate' ?
                 <React.Fragment>

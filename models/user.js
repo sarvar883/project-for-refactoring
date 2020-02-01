@@ -69,4 +69,17 @@ userSchema.methods.subtractConsumptionMaterials = function (consumptionArray) {
   return this.save();
 };
 
+// return materials to disinfector after admin returned the query
+userSchema.methods.returnMaterials = function (consumptionArray) {
+  consumptionArray.forEach(item => {
+    this.materials.forEach(thing => {
+      if (thing.material === item.material && thing.unit === item.unit) {
+        thing.amount += item.amount;
+        return;
+      }
+    });
+  });
+  return this.save();
+};
+
 module.exports = mongoose.model('User', userSchema);

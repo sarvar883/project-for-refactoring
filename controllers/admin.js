@@ -88,6 +88,17 @@ exports.confirmOrderQuery = (req, res) => {
 
         order.accountantDecided = false;
         order.accountantConfirmed = false;
+
+        // return materials to disinfectors
+        req.body.object.disinfectors.forEach(person => {
+          User.findById(person.user._id)
+            .then(user => {
+              if (user) {
+                user.returnMaterials(person.consumption);
+              }
+            });
+        });
+
       } else {
         order.adminDecided = true;
         order.adminCheckedAt = new Date();

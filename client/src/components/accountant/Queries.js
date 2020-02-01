@@ -53,6 +53,10 @@ class Queries extends Component {
           <div className="card order mt-2">
             <div className="card-body p-0">
               <ul className="font-bold mb-0 list-unstyled">
+                {item.returnedBack ? (
+                  <li className="text-danger">Это возвращенный заказ</li>
+                ) : ''}
+
                 <li>Ответственный: {item.disinfectorId.occupation} {item.disinfectorId.name}</li>
 
                 {item.operatorDecided ? (

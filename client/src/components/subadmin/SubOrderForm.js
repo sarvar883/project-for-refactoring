@@ -484,6 +484,74 @@ class SubOrderForm extends Component {
     });
 
 
+
+    // IF THIS IS A RETURNED QUERY
+    let renderReturnedOrder = '';
+    if (order.returnedBack && !order.returnHandled) {
+      let consumptionArray = [];
+      order.disinfectors.forEach(item => {
+        consumptionArray.push({
+          user: item.user,
+          consumption: item.consumption
+        });
+      });
+
+      let consumptionRender = consumptionArray.map((item, index) =>
+        <li key={index}>
+          <p className="mb-0">Пользователь: {item.user.occupation} {item.user.name}</p>
+          {item.consumption.map((element, number) =>
+            <p key={number} className="mb-0">{element.material}: {element.amount.toLocaleString()} {element.unit}</p>
+          )}
+        </li>
+      );
+
+      renderReturnedOrder = (
+        <div className="col-lg-4 col-md-6">
+          <div className="card order mt-2">
+            <div className="card-body p-0">
+              <ul className="font-bold mb-0 list-unstyled">
+                <h4>Это возвращенный заказ</h4>
+                <li>В прошлый раз вы заполняли форму выполнения:</li>
+
+                <li>Расход Материалов (заказ выполнили {order.disinfectors.length} чел):</li>
+                <ul className="font-bold mb-0">
+                  {consumptionRender}
+                </ul>
+
+                <li>Срок гарантии (в месяцах): {order.guarantee}</li>
+
+                {order.clientType === 'corporate' ? (
+                  <React.Fragment>
+                    {order.paymentMethod === 'cash' ? (
+                      <React.Fragment>
+                        <li>Тип Платежа: Наличный</li>
+                        <li>Общая Сумма: {order.cost.toLocaleString()} UZS (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
+                      </React.Fragment>
+                    ) : (
+                        <React.Fragment>
+                          <li>Тип Платежа: Безналичный</li>
+                          <li>Номер Договора: {order.contractNumber}</li>
+                        </React.Fragment>
+                      )}
+                  </React.Fragment>
+                ) : ''}
+
+                {order.clientType === 'individual' ?
+                  <li>Общая Сумма: {order.cost.toLocaleString()} UZS  (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
+                  : ''}
+
+                <li>Форма Выполнения Заказа была заполнена: <Moment format="DD/MM/YYYY HH:mm">{order.completedAt}</Moment></li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    // END OF IF THIS IS A RETURNED QUERY
+
+
+
     return (
       <div className="container-fluid p-0">
         {this.props.subadmin.loading ? <Spinner /> : (
@@ -492,10 +560,10 @@ class SubOrderForm extends Component {
               <div className="col-12">
                 <h2 className="text-center">Информация о заказе</h2>
               </div>
-              <div className="col-md-6">
+              <div className="col-lg-4 col-md-6">
                 <div className="card order mt-2">
                   <div className="card-body p-0">
-                    <ul className="font-bold mb-0">
+                    <ul className="font-bold mb-0 list-unstyled">
                       <li>Ответственный: {order.disinfectorId.occupation} {order.disinfectorId.name}</li>
 
                       {order.clientType === 'corporate' ?
@@ -513,16 +581,16 @@ class SubOrderForm extends Component {
                       {order.phone2 !== '' ? <li>Запасной Телефон Клиента: {order.phone2}</li> : ''}
                       <li>Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
                       <li>Время выполнения: <Moment format="HH:mm">{order.dateFrom}</Moment></li>
+                      <li>Адрес: {order.address}</li>
                     </ul>
                   </div>
                 </div>
               </div>
 
-              <div className="col-md-6">
+              <div className="col-lg-4 col-md-6">
                 <div className="card order mt-2">
                   <div className="card-body p-0">
-                    <ul className="font-bold mb-0">
-                      <li>Адрес: {order.address}</li>
+                    <ul className="font-bold mb-0 list-unstyled">
                       <li>Тип услуги: {order.typeOfService}</li>
                       <li>Комментарии Оператора: {order.comment ? order.comment : 'Нет комментариев'}</li>
                       <li>Комментарии Дезинфектора: {order.disinfectorComment ? order.disinfectorComment : 'Нет комментариев'}</li>
@@ -536,6 +604,8 @@ class SubOrderForm extends Component {
                   </div>
                 </div>
               </div>
+
+              {order.returnedBack ? renderReturnedOrder : ''}
             </div>
 
             <div className="row m-0">

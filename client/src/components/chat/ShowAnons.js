@@ -6,6 +6,7 @@ import moment from 'moment';
 
 // socket.io
 import openSocket from 'socket.io-client';
+import socketLink from '../common/socketLink';
 
 class ShowAnons extends Component {
   _isMounted = false;
@@ -18,8 +19,8 @@ class ShowAnons extends Component {
     this._isMounted = true;
 
     // const socket = openSocket('http://localhost:5000');
-    const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
-    // const socket = openSocket(window.location.origin);
+    // const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
+    const socket = openSocket(socketLink);
 
     socket.on('createAnons', data => {
       this.addAnonsToDOM(data.anons);
