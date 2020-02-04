@@ -4,6 +4,7 @@ import Calendar from 'react-calendar';
 import { connect } from 'react-redux';
 import Moment from 'react-moment';
 import Spinner from '../common/Spinner';
+import { Swipeable } from 'react-swipeable';
 
 import { getSortedOrders } from '../../actions/subadminActions';
 
@@ -23,6 +24,24 @@ class Subadmin extends Component {
       date: date
     });
     this.props.getSortedOrders(date);
+  };
+
+  onSwiped = (direction) => {
+    let newDate = new Date();
+    if (direction === 'LEFT') {
+      // add 1 day to state date
+      newDate.setDate(this.state.date.getDate() + 1);
+      this.setState({
+        date: newDate
+      });
+    } else if (direction === 'RIGHT') {
+      // decrement 1 day from state date
+      newDate.setDate(this.state.date.getDate() - 1);
+      this.setState({
+        date: newDate
+      });
+    }
+    this.props.getSortedOrders(this.state.date);
   };
 
   render() {
@@ -49,7 +68,15 @@ class Subadmin extends Component {
             <h1 className="text-center">Заявки на <Moment format="DD/MM/YYYY">{this.state.date}</Moment></h1>
 
             {loadingSortedOrders ? <Spinner /> : (
-              <SubadmSortedOrders date={this.state.date} />
+              <Swipeable
+                trackMouse
+                preventDefaultTouchmoveEvent
+                onSwipedLeft={() => this.onSwiped('LEFT')}
+                onSwipedRight={() => this.onSwiped('RIGHT')}
+                delta={120}
+              >
+                <SubadmSortedOrders date={this.state.date} />
+              </Swipeable>
             )}
           </div>
         </div>
