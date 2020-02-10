@@ -38,6 +38,7 @@ exports.getSortedOrders = (req, res) => {
   //     });
   //   });
 
+
   Order.find()
     .populate('disinfectorId clientId')
     .exec()
