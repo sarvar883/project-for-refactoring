@@ -25,6 +25,7 @@ const materialsArray = [
   { material: 'Coldfogger', unit: 'шт' },
   { material: 'Thermalfogger', unit: 'шт' },
   { material: 'Sprayer 5l', unit: 'шт' },
-  { material: 'Фонарик', unit: 'шт' }
+  { material: 'Фонарик', unit: 'шт' },
+  { material: 'Кемирувчи контейнер', unit: 'шт' }
 ];
 module.exports = materialsArray;

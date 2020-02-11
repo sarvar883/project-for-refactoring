@@ -38,6 +38,18 @@ exports.getSortedOrders = (req, res) => {
   //     });
   //   });
 
+  // let array;
+  // CurrentMaterial.findOne()
+  //   .then(curMat => {
+  //     array = [...curMat.materials];
+  //     array.push({
+  //       material: 'Кемирувчи контейнер',
+  //       amount: 0,
+  //       unit: 'шт'
+  //     });
+  //     curMat.materials = array;
+  //     curMat.save();
+  //   });
 
   Order.find()
     .populate('disinfectorId clientId')
