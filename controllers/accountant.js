@@ -1,9 +1,10 @@
 const Order = require('../models/order');
-
+const User = require('../models/user');
 
 exports.getQueries = (req, res) => {
   Order.find({
     completed: true,
+    adminDecidedReturn: false,
     accountantDecided: false
   })
     .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
@@ -34,15 +35,40 @@ exports.getQueryById = (req, res) => {
 exports.confirmQuery = (req, res) => {
   Order.findById(req.body.object.orderId)
     .then(order => {
-      order.accountantDecided = true;
-      if (req.body.object.decision === 'confirm') {
-        order.accountantConfirmed = true;
-        order.invoice = req.body.object.invoice;
-        order.cost = req.body.object.cost;
-      } else if (req.body.object.decision === 'reject') {
+      if (req.body.object.decision === 'back') {
+        order.returnedBack = true;
+        order.returnHandled = false;
+        order.adminDecidedReturn = true;
+
+        order.operatorDecided = false;
+        order.operatorConfirmed = false;
+
+        order.accountantDecided = false;
         order.accountantConfirmed = false;
+
+        // return materials to disinfectors
+        req.body.object.disinfectors.forEach(person => {
+          User.findById(person.user._id)
+            .then(user => {
+              if (user) {
+                user.returnMaterials(person.consumption);
+              }
+            });
+        });
+
+      } else {
+        order.accountantDecided = true;
+        order.accountantCheckedAt = new Date();
+
+        if (req.body.object.decision === 'confirm') {
+          order.accountantConfirmed = true;
+          order.invoice = req.body.object.invoice;
+          order.cost = req.body.object.cost;
+        } else if (req.body.object.decision === 'reject') {
+          order.accountantConfirmed = false;
+        }
+
       }
-      order.accountantCheckedAt = new Date();
       return order.save();
     })
     .then(savedOrder => res.json(savedOrder))

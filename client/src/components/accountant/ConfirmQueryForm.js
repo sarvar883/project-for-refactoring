@@ -44,6 +44,7 @@ class ConfirmQueryForm extends Component {
         orderId: this.state.query._id,
         invoice: this.state.invoice,
         cost: Number(this.state.cost),
+        disinfectors: this.state.query.disinfectors
       };
       this.props.accountantConfirmQuery(object, this.props.history);
     }
@@ -53,7 +54,18 @@ class ConfirmQueryForm extends Component {
     e.preventDefault();
     const object = {
       decision: 'reject',
-      orderId: this.state.query._id
+      orderId: this.state.query._id,
+      disinfectors: this.state.query.disinfectors
+    };
+    this.props.accountantConfirmQuery(object, this.props.history);
+  }
+
+  returnBack = (e) => {
+    e.preventDefault();
+    const object = {
+      decision: 'back',
+      orderId: this.state.query._id,
+      disinfectors: this.state.query.disinfectors
     };
     this.props.accountantConfirmQuery(object, this.props.history);
   }
@@ -134,6 +146,7 @@ class ConfirmQueryForm extends Component {
                     <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{query.completedAt}</Moment></li>
                   </ul>
                   <button className="btn btn-danger" onClick={this.reject}>Отменить Выполнение Заказа</button>
+                  <button className="btn btn-dark ml-2" onClick={this.returnBack}>Отправить Обратно</button>
                 </div>
               </div>
             )}
