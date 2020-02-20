@@ -54,9 +54,9 @@ class CompleteOrdersInMonth extends Component {
                 ) : <li>Оператор еще не рассмотрел заявку</li>}
 
 
-                {order.clientType === 'corporate' && !order.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
+                {order.clientType === 'corporate' && order.paymentMethod === 'notCash' && !order.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
 
-                {order.clientType === 'corporate' && order.accountantDecided ?
+                {order.clientType === 'corporate' && order.paymentMethod === 'notCash' && order.accountantDecided ?
                   <React.Fragment>
                     <li>Бухгалтер рассмотрел заявку</li>
                     {order.accountantConfirmed ? (
@@ -68,6 +68,17 @@ class CompleteOrdersInMonth extends Component {
                     ) : <li className="text-danger">Бухгалтер Отклонил (<Moment format="DD/MM/YYYY HH:mm">{order.accountantCheckedAt}</Moment>)</li>}
                   </React.Fragment>
                   : ''}
+
+                {order.clientType === 'corporate' && order.paymentMethod === 'cash' && !order.adminDecided ? <li>Админ еще не рассмотрел заявку</li> : ''}
+
+                {order.clientType === 'corporate' && order.paymentMethod === 'cash' && order.adminDecided ? (
+                  <React.Fragment>
+                    <li>Админ рассмотрел заявку</li>
+                    {order.adminConfirmed ? (
+                      <li className="text-success">Админ Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{order.adminCheckedAt}</Moment>)</li>
+                    ) : <li className="text-danger">Админ Отклонил (<Moment format="DD/MM/YYYY HH:mm">{order.adminCheckedAt}</Moment>)</li>}
+                  </React.Fragment>
+                ) : ''}
 
                 {order.clientType === 'individual' && !order.adminDecided ? <li>Админ еще не рассмотрел заявку</li> : ''}
                 {order.clientType === 'individual' && order.adminDecided ? (

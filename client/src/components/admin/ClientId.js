@@ -95,9 +95,9 @@ class ClientId extends Component {
                   </React.Fragment>
                 ) : <li>Оператор еще не рассмотрел заявку</li>}
 
-                {item.clientType === 'corporate' && !item.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
+                {item.clientType === 'corporate' && item.paymentMethod === 'notCash' && !item.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
 
-                {item.clientType === 'corporate' && item.accountantDecided ?
+                {item.clientType === 'corporate' && item.paymentMethod === 'notCash' && item.accountantDecided ?
                   <React.Fragment>
                     <li>Бухгалтер рассмотрел заявку</li>
                     {item.accountantConfirmed ? (
@@ -109,6 +109,17 @@ class ClientId extends Component {
                     ) : <li className="text-danger">Бухгалтер Отклонил (<Moment format="DD/MM/YYYY HH:mm">{item.accountantCheckedAt}</Moment>)</li>}
                   </React.Fragment>
                   : ''}
+
+                {item.clientType === 'corporate' && item.paymentMethod === 'cash' && !item.adminDecided ? <li>Админ еще не рассмотрел заявку</li> : ''}
+
+                {item.clientType === 'corporate' && item.paymentMethod === 'cash' && item.adminDecided ? (
+                  <React.Fragment>
+                    <li>Админ рассмотрел заявку</li>
+                    {item.adminConfirmed ? (
+                      <li className="text-success">Админ Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{item.adminCheckedAt}</Moment>)</li>
+                    ) : <li className="text-danger">Админ Отклонил (<Moment format="DD/MM/YYYY HH:mm">{item.adminCheckedAt}</Moment>)</li>}
+                  </React.Fragment>
+                ) : ''}
 
                 {item.clientType === 'individual' && !item.adminDecided ? <li>Админ еще не рассмотрел заявку</li> : ''}
                 {item.clientType === 'individual' && item.adminDecided ? (
