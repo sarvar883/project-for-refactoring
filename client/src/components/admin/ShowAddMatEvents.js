@@ -51,7 +51,8 @@ class ShowAddMatEvents extends Component {
 
     events.forEach(event => {
       disinfArray.forEach(element => {
-        if (event.disinfector._id.toString() === element._id.toString() && event.disinfector.name === element.name) {
+
+        if (event.disinfector && event.disinfector._id.toString() === element._id.toString() && event.disinfector.name === element.name) {
           element.events.push(event);
           element.received.forEach(i => {
             event.materials.forEach(thing => {
