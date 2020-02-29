@@ -265,7 +265,13 @@ class EditOrder extends Component {
     const corporateClients = [
       { label: '-- Выберите корпоративного клиента --', value: '' }
     ];
-    this.props.order.corporateClients.forEach(item => {
+    // sort clients alphabetically
+    let sortedCorpClients = this.props.order.corporateClients.sort((a, b) => {
+      if (a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
+      if (a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
+      return 0;
+    });
+    sortedCorpClients.forEach(item => {
       corporateClients.push({
         label: item.name,
         value: item._id

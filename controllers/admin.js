@@ -38,6 +38,46 @@ exports.getSortedOrders = (req, res) => {
   //     });
   //   });
 
+
+
+  // let materials = [
+  //   { material: 'Рубашка', unit: 'шт' },
+  //   { material: 'Респиратор 3м polomsk', unit: 'шт' },
+  //   { material: 'Респиратор fullmask', unit: 'шт' },
+  //   { material: 'Электронные Весы', unit: 'шт' },
+  //   { material: 'Униформа Халат', unit: 'шт' },
+  //   { material: 'Разовая Перчатка', unit: 'шт' },
+  //   { material: 'Разовый Респиратор', unit: 'шт' },
+  //   { material: 'Договор', unit: 'шт' },
+  //   { material: 'Акт Счет-Фак', unit: 'шт' },
+  //   { material: 'Лицен. Гувохнома', unit: 'шт' },
+  //   { material: 'Coldfogger', unit: 'шт' },
+  //   { material: 'Thermalfogger', unit: 'шт' },
+  //   { material: 'Sprayer 5l', unit: 'шт' },
+  //   { material: 'Фонарик', unit: 'шт' },
+  //   { material: 'Кемирувчи контейнер', unit: 'шт' }
+  // ];
+  // User.find()
+  //   .then(users => {
+  //     let array;
+  //     users.forEach(user => {
+
+  //       array = [...user.materials];
+  //       materials.forEach(object => {
+  //         array.push({
+  //           material: object.material,
+  //           amount: 0,
+  //           unit: object.unit
+  //         });
+  //       });
+
+  //       user.materials = array;
+  //       user.save();
+  //     });
+  //   });
+
+
+
   // let array;
   // CurrentMaterial.findOne()
   //   .then(curMat => {
