@@ -117,16 +117,16 @@ class ConfirmQueryForm extends Component {
                     ) : <li>Оператор еще не рассмотрел заявку</li>}
 
                     {query.clientId ? (
-                      <li>Корпоративный Клиент: {query.clientId.name}</li>
-                    ) : <li>Корпоративный Клиент</li>}
+                      <li className="text-danger">Корпоративный Клиент: {query.clientId.name}</li>
+                    ) : <li className="text-danger">Корпоративный Клиент</li>}
 
-                    <li>Имя клиента: {query.client}</li>
+                    <li className="text-danger">Имя клиента: {query.client}</li>
+                    <li className="text-danger">Дата: <Moment format="DD/MM/YYYY">{query.dateFrom}</Moment></li>
+                    <li className="text-danger">Время выполнения: С <Moment format="HH:mm">{query.dateFrom}</Moment> ПО <Moment format="HH:mm">{query.completedAt}</Moment></li>
+                    <li className="text-danger">Адрес: {query.address}</li>
 
                     <li>Телефон клиента: {query.phone}</li>
                     {query.phone2 !== '' ? <li>Запасной номер: {query.phone2}</li> : ''}
-                    <li>Дата: <Moment format="DD/MM/YYYY">{query.dateFrom}</Moment></li>
-                    <li>Время выполнения: С <Moment format="HH:mm">{query.dateFrom}</Moment> ПО <Moment format="HH:mm">{query.completedAt}</Moment></li>
-                    <li>Адрес: {query.address}</li>
                     <li>Тип услуги: {query.typeOfService}</li>
                     <li>Комментарии Оператора: {query.comment ? query.comment : 'Нет комментариев'}</li>
                     <li>Комментарии Дезинфектора: {query.disinfectorComment ? query.disinfectorComment : 'Нет комментариев'}</li>

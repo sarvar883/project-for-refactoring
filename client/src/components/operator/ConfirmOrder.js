@@ -110,20 +110,21 @@ class ConfirmOrder extends Component {
                     {completeOrder.clientType === 'corporate' ?
                       <React.Fragment>
                         {completeOrder.clientId ? (
-                          <li>Корпоративный Клиент: {completeOrder.clientId.name}</li>
-                        ) : <li>Корпоративный Клиент</li>}
-                        <li>Имя клиента: {completeOrder.client}</li>
+                          <li className="text-danger">Корпоративный Клиент: {completeOrder.clientId.name}</li>
+                        ) : <li className="text-danger">Корпоративный Клиент</li>}
+                        <li className="text-danger">Имя клиента: {completeOrder.client}</li>
                       </React.Fragment>
                       : ''}
 
                     {completeOrder.clientType === 'individual' ?
-                      <li>Физический Клиент: {completeOrder.client}</li>
+                      <li className="text-danger">Физический Клиент: {completeOrder.client}</li>
                       : ''}
+                    <li className="text-danger">Дата: <Moment format="DD/MM/YYYY">{completeOrder.dateFrom}</Moment></li>
+                    <li className="text-danger">Время выполнения: С <Moment format="HH:mm">{completeOrder.dateFrom}</Moment> ПО <Moment format="HH:mm">{completeOrder.completedAt}</Moment></li>
+                    <li className="text-danger">Адрес: {completeOrder.address}</li>
+
                     <li>Телефон клиента: {completeOrder.phone}</li>
                     {completeOrder.phone2 !== '' ? <li>Запасной номер: {completeOrder.phone2}</li> : ''}
-                    <li>Дата: <Moment format="DD/MM/YYYY">{completeOrder.dateFrom}</Moment></li>
-                    <li>Время выполнения: С <Moment format="HH:mm">{completeOrder.dateFrom}</Moment> ПО <Moment format="HH:mm">{completeOrder.completedAt}</Moment></li>
-                    <li>Адрес: {completeOrder.address}</li>
                     <li>Тип услуги: {completeOrder.typeOfService}</li>
                     <li>Комментарии Оператора: {completeOrder.comment ? completeOrder.comment : 'Нет комментариев'}</li>
                     <li>Комментарии Дезинфектора: {completeOrder.disinfectorComment ? completeOrder.disinfectorComment : 'Нет комментариев'}</li>

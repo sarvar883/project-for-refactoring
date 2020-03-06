@@ -105,7 +105,10 @@ class EditOrder extends Component {
         { label: 'TR', value: 'TR' },
         { label: 'GR', value: 'GR' },
         { label: 'MX', value: 'MX' },
-        { label: 'KOMP', value: 'KOMP' }
+        { label: 'KOMP', value: 'KOMP' },
+        { label: 'Консультация', value: 'Консультация' },
+        { label: 'Профилактика', value: 'Профилактика' },
+        { label: 'Осмотр', value: 'Осмотр' }
       ];
 
       let array = [];

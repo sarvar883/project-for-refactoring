@@ -66,19 +66,19 @@ class ShowQueriesForAdmin extends Component {
                 {order.clientType === 'corporate' ?
                   <React.Fragment>
                     {order.clientId ? (
-                      <li>Корпоративный Клиент: {order.clientId.name}</li>
-                    ) : <li>Корпоративный Клиент</li>}
-                    <li>Имя клиента: {order.client}</li>
+                      <li className="text-danger">Корпоративный Клиент: {order.clientId.name}</li>
+                    ) : <li className="text-danger">Корпоративный Клиент</li>}
+                    <li className="text-danger">Имя клиента: {order.client}</li>
                   </React.Fragment>
                   : ''}
 
                 {order.clientType === 'individual' ?
-                  <li>Физический Клиент: {order.client}</li>
+                  <li className="text-danger">Физический Клиент: {order.client}</li>
                   : ''}
 
-                <li>Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
-                <li>Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment> ПО <Moment format="HH:mm">{order.completedAt}</Moment></li>
-                <li>Адрес: {order.address}</li>
+                <li className="text-danger">Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
+                <li className="text-danger">Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment> ПО <Moment format="HH:mm">{order.completedAt}</Moment></li>
+                <li className="text-danger">Адрес: {order.address}</li>
                 <li>Тип услуги: {order.typeOfService}</li>
                 <li>Откуда узнали: {order.advertising}</li>
                 <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{order.completedAt}</Moment></li>
