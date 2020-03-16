@@ -471,7 +471,8 @@ exports.searchClients = (req, res) => {
           if (item.type === 'corporate') {
             return false;
           } else if (item.type === 'individual') {
-            return stringSimilarity.compareTwoStrings(item.phone, req.body.object.payload) > 0.72;
+            return item.phone.includes(req.body.object.payload);
+            // stringSimilarity.compareTwoStrings(item.phone, req.body.object.payload) > 0.72;
           }
         } else if (req.body.object.method === 'address') {
           if (item.type === 'corporate') {

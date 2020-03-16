@@ -175,26 +175,36 @@ class ClientList extends Component {
             </div>
           </div>
         ) : (
-            <div className="row">
-              <div className="col-12">
-                <div className="table-responsive mt-3">
-                  <table className="table table-bordered table-hover table-striped">
-                    <thead>
-                      <tr>
-                        <th>Имя</th>
-                        <th>Подробнее</th>
-                        <th>Тип</th>
-                        <th>Телефон</th>
-                        <th>Адрес</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {renderClients}
-                    </tbody>
-                  </table>
+            <React.Fragment>
+              {clients.length === 0 ? (
+                <div className="row">
+                  <div className="col-12">
+                    <h2 className="text-center">Клиенты не найдены</h2>
+                  </div>
                 </div>
-              </div>
-            </div>
+              ) : (
+                  <div className="row">
+                    <div className="col-12">
+                      <div className="table-responsive mt-3">
+                        <table className="table table-bordered table-hover table-striped">
+                          <thead>
+                            <tr>
+                              <th>Имя</th>
+                              <th>Подробнее</th>
+                              <th>Тип</th>
+                              <th>Телефон</th>
+                              <th>Адрес</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {renderClients}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                )}
+            </React.Fragment>
           )}
       </div>
     )
