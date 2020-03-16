@@ -466,18 +466,18 @@ exports.searchClients = (req, res) => {
 
       clients = clients.filter(item => {
         if (req.body.object.method === 'name') {
-          return stringSimilarity.compareTwoStrings(item.name.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.45;
+          return stringSimilarity.compareTwoStrings(item.name.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.5;
         } else if (req.body.object.method === 'phone') {
           if (item.type === 'corporate') {
             return false;
           } else if (item.type === 'individual') {
-            return stringSimilarity.compareTwoStrings(item.phone, req.body.object.payload) > 0.5;
+            return stringSimilarity.compareTwoStrings(item.phone, req.body.object.payload) > 0.72;
           }
         } else if (req.body.object.method === 'address') {
           if (item.type === 'corporate') {
             return false;
           } else if (item.type === 'individual') {
-            return stringSimilarity.compareTwoStrings(item.address.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.45;
+            return stringSimilarity.compareTwoStrings(item.address.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.5;
           }
         } else if (req.body.object.method === 'all') {
           return true;
