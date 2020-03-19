@@ -5,7 +5,7 @@ const materialsArray = [
   { material: 'Гр Таб', unit: 'шт' },
   { material: 'Гр Гран', unit: 'гр' },
   { material: 'Титан', unit: 'гр' },
-  { material: 'Хлор', unit: 'шт' },
+  { material: 'Хлор Актив', unit: 'гр' },
   { material: 'Dry Smoke', unit: 'гр' },
   { material: 'Ароматизатор', unit: 'гр' },
   { material: 'Гель Тр', unit: 'шт' },
@@ -26,6 +26,9 @@ const materialsArray = [
   { material: 'Thermalfogger', unit: 'шт' },
   { material: 'Sprayer 5l', unit: 'шт' },
   { material: 'Фонарик', unit: 'шт' },
-  { material: 'Кемирувчи контейнер', unit: 'шт' }
+  { material: 'Кемирувчи контейнер', unit: 'шт' },
+
+  { material: 'Хлор', unit: 'шт' }
 ];
+
 module.exports = materialsArray;
