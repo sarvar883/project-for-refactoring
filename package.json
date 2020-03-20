@@ -4,7 +4,8 @@
   "description": "a web app for pro-team",
   "main": "server.js",
   "engines": {
-    "node": "8.11.4"
+    "node": "8.11.4",
+    "npm": "5.6.0"
   },
   "scripts": {
     "client-install": "npm install --prefix client",
