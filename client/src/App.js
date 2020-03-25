@@ -69,6 +69,7 @@ import Queries from './components/accountant/Queries';
 import ConfirmQueryForm from './components/accountant/ConfirmQueryForm';
 import AccStats from './components/accountant/AccStats';
 
+import OrderFullDetails from './components/common/OrderFullDetails';
 import NotCompOrders from './components/operator/NotCompOrders';
 import SearchOrders from './components/operator/SearchOrders';
 import Chat from './components/chat/Chat';
@@ -123,6 +124,10 @@ class App extends Component {
 
             <Switch>
               <PrivateRoute exact path="/not-completed-orders" component={NotCompOrders} />
+            </Switch>
+
+            <Switch>
+              <PrivateRoute exact path="/order-full-details/:id" component={OrderFullDetails} />
             </Switch>
 
 

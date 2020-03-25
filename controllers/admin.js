@@ -100,12 +100,13 @@ exports.getOrderQueriesForAdmin = (req, res) => {
   Order.find({
     completed: true,
     adminDecidedReturn: false,
-    adminDecided: false
+    adminDecided: false,
+    $or: [{ clientType: 'individual' }, { paymentMethod: 'cash' }]
   })
     .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(orderQueries => {
-      orderQueries = orderQueries.filter(order => order.clientType === 'individual' || order.paymentMethod === 'cash');
+      // orderQueries = orderQueries.filter(order => order.clientType === 'individual' || order.paymentMethod === 'cash');
       return res.json(orderQueries);
     })
     .catch(err => {

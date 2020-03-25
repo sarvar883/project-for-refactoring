@@ -5,12 +5,14 @@ exports.getQueries = (req, res) => {
   Order.find({
     completed: true,
     adminDecidedReturn: false,
-    accountantDecided: false
+    accountantDecided: false,
+    clientType: 'corporate',
+    paymentMethod: 'notCash'
   })
-    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
+    .populate('disinfectorId clientId')
     .exec()
     .then(orders => {
-      orders = orders.filter(order => order.clientType === 'corporate' && order.paymentMethod === 'notCash');
+      // orders = orders.filter(order => order.clientType === 'corporate' && order.paymentMethod === 'notCash');
       return res.json(orders);
     })
     .catch(err => {

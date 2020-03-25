@@ -8,7 +8,8 @@ import materials from '../common/materials';
 class ShowDisStats extends Component {
   state = {
     orders: this.props.admin.stats.orders,
-    acceptedOrders: this.props.admin.stats.acceptedOrders
+    acceptedOrders: this.props.admin.stats.acceptedOrders,
+    showOrders: false
   };
 
 
@@ -193,6 +194,14 @@ class ShowDisStats extends Component {
 
 
 
+
+
+  toggleShowOrders = (param) => {
+    this.setState({
+      showOrders: param
+    });
+  };
+
   render() {
 
     let totalSum = 0,
@@ -276,17 +285,22 @@ class ShowDisStats extends Component {
       }
 
       // calculate total consumption of all orders of disinfector in given period
-      order.disinfectors.forEach(element => {
-        if (element.user._id.toString() === this.props.admin.stats.disinfectorId) {
-          element.consumption.forEach(object => {
-            totalConsumption.forEach(item => {
-              if (object.material === item.material && object.unit === item.unit) {
-                item.amount += object.amount;
-              }
+      if (order.completed) {
+
+        order.disinfectors.forEach(element => {
+          if (element.user._id === this.props.admin.stats.disinfectorId) {
+            element.consumption.forEach(object => {
+              totalConsumption.forEach(item => {
+                if (object.material === item.material && object.unit === item.unit) {
+                  item.amount += object.amount;
+                }
+              });
             });
-          });
-        }
-      });
+          }
+        });
+
+      }
+
     });
 
     this.state.acceptedOrders.forEach(order => {
@@ -317,7 +331,6 @@ class ShowDisStats extends Component {
       <li key={key}>{item.material}: {item.amount.toLocaleString()} {item.unit}</li>
     );
 
-    // let renderAllOrders = this.state
     let renderAllOrders = this.renderOrders(this.state.orders);
 
     let renderAcceptedOrders = this.renderOrders(this.state.acceptedOrders);
@@ -371,19 +384,31 @@ class ShowDisStats extends Component {
           </div>
         </div>
 
-        <div className="row mt-2">
-          <div className="col-12">
-            <h2 className="text-center pl-3 pr-3">Все Заказы Пользователя</h2>
-          </div>
-          {this.state.orders.length > 0 ? (renderAllOrders) : <h2>Нет заказов</h2>}
-        </div>
+        {this.state.showOrders ? (
+          <React.Fragment>
+            <div className="row mt-2">
+              <div className="col-12">
+                <button className="btn btn-dark" onClick={this.toggleShowOrders.bind(this, false)}>Скрыть заказы</button>
+              </div>
+            </div>
 
-        <div className="row mt-2">
-          <div className="col-12">
-            <h2 className="text-center pl-3 pr-3">Принятые Заказы Пользователя</h2>
-          </div>
-          {this.state.acceptedOrders.length > 0 ? (renderAcceptedOrders) : <h2>Нет заказов</h2>}
-        </div>
+            <div className="row mt-2">
+              <div className="col-12">
+                <h2 className="text-center pl-3 pr-3">Все Заказы Пользователя</h2>
+              </div>
+              {this.state.orders.length > 0 ? (renderAllOrders) : <h2>Нет заказов</h2>}
+            </div>
+
+            <div className="row mt-2">
+              <div className="col-12">
+                <h2 className="text-center pl-3 pr-3">Принятые Заказы Пользователя</h2>
+              </div>
+              {this.state.acceptedOrders.length > 0 ? (renderAcceptedOrders) : <h2>Нет заказов</h2>}
+            </div>
+          </React.Fragment>
+        ) : (
+            <button className="btn btn-dark" onClick={this.toggleShowOrders.bind(this, true)}>Показать заказы</button>
+          )}
       </React.Fragment>
     )
   }

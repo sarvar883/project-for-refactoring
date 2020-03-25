@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Moment from 'react-moment';
 
@@ -7,7 +7,14 @@ import materials from '../common/materials';
 
 class ShowAdminStats extends Component {
   state = {
-    orders: this.props.admin.stats.orders
+    orders: this.props.admin.stats.orders,
+    showOrders: false
+  };
+
+  toggleShowOrders = (param) => {
+    this.setState({
+      showOrders: param
+    });
   };
 
   render() {
@@ -109,25 +116,6 @@ class ShowAdminStats extends Component {
     );
 
     let renderConfirmedOrders = confirmedOrders.map((order, key) => {
-      // consumption array of specific confirmed order
-      let consumptionArray = [];
-
-      order.disinfectors.forEach(item => {
-        consumptionArray.push({
-          user: item.user,
-          consumption: item.consumption
-        });
-      });
-
-      let renderOrderConsumption = consumptionArray.map((object, number) =>
-        <li key={number}>
-          <p className="mb-0">Пользователь: {object.user.occupation} {object.user.name}</p>
-          {object.consumption.map((element, number) =>
-            <p key={number} className="mb-0">{element.material}: {element.amount.toLocaleString()} {element.unit}</p>
-          )}
-        </li>
-      );
-
       return (
         <div className="col-lg-4 col-md-6" key={key}>
           <div className="card order mt-2">
@@ -142,7 +130,6 @@ class ShowAdminStats extends Component {
                       <React.Fragment>
                         <li className="text-success">Оператор Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{order.operatorCheckedAt}</Moment>)</li>
                         <li>Балл (0-5): {order.score}</li>
-                        <li>Отзыв Клиента: {order.clientReview ? order.clientReview : 'Нет Отзыва'}</li>
                       </React.Fragment>
                     ) : <li className="text-danger">Оператор Отклонил (<Moment format="DD/MM/YYYY HH:mm">{order.operatorCheckedAt}</Moment>)</li>}
                   </React.Fragment>
@@ -197,20 +184,10 @@ class ShowAdminStats extends Component {
                   <li>Физический Клиент: {order.client}</li>
                   : ''}
 
-                <li>Телефон Клиента: {order.phone}</li>
-                {order.phone2 ? <li>Другой номер: {order.phone2}</li> : ''}
                 <li>Дата выполнения: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
                 <li>Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment> ПО <Moment format="HH:mm">{order.completedAt}</Moment></li>
                 <li>Адрес: {order.address}</li>
                 <li>Тип услуги: {order.typeOfService}</li>
-                <li>Комментарии Оператора: {order.comment ? order.comment : 'Нет комментариев'}</li>
-                <li>Комментарии Дезинфектора: {order.disinfectorComment ? order.disinfectorComment : 'Нет комментариев'}</li>
-                <li>Срок гарантии (в месяцах): {order.guarantee}</li>
-
-                <li>Расход Материалов (заказ выполнили {order.disinfectors.length} чел):</li>
-                <ul className="font-bold mb-0">
-                  {renderOrderConsumption}
-                </ul>
 
                 {order.clientType === 'corporate' ? (
                   <React.Fragment>
@@ -231,13 +208,7 @@ class ShowAdminStats extends Component {
                 {order.clientType === 'individual' ?
                   <li>Общая Сумма: {order.cost.toLocaleString()} UZS (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
                   : ''}
-
-                {order.userAcceptedOrder ? (
-                  <li>Заказ принял: {order.userAcceptedOrder.occupation} {order.userAcceptedOrder.name}</li>
-                ) : ''}
-
-                <li>Заказ добавил: {order.userCreated.occupation} {order.userCreated.name} (<Moment format="DD/MM/YYYY HH:mm">{order.createdAt}</Moment>)</li>
-                <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{order.completedAt}</Moment></li>
+                <Link className="btn btn-primary" to={`/order-full-details/${order._id}`}>Подробнее</Link>
               </ul>
             </div>
           </div>
@@ -290,12 +261,24 @@ class ShowAdminStats extends Component {
           </div>
         </div>
 
-        <div className="row mt-2">
-          <div className="col-12">
-            <h2 className="text-center pl-3 pr-3">Подтвержденные Заказы</h2>
-          </div>
-          {confirmedOrders.length > 0 ? (renderConfirmedOrders) : <h2>Нет подтвержденных заказов</h2>}
-        </div>
+        {this.state.showOrders ? (
+          <React.Fragment>
+            <div className="row mt-2">
+              <div className="col-12">
+                <button className="btn btn-dark" onClick={this.toggleShowOrders.bind(this, false)}>Скрыть заказы</button>
+              </div>
+            </div>
+
+            <div className="row mt-2">
+              <div className="col-12">
+                <h2 className="text-center pl-3 pr-3">Подтвержденные Заказы</h2>
+              </div>
+              {confirmedOrders.length > 0 ? (renderConfirmedOrders) : <h2>Нет подтвержденных заказов</h2>}
+            </div>
+          </React.Fragment>
+        ) : (
+            <button className="btn btn-dark" onClick={this.toggleShowOrders.bind(this, true)}>Показать заказы</button>
+          )}
       </React.Fragment>
     )
   }

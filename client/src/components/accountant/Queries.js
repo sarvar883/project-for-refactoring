@@ -27,26 +27,23 @@ class Queries extends Component {
     const { queries } = this.state;
 
     let renderQueries = queries.map((item, key) => {
-      if (!item.clientId) {
-        console.log('queries', item);
-      }
 
-      let consumptionArray = [];
-      item.disinfectors.forEach(element => {
-        consumptionArray.push({
-          user: element.user,
-          consumption: element.consumption
-        });
-      });
+      // let consumptionArray = [];
+      // item.disinfectors.forEach(element => {
+      //   consumptionArray.push({
+      //     user: element.user,
+      //     consumption: element.consumption
+      //   });
+      // });
 
-      let consumptionRender = consumptionArray.map((object, index) =>
-        <li key={index}>
-          <p className="mb-0">Пользователь: {object.user.occupation} {object.user.name}</p>
-          {object.consumption.map((element, number) =>
-            <p key={number} className="mb-0">{element.material}: {element.amount.toLocaleString()} {element.unit}</p>
-          )}
-        </li>
-      );
+      // let consumptionRender = consumptionArray.map((object, index) =>
+      //   <li key={index}>
+      //     <p className="mb-0">Пользователь: {object.user.occupation} {object.user.name}</p>
+      //     {object.consumption.map((element, number) =>
+      //       <p key={number} className="mb-0">{element.material}: {element.amount.toLocaleString()} {element.unit}</p>
+      //     )}
+      //   </li>
+      // );
 
       return (
         <div className="col-lg-4 col-md-6 mt-2" key={key}>
@@ -87,10 +84,10 @@ class Queries extends Component {
                 <li>Комментарии Оператора: {item.comment ? item.comment : 'Нет комментариев'}</li>
                 <li>Комментарии Дезинфектора: {item.disinfectorComment ? item.disinfectorComment : 'Нет комментариев'}</li>
 
-                <li>Расход Материалов (заказ выполнили {item.disinfectors.length} чел):</li>
+                {/* <li>Расход Материалов (заказ выполнили {item.disinfectors.length} чел):</li>
                 <ul className="font-bold mb-0">
                   {consumptionRender}
-                </ul>
+                </ul> */}
 
                 <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{item.completedAt}</Moment></li>
               </ul>

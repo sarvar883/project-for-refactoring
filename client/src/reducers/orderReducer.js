@@ -21,7 +21,8 @@ const initialState = {
     disinfectorId: {},
     clientId: {},
     userCreated: {},
-    userAcceptedOrder: {}
+    userAcceptedOrder: {},
+    disinfectors: []
   },
   repeatOrder: {
     disinfectorId: {},

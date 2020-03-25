@@ -7,7 +7,14 @@ import materials from '../common/materials';
 
 class ShowOperStats extends Component {
   state = {
-    orders: this.props.admin.stats.orders
+    orders: this.props.admin.stats.orders,
+    showOrders: false
+  };
+
+  toggleShowOrders = (param) => {
+    this.setState({
+      showOrders: param
+    });
   };
 
   render() {
@@ -307,12 +314,24 @@ class ShowOperStats extends Component {
           </div>
         </div>
 
-        <div className="row mt-2">
-          <div className="col-12">
-            <h2 className="text-center pl-3 pr-3">Заказы, которые принял Пользователь</h2>
-          </div>
-          {orders.length > 0 ? (renderOrders) : <h2>Нет заказов</h2>}
-        </div>
+        {this.state.showOrders ? (
+          <React.Fragment>
+            <div className="row mt-2">
+              <div className="col-12">
+                <button className="btn btn-dark" onClick={this.toggleShowOrders.bind(this, false)}>Скрыть заказы</button>
+              </div>
+            </div>
+
+            <div className="row mt-2">
+              <div className="col-12">
+                <h2 className="text-center pl-3 pr-3">Заказы, которые принял Пользователь</h2>
+              </div>
+              {orders.length > 0 ? (renderOrders) : <h2>Нет заказов</h2>}
+            </div>
+          </React.Fragment>
+        ) : (
+            <button className="btn btn-dark" onClick={this.toggleShowOrders.bind(this, true)}>Показать заказы</button>
+          )}
       </React.Fragment>
     )
   }

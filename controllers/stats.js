@@ -154,7 +154,8 @@ exports.monthStatsForAdmin = (req, res) => {
   const year = Number(req.body.year);
 
   Order.find()
-    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
+    .populate('disinfectorId clientId')
+    // .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
     .exec()
     .then(orders => {
       orders = orders.filter(order =>
@@ -174,7 +175,7 @@ exports.weekStatsForAdmin = (req, res) => {
   const days = req.body.days;
 
   Order.find()
-    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
+    .populate('disinfectorId clientId')
     .exec()
     .then(orders => {
       orders = orders.filter(order =>
@@ -194,7 +195,7 @@ exports.dayStatsForAdmin = (req, res) => {
   const day = req.body.day;
 
   Order.find()
-    .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
+    .populate('disinfectorId clientId')
     .exec()
     .then(orders => {
       orders = orders.filter(order =>
