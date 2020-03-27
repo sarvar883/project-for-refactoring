@@ -14,6 +14,9 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  tgChat: {
+    type: String
+  },
   occupation: {
     type: String,
     required: true

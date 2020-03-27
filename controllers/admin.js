@@ -9,7 +9,6 @@ const stringSimilarity = require('string-similarity');
 
 const materials = require('../client/src/components/common/materials');
 
-
 exports.getSortedOrders = (req, res) => {
   const date = new Date(req.body.date);
   const day = date.getDate();
@@ -63,8 +62,6 @@ exports.getSortedOrders = (req, res) => {
   //     });
   //   });
 
-
-
   // let array;
   // CurrentMaterial.findOne()
   //   .then(curMat => {
@@ -77,6 +74,7 @@ exports.getSortedOrders = (req, res) => {
   //     curMat.materials = array;
   //     curMat.save();
   //   });
+
 
   Order.find()
     .populate('disinfectorId clientId')

@@ -53,7 +53,10 @@ class CreateOrder extends Component {
       { label: 'TR', value: 'TR' },
       { label: 'GR', value: 'GR' },
       { label: 'MX', value: 'MX' },
-      { label: 'KOMP', value: 'KOMP' }
+      { label: 'KOMP', value: 'KOMP' },
+      { label: 'Консультация', value: 'Консультация' },
+      { label: 'Профилактика', value: 'Профилактика' },
+      { label: 'Осмотр', value: 'Осмотр' }
     ];
 
     let array = [];
@@ -142,8 +145,19 @@ class CreateOrder extends Component {
     } else if (selectedItems === 0) {
       alert('Выберите тип заказа');
     } else {
+
+      // find object ответственный дезинфектор
+      let respDisinf;
+      this.props.order.allUsers.forEach((item, index) => {
+        if (item._id === this.state.disinfectorId) {
+          respDisinf = item;
+          return;
+        }
+      });
+
       const newOrder = {
         disinfectorId: this.state.disinfectorId,
+        tgChat: respDisinf.tgChat ? respDisinf.tgChat : '',
         client: this.state.client,
         clientType: this.state.clientType,
         clientId: this.state.clientId,
@@ -167,6 +181,7 @@ class CreateOrder extends Component {
     const { errors } = this.state;
 
     let allUsers = this.props.order.allUsers ? this.props.order.allUsers.sort((x, y) => x.name - y.name) : [];
+
     const userOptions = [
       { label: '-- Кто принял заказ? --', value: 0 }
     ];

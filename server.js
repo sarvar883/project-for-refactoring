@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 const path = require('path');
 
+// Import routes
 const authRoutes = require('./routes/auth');
 const orderRoutes = require('./routes/order');
 const chatRoutes = require('./routes/chat');
@@ -21,6 +22,10 @@ app.use(bodyParser.json());
 
 // DB Config
 const db = require('./config/keys').mongoURI;
+
+// import and launch telegram bot
+const bot = require('./bot');
+bot.launch();
 
 // Connect to MongoDB
 mongoose
@@ -43,7 +48,6 @@ app.use('/stats', statsRoutes);
 app.use('/admin', adminRoutes);
 app.use('/subadmin', subadminRoutes);
 app.use('/accountant', accountantRoutes);
-
 
 // Server static assets if in production
 if (process.env.NODE_ENV === 'production') {

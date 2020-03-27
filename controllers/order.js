@@ -8,6 +8,7 @@ const stringSimilarity = require('string-similarity');
 const validateOrderInput = require('../validation/order');
 const io = require('../socket');
 
+const tgBot = require('../bot');
 
 // get all corporate clients
 exports.getCorporateClients = (req, res) => {
@@ -69,6 +70,20 @@ exports.createOrder = (req, res) => {
   const order = new Order(orderObject);
   order.save()
     .then((savedOrder) => {
+      // send telegram notification
+      tgBot.telegram.sendMessage(req.body.tgChat, `
+        У Вас новый заказ:
+        -------
+        Дата и Время: ${req.body.date} ${req.body.timeFrom}
+        Адрес: ${req.body.address}
+        Тип Клиента: ${req.body.clientType}
+        Клиент: ${req.body.client}
+        Телефон Клиента: ${req.body.phone}
+        Тип Заказа: ${req.body.typeOfService}
+        -------
+        Пожалуйста, проверьте приложение Pro Team
+      `);
+
       if (req.body.clientType === 'corporate') {
         Client.findById(req.body.clientId)
           .then(client => {
@@ -325,7 +340,9 @@ exports.searchOrders = (req, res) => {
       if (req.body.object.method === 'address') {
         orders = orders.filter(item => stringSimilarity.compareTwoStrings(item.address.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.50);
       } else if (req.body.object.method === 'phone') {
-        orders = orders.filter(item => stringSimilarity.compareTwoStrings(item.phone.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.70);
+        // orders = orders.filter(item => stringSimilarity.compareTwoStrings(item.phone.toUpperCase(), req.body.object.payload.toUpperCase()) > 0.70);
+
+        orders = orders.filter(item => item.phone.includes(req.body.object.payload));
       } else if (req.body.object.method === 'contract') {
         orders = orders.filter(item => {
           if (item.clientType === 'corporate' && item.contractNumber) {
@@ -335,6 +352,7 @@ exports.searchOrders = (req, res) => {
           }
         });
       }
+
       return res.json(orders);
     })
     .catch(err => {
