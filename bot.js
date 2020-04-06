@@ -24,7 +24,7 @@ bot.command('register', (ctx) => {
   if (input.length !== 2) {
     return ctx.reply(`
       Вы ввели неправильный формат.
-      Gапишите: /register <EMAIL_ADDRESS>
+      Напишите: /register <EMAIL_ADDRESS>
       Здесь введите email, при помощи которого вы заходите на приложение Pro Team`);
   }
 
