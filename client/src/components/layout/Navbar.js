@@ -19,18 +19,6 @@ class Navbar extends Component {
 
     const authLinks = (
       <div className="authLinks">
-        <div className="dropdown">
-          <button type="button" className="btn btn-primary dropdown-toggle align-baseline mr-2" data-toggle="dropdown">Чат</button>
-          <div className="dropdown-menu">
-            <li className="nav-item">
-              <Link to="/chat" className="nav-link">Чат</Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/anons" className="nav-link">Анонсы</Link>
-            </li>
-          </div>
-        </div>
-
         <li className="nav-item list-inline-item">
           <Link to="/login" onClick={this.onLogoutClick} className="nav-link logout">
             Logout

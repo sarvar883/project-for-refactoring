@@ -72,9 +72,6 @@ import AccStats from './components/accountant/AccStats';
 import OrderFullDetails from './components/common/OrderFullDetails';
 import NotCompOrders from './components/operator/NotCompOrders';
 import SearchOrders from './components/operator/SearchOrders';
-import Chat from './components/chat/Chat';
-import ChatRoom from './components/chat/ChatRoom';
-import Anons from './components/chat/Anons';
 
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
@@ -285,15 +282,6 @@ class App extends Component {
             </Switch>
             <Switch>
               <AccountantRoute exact path="/accountant/stats" component={AccStats} />
-            </Switch>
-
-
-            {/* Chat Routes */}
-            <Switch>
-              <PrivateRoute exact path="/chat" component={Chat} />
-            </Switch>
-            <Switch>
-              <PrivateRoute exact path="/chat/:chatId" component={ChatRoom} />
             </Switch>
 
             {/* Footer */}
