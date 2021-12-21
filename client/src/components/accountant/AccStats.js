@@ -177,7 +177,7 @@ class AccStats extends Component {
       <option value={year.value} key={index}>{year.label}</option>
     );
     const monthOptions = months.map((month, index) =>
-      <option value={month.value} key={index}>{month.label}</option>
+      <option data-testid="month-options" value={month.value} key={index}>{month.label}</option>
     );
 
 
@@ -208,15 +208,22 @@ class AccStats extends Component {
           <div className="col-lg-4 col-md-6">
             <h2 className="text-center">Статистика по месяцам</h2>
             <form onSubmit={this.getMonthStats}>
+
               <div className="form-group">
                 <label htmlFor="year"><strong>Выберите Год:</strong></label>
                 <select name="year" className="form-control" onChange={this.onChange} required>
                   {yearsOptions}
                 </select>
               </div>
+
               <div className="form-group">
                 <label htmlFor="month"><strong>Выберите Месяц:</strong></label>
-                <select name="month" className="form-control" onChange={this.onChange} required>
+                <select name="month"
+                  data-testid="month-input"
+                  className="form-control"
+                  onChange={this.onChange}
+                  required
+                >
                   {monthOptions}
                 </select>
               </div>

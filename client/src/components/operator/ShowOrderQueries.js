@@ -4,26 +4,27 @@ import { connect } from 'react-redux';
 import Moment from 'react-moment';
 
 // socket.io
-import openSocket from 'socket.io-client';
-import socketLink from '../common/socketLink';
+// import openSocket from 'socket.io-client';
+// import socketLink from '../common/socketLink';
 
 class ShowOrderQueries extends Component {
   _isMounted = false;
 
   state = {
-    completeOrders: this.props.operator.completeOrders
+    // completeOrders: this.props.operator.completeOrders,
+    completeOrders: this.props.orders,
   };
 
   componentDidMount() {
-    this._isMounted = true;
+    // this._isMounted = true;
 
     // const socket = openSocket('http://localhost:5000');
     // const socket = openSocket('https://fierce-scrubland-41952.herokuapp.com');
-    const socket = openSocket(socketLink);
+    // const socket = openSocket(socketLink);
 
-    socket.on('submitCompleteOrder', data => {
-      this.addOrderToDOM(data.completeOrder);
-    });
+    // socket.on('submitCompleteOrder', data => {
+    //   this.addOrderToDOM(data.completeOrder);
+    // });
   }
 
   addOrderToDOM = (order) => {
@@ -52,26 +53,26 @@ class ShowOrderQueries extends Component {
                 <li className="text-danger">Это возвращенный заказ</li>
               ) : ''}
 
-              <li>Ответственный: {order.disinfectorId.occupation} {order.disinfectorId.name}</li>
+              <li className='disinfector'>Ответственный: {order.disinfectorId.occupation} {order.disinfectorId.name}</li>
               {order.clientType === 'corporate' ?
                 <React.Fragment>
                   {order.clientId ? (
-                    <li>Корпоративный Клиент: {order.clientId.name}</li>
-                  ) : <li>Корпоративный Клиент</li>}
+                    <li className='client'>Корпоративный Клиент: {order.clientId.name}</li>
+                  ) : <li className='client'>Корпоративный Клиент</li>}
                   <li>Имя клиента: {order.client}</li>
                 </React.Fragment>
                 : ''}
 
               {order.clientType === 'individual' ?
-                <li>Физический Клиент: {order.client}</li>
+                <li className='client'>Физический Клиент: {order.client}</li>
                 : ''}
 
               <li>Телефон клиента: {order.phone}</li>
               {order.phone2 !== '' ? <li>Запасной номер: {order.phone2}</li> : ''}
-              <li>Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
+              <li className='date'>Дата: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
               <li>Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment> ПО <Moment format="HH:mm">{order.completedAt}</Moment></li>
-              <li>Адрес: {order.address}</li>
-              <li>Тип услуги: {order.typeOfService}</li>
+              <li className='address'>Адрес: {order.address}</li>
+              <li className='typeOfService'>Тип услуги: {order.typeOfService}</li>
               <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{order.completedAt}</Moment></li>
             </ul>
             <Link to={`/order-confirm/${order._id}`} className="btn btn-dark">Форма Подтверждения</Link>

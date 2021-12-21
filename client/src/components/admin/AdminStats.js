@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Spinner from '../common/Spinner';
 import Moment from 'react-moment';
 import moment from 'moment';
+import axios from 'axios';
 
 import { getDayStatsForAdmin, getMonthStatsForAdmin, getWeekStatsForAdmin } from '../../actions/adminActions';
 import ShowAdminStats from './ShowAdminStats';
@@ -50,16 +51,29 @@ class AdminStats extends Component {
     headingDay: '',
 
     hoverRange: undefined,
-    selectedDays: []
+    selectedDays: [],
+
+    orders: [],
   };
 
   componentDidMount() {
     const thisMonth = new Date().getMonth();
     const thisYear = new Date().getFullYear();
+    const URL = 'http://localhost:5000';
+
     this.props.getMonthStatsForAdmin(thisMonth, thisYear);
+    // axios.post(`${URL}/stats/for-admin-month`, { month: thisMonth, year: thisYear })
+    //   .then(res => {
+    //     this.setState({
+    //       headingMonth: thisMonth,
+    //       headingYear: thisYear,
+    //       orders: res.data,
+    //     });
+    //   });
+
     this.setState({
       headingMonth: thisMonth,
-      headingYear: thisYear
+      headingYear: thisYear,
     });
   }
 

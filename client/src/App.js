@@ -116,10 +116,6 @@ class App extends Component {
             </Switch>
 
             <Switch>
-              <PrivateRoute exact path="/anons" component={Anons} />
-            </Switch>
-
-            <Switch>
               <PrivateRoute exact path="/not-completed-orders" component={NotCompOrders} />
             </Switch>
 

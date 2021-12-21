@@ -14,7 +14,8 @@ class OrderQueries extends Component {
   render() {
     return (
       <div className="container-fluid">
-        {this.props.operator.loadingCompleteOrders ? <Spinner /> : <ShowOrderQueries />}
+        {/* {this.props.operator.loadingCompleteOrders ? <Spinner /> : <ShowOrderQueries />} */}
+        {<ShowOrderQueries orders={this.props.orders} />}
       </div>
     )
   }

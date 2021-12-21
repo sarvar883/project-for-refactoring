@@ -7,7 +7,8 @@ import materials from '../common/materials';
 
 class ShowAdminStats extends Component {
   state = {
-    orders: this.props.admin.stats.orders,
+    // orders: this.props.admin.stats.orders,
+    orders: this.props.orders,
     showOrders: false
   };
 
@@ -197,11 +198,11 @@ class ShowAdminStats extends Component {
                         <li>Общая Сумма: {order.cost.toLocaleString()} UZS (каждому по {(order.cost / order.disinfectors.length).toLocaleString()} UZS)</li>
                       </React.Fragment>
                     ) : (
-                        <React.Fragment>
-                          <li>Тип Платежа: Безналичный</li>
-                          <li>Номер Договора: {order.contractNumber}</li>
-                        </React.Fragment>
-                      )}
+                      <React.Fragment>
+                        <li>Тип Платежа: Безналичный</li>
+                        <li>Номер Договора: {order.contractNumber}</li>
+                      </React.Fragment>
+                    )}
                   </React.Fragment>
                 ) : ''}
 
@@ -224,11 +225,11 @@ class ShowAdminStats extends Component {
               <div className="card-body p-0">
                 <h3 className="text-center">Заказы</h3>
                 <ul className="font-bold mb-0 list-unstyled">
-                  <li>Всего Получено Заказов: {this.state.orders.length}</li>
-                  <li>Выполнено Заказов: {completedOrders.length}</li>
-                  <li>Подтверждено Заказов: {confirmedOrders.length}</li>
-                  <li>Общая Сумма: {totalSum.toLocaleString()} UZS</li>
-                  <li>Средний балл: {(totalScore / confirmedOrders.length).toFixed(2)} (из 5)</li>
+                  <li className='total'>Всего Получено Заказов: {this.state.orders.length}</li>
+                  <li className='completed'>Выполнено Заказов: {completedOrders.length}</li>
+                  <li className='confirmed'>Подтверждено Заказов: {confirmedOrders.length}</li>
+                  <li className='totalSum'>Общая Сумма: {totalSum}</li>
+                  <li className='totalScore'>Средний балл: {(totalScore / confirmedOrders.length).toFixed(2)}</li>
                 </ul>
               </div>
             </div>
@@ -277,8 +278,8 @@ class ShowAdminStats extends Component {
             </div>
           </React.Fragment>
         ) : (
-            <button className="btn btn-dark" onClick={this.toggleShowOrders.bind(this, true)}>Показать заказы</button>
-          )}
+          <button className="btn btn-dark" onClick={this.toggleShowOrders.bind(this, true)}>Показать заказы</button>
+        )}
       </React.Fragment>
     )
   }
