@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Spinner from '../common/Spinner';
-import Moment from 'react-moment';
 
+import RenderOrder from '../common/RenderOrder';
 import { getAccountantQueries } from '../../actions/accountantActions';
 
 class Queries extends Component {
@@ -27,69 +27,26 @@ class Queries extends Component {
     const { queries } = this.state;
 
     let renderQueries = queries.map((item, key) => {
-
-      // let consumptionArray = [];
-      // item.disinfectors.forEach(element => {
-      //   consumptionArray.push({
-      //     user: element.user,
-      //     consumption: element.consumption
-      //   });
-      // });
-
-      // let consumptionRender = consumptionArray.map((object, index) =>
-      //   <li key={index}>
-      //     <p className="mb-0">Пользователь: {object.user.occupation} {object.user.name}</p>
-      //     {object.consumption.map((element, number) =>
-      //       <p key={number} className="mb-0">{element.material}: {element.amount.toLocaleString()} {element.unit}</p>
-      //     )}
-      //   </li>
-      // );
-
       return (
         <div className="col-lg-4 col-md-6 mt-2" key={key}>
           <div className="card order mt-2">
             <div className="card-body p-0">
               <ul className="font-bold mb-0 list-unstyled">
-                {item.returnedBack ? (
-                  <li className="text-danger">Это возвращенный заказ</li>
-                ) : ''}
-
-                <li>Ответственный: {item.disinfectorId.occupation} {item.disinfectorId.name}</li>
-
-                {item.operatorDecided ? (
-                  <React.Fragment>
-                    <li>Оператор рассмотрел заявку</li>
-                    {item.operatorConfirmed ? (
-                      <React.Fragment>
-                        <li className="text-success">Оператор Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{item.operatorCheckedAt}</Moment>)</li>
-                        <li>Балл (0-5): {item.score}</li>
-                        <li>Отзыв Клиента: {item.clientReview ? item.clientReview : 'Нет Отзыва'}</li>
-                      </React.Fragment>
-                    ) : <li className="text-danger">Оператор Отклонил (<Moment format="DD/MM/YYYY HH:mm">{item.operatorCheckedAt}</Moment>)</li>}
-                  </React.Fragment>
-                ) : <li>Оператор еще не рассмотрел заявку</li>}
-
-                <li>Номер Договора: {item.contractNumber}</li>
-
-                {item.clientId ? (
-                  <li>Корпоративный Клиент: {item.clientId.name}</li>
-                ) : <li>Корпоративный Клиент</li>}
-
-                <li>Имя клиента: {item.client}</li>
-                <li>Телефон Клиента: {item.phone}</li>
-                {item.phone2 ? <li>Другой номер: {item.phone2}</li> : ''}
-                <li>Адрес: {item.address}</li>
-                <li>Дата выполнения: <Moment format="DD/MM/YYYY">{item.dateFrom}</Moment></li>
-                <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
-                <li>Комментарии Оператора: {item.comment ? item.comment : 'Нет комментариев'}</li>
-                <li>Комментарии Дезинфектора: {item.disinfectorComment ? item.disinfectorComment : 'Нет комментариев'}</li>
-
-                {/* <li>Расход Материалов (заказ выполнили {item.disinfectors.length} чел):</li>
-                <ul className="font-bold mb-0">
-                  {consumptionRender}
-                </ul> */}
-
-                <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{item.completedAt}</Moment></li>
+                <RenderOrder
+                  order={item}
+                  shouldRenderIfOrderIsPovtor={false}
+                  shouldRenderIfOrderIsFailed={false}
+                  sholdRenderIfOrderIsReturned={true}
+                  shouldRenderNextOrdersAfterFailArray={false}
+                  shouldRenderDisinfector={true}
+                  shouldRenderOperatorDecided={true}
+                  shouldRenderAccountantDecided={false}
+                  shouldRenderMaterialConsumption={false}
+                  shouldRenderPaymentMethod={false}
+                  shouldRenderUserAcceptedOrder={false}
+                  shouldRenderUserCreated={false}
+                  shouldRenderCompletedAt={true}
+                />
               </ul>
 
               <Link to={`/accountant/order-confirm/${item._id}`} className="btn btn-dark">Форма Подтверждения</Link>

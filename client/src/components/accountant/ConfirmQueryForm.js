@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Spinner from '../common/Spinner';
-import Moment from 'react-moment';
 import TextFieldGroup from '../common/TextFieldGroup';
 
+import RenderOrder from '../common/RenderOrder';
 import { getCompleteOrderById, accountantConfirmQuery } from '../../actions/accountantActions';
+
 
 class ConfirmQueryForm extends Component {
   state = {
@@ -73,25 +74,6 @@ class ConfirmQueryForm extends Component {
   render() {
     const { query } = this.state;
 
-    let consumptionArray = [];
-    if (query.disinfectors) {
-      query.disinfectors.forEach(item => {
-        consumptionArray.push({
-          user: item.user,
-          consumption: item.consumption
-        });
-      });
-    }
-
-    let consumptionRender = consumptionArray.map((item, index) =>
-      <li key={index}>
-        <p className="mb-0">Пользователь: {item.user.occupation} {item.user.name}</p>
-        {item.consumption.map((element, number) =>
-          <p key={number} className="mb-0">{element.material}: {element.amount.toLocaleString()} {element.unit}</p>
-        )}
-      </li>
-    );
-
     return (
       <div className="container-fluid">
         <div className="row m-0">
@@ -101,50 +83,22 @@ class ConfirmQueryForm extends Component {
               <div className="card order mt-2">
                 <div className="card-body p-0">
                   <ul className="font-bold mb-0">
-                    <li>Ответственный: {query.disinfectorId.occupation} {query.disinfectorId.name}</li>
-
-                    {query.operatorDecided ? (
-                      <React.Fragment>
-                        <li>Оператор рассмотрел заявку</li>
-                        {query.operatorConfirmed ? (
-                          <React.Fragment>
-                            <li className="text-success">Оператор Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{query.operatorCheckedAt}</Moment>)</li>
-                            <li>Балл (0-5): {query.score}</li>
-                            <li>Отзыв Клиента: {query.clientReview ? query.clientReview : 'Нет Отзыва'}</li>
-                          </React.Fragment>
-                        ) : <li className="text-danger">Оператор Отклонил (<Moment format="DD/MM/YYYY HH:mm">{query.operatorCheckedAt}</Moment>)</li>}
-                      </React.Fragment>
-                    ) : <li>Оператор еще не рассмотрел заявку</li>}
-
-                    {query.clientId ? (
-                      <li className="text-danger">Корпоративный Клиент: {query.clientId.name}</li>
-                    ) : <li className="text-danger">Корпоративный Клиент</li>}
-
-                    <li className="text-danger">Имя клиента: {query.client}</li>
-                    <li className="text-danger">Дата: <Moment format="DD/MM/YYYY">{query.dateFrom}</Moment></li>
-                    <li className="text-danger">Время выполнения: С <Moment format="HH:mm">{query.dateFrom}</Moment> ПО <Moment format="HH:mm">{query.completedAt}</Moment></li>
-                    <li className="text-danger">Адрес: {query.address}</li>
-
-                    <li>Телефон клиента: {query.phone}</li>
-                    {query.phone2 !== '' ? <li>Запасной номер: {query.phone2}</li> : ''}
-                    <li>Тип услуги: {query.typeOfService}</li>
-                    <li>Комментарии Оператора: {query.comment ? query.comment : 'Нет комментариев'}</li>
-                    <li>Комментарии Дезинфектора: {query.disinfectorComment ? query.disinfectorComment : 'Нет комментариев'}</li>
-
-                    <li>Расход Материалов (заказ выполнили {query.disinfectors.length} чел):</li>
-                    <ul className="font-bold mb-0">
-                      {consumptionRender}
-                    </ul>
-
-                    <li>Номер Договора: {query.contractNumber}</li>
-
-                    {query.userAcceptedOrder ? (
-                      <li>Заказ принял: {query.userAcceptedOrder.occupation} {query.userAcceptedOrder.name}</li>
-                    ) : ''}
-
-                    <li>Заказ добавил: {query.userCreated.occupation} {query.userCreated.name}</li>
-                    <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{query.completedAt}</Moment></li>
+                    <RenderOrder
+                      order={query}
+                      shouldRenderIfOrderIsPovtor={false}
+                      shouldRenderIfOrderIsFailed={false}
+                      shouldRenderNextOrdersAfterFailArray={true}
+                      shouldRenderDisinfector={true}
+                      shouldRenderOperatorDecided={true}
+                      shouldRenderAccountantDecided={false}
+                      shouldRenderMaterialConsumption={true}
+                      shouldRenderPaymentMethod={true}
+                      shouldRenderUserAcceptedOrder={true}
+                      shouldRenderUserCreated={true}
+                      shouldRenderCompletedAt={true}
+                    />
                   </ul>
+
                   <button className="btn btn-danger" onClick={this.reject}>Отменить Выполнение Заказа</button>
                   <button className="btn btn-dark ml-2" onClick={this.returnBack}>Отправить Обратно</button>
                 </div>

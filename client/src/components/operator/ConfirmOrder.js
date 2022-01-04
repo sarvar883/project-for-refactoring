@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+
 import Spinner from '../common/Spinner';
-import Moment from 'react-moment';
+import RenderOrder from '../common/RenderOrder';
 import TextFieldGroup from '../common/TextFieldGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 
 import { getCompleteOrderById, confirmCompleteOrder } from '../../actions/operatorActions';
+
 
 class ConfirmOrder extends Component {
   state = {
@@ -52,23 +54,6 @@ class ConfirmOrder extends Component {
     const completeOrder = this.props.operator.orderToConfirm;
     const { errors } = this.state;
 
-    let consumptionArray = [];
-    completeOrder.disinfectors.forEach(item => {
-      consumptionArray.push({
-        user: item.user,
-        consumption: item.consumption
-      });
-    });
-
-    let consumptionRender = consumptionArray.map((item, index) =>
-      <li key={index}>
-        <p className="mb-0">Пользователь: {item.user.occupation} {item.user.name}</p>
-        {item.consumption.map((element, number) =>
-          <p key={number} className="mb-0">{element.material}: {element.amount.toLocaleString()} {element.unit}</p>
-        )}
-      </li>
-    );
-
     return (
       <div className="container-fluid">
         <div className="row">
@@ -79,88 +64,22 @@ class ConfirmOrder extends Component {
               <div className="card order mt-2">
                 <div className="card-body p-0">
                   <ul className="font-bold mb-0">
-                    <li>Ответственный: {completeOrder.disinfectorId.occupation} {completeOrder.disinfectorId.name}</li>
-
-                    {completeOrder.clientType === 'corporate' && completeOrder.paymentMethod === 'notCash' && !completeOrder.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
-
-                    {completeOrder.clientType === 'corporate' && completeOrder.paymentMethod === 'notCash' && completeOrder.accountantDecided ?
-                      <React.Fragment>
-                        <li>Бухгалтер рассмотрел заявку</li>
-                        {completeOrder.accountantConfirmed ? (
-                          <React.Fragment>
-                            <li className="text-success">Бухгалтер Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{completeOrder.accountantCheckedAt}</Moment>)</li>
-                            <li>Счет-Фактура: {completeOrder.invoice}</li>
-                            <li>Общая Сумма: {completeOrder.cost.toLocaleString()} (каждому по {(completeOrder.cost / completeOrder.disinfectors.length).toLocaleString()})</li>
-                          </React.Fragment>
-                        ) : <li className="text-danger">Бухгалтер Отклонил (<Moment format="DD/MM/YYYY HH:mm">{completeOrder.accountantCheckedAt}</Moment>)</li>}
-                      </React.Fragment>
-                      : ''}
-
-                    {completeOrder.clientType === 'corporate' && completeOrder.paymentMethod === 'cash' && !completeOrder.adminDecided ? <li>Админ еще не рассмотрел заявку</li> : ''}
-
-                    {completeOrder.clientType === 'corporate' && completeOrder.paymentMethod === 'cash' && completeOrder.adminDecided ? (
-                      <React.Fragment>
-                        <li>Админ рассмотрел заявку</li>
-                        {completeOrder.adminConfirmed ? (
-                          <li className="text-success">Админ Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{completeOrder.adminCheckedAt}</Moment>)</li>
-                        ) : <li className="text-danger">Админ Отклонил (<Moment format="DD/MM/YYYY HH:mm">{completeOrder.adminCheckedAt}</Moment>)</li>}
-                      </React.Fragment>
-                    ) : ''}
-
-                    {completeOrder.clientType === 'corporate' ?
-                      <React.Fragment>
-                        {completeOrder.clientId ? (
-                          <li className="text-danger">Корпоративный Клиент: {completeOrder.clientId.name}</li>
-                        ) : <li className="text-danger">Корпоративный Клиент</li>}
-                        <li className="text-danger">Имя клиента: {completeOrder.client}</li>
-                      </React.Fragment>
-                      : ''}
-
-                    {completeOrder.clientType === 'individual' ?
-                      <li className="text-danger">Физический Клиент: {completeOrder.client}</li>
-                      : ''}
-                    <li className="text-danger">Дата: <Moment format="DD/MM/YYYY">{completeOrder.dateFrom}</Moment></li>
-                    <li className="text-danger">Время выполнения: С <Moment format="HH:mm">{completeOrder.dateFrom}</Moment> ПО <Moment format="HH:mm">{completeOrder.completedAt}</Moment></li>
-                    <li className="text-danger">Адрес: {completeOrder.address}</li>
-
-                    <li>Телефон клиента: {completeOrder.phone}</li>
-                    {completeOrder.phone2 !== '' ? <li>Запасной номер: {completeOrder.phone2}</li> : ''}
-                    <li>Тип услуги: {completeOrder.typeOfService}</li>
-                    <li>Комментарии Оператора: {completeOrder.comment ? completeOrder.comment : 'Нет комментариев'}</li>
-                    <li>Комментарии Дезинфектора: {completeOrder.disinfectorComment ? completeOrder.disinfectorComment : 'Нет комментариев'}</li>
-
-                    <li>Расход Материалов (заказ выполнили {completeOrder.disinfectors.length} чел):</li>
-                    <ul className="font-bold mb-0">
-                      {consumptionRender}
-                    </ul>
-
-                    {completeOrder.clientType === 'corporate' ? (
-                      <React.Fragment>
-                        {completeOrder.paymentMethod === 'cash' ? (
-                          <React.Fragment>
-                            <li>Тип Платежа: Наличный</li>
-                            <li>Общая Сумма: {completeOrder.cost.toLocaleString()} UZS (каждому по {(completeOrder.cost / completeOrder.disinfectors.length).toLocaleString()} UZS)</li>
-                          </React.Fragment>
-                        ) : (
-                            <React.Fragment>
-                              <li>Тип Платежа: Безналичный</li>
-                              <li>Номер Договора: {completeOrder.contractNumber}</li>
-                            </React.Fragment>
-                          )}
-                      </React.Fragment>
-                    ) : ''}
-
-                    {completeOrder.clientType === 'individual' ?
-                      <li>Общая Сумма: {completeOrder.cost.toLocaleString()} UZS (каждому по {(completeOrder.cost / completeOrder.disinfectors.length).toLocaleString()} UZS)</li>
-                      : ''}
-
-                    {completeOrder.userAcceptedOrder ? (
-                      <li>Заказ принял: {completeOrder.userAcceptedOrder.occupation} {completeOrder.userAcceptedOrder.name}</li>
-                    ) : ''}
-
-                    <li>Заказ добавил: {completeOrder.userCreated.occupation} {completeOrder.userCreated.name}</li>
-                    <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{completeOrder.completedAt}</Moment></li>
+                    <RenderOrder
+                      order={completeOrder}
+                      shouldRenderIfOrderIsPovtor={false}
+                      shouldRenderIfOrderIsFailed={false}
+                      shouldRenderNextOrdersAfterFailArray={false}
+                      shouldRenderDisinfector={true}
+                      shouldRenderOperatorDecided={true}
+                      shouldRenderAccountantDecided={false}
+                      shouldRenderMaterialConsumption={true}
+                      shouldRenderPaymentMethod={true}
+                      shouldRenderUserAcceptedOrder={true}
+                      shouldRenderUserCreated={true}
+                      shouldRenderCompletedAt={true}
+                    />
                   </ul>
+
                   <button className="btn btn-danger" onClick={() => { if (window.confirm('Вы уверены отменить заказ?')) { this.reject() } }}>Отменить Выполнение Заказа</button>
                 </div>
               </div>

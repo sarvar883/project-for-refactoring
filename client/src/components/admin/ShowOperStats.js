@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import Moment from 'react-moment';
 
 import materials from '../common/materials';
+import RenderOrder from '../common/RenderOrder';
+
 
 class ShowOperStats extends Component {
   state = {
@@ -125,144 +126,25 @@ class ShowOperStats extends Component {
     );
 
     let renderOrders = orders.map((item, key) => {
-
-      // consumption array of specific order
-      let consumptionArray = [];
-
-      item.disinfectors.forEach(thing => {
-        consumptionArray.push({
-          user: thing.user,
-          consumption: thing.consumption
-        });
-      });
-
-      let renderOrderConsumption = consumptionArray.map((object, number) =>
-        <li key={number}>
-          <p className="mb-0">Пользователь: {object.user.occupation} {object.user.name}</p>
-          {object.consumption.map((element, number) =>
-            <p key={number} className="mb-0">{element.material}: {element.amount.toLocaleString()} {element.unit}</p>
-          )}
-        </li>
-      );
-
       return (
         <div className="col-lg-4 col-md-6" key={key}>
           <div className="card order mt-2">
             <div className="card-body p-0">
               <ul className="font-bold mb-0 list-unstyled">
-                <li>Ответственный: {item.disinfectorId.occupation} {item.disinfectorId.name}</li>
-
-                {item.operatorDecided ? (
-                  <React.Fragment>
-                    <li>Оператор рассмотрел заявку</li>
-                    {item.operatorConfirmed ? (
-                      <React.Fragment>
-                        <li className="text-success">Оператор Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{item.operatorCheckedAt}</Moment>)</li>
-                        <li>Балл (0-5): {item.score}</li>
-                        <li>Отзыв Клиента: {item.clientReview ? item.clientReview : 'Нет Отзыва'}</li>
-                      </React.Fragment>
-                    ) : <li className="text-danger">Оператор Отклонил (<Moment format="DD/MM/YYYY HH:mm">{item.operatorCheckedAt}</Moment>)</li>}
-                  </React.Fragment>
-                ) : <li>Оператор еще не рассмотрел заявку</li>}
-
-                {item.clientType === 'corporate' && item.paymentMethod === 'notCash' && !item.accountantDecided ? <li>Бухгалтер еще не рассмотрел заявку</li> : ''}
-
-                {item.clientType === 'corporate' && item.paymentMethod === 'notCash' && item.accountantDecided ?
-                  <React.Fragment>
-                    <li>Бухгалтер рассмотрел заявку</li>
-                    {item.accountantConfirmed ? (
-                      <React.Fragment>
-                        <li className="text-success">Бухгалтер Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{item.accountantCheckedAt}</Moment>)</li>
-                        <li>Счет-Фактура: {item.invoice}</li>
-                        <li>Общая Сумма: {item.cost.toLocaleString()} UZS (каждому по {(item.cost / item.disinfectors.length).toLocaleString()} UZS)</li>
-                      </React.Fragment>
-                    ) : <li className="text-danger">Бухгалтер Отклонил (<Moment format="DD/MM/YYYY HH:mm">{item.accountantCheckedAt}</Moment>)</li>}
-                  </React.Fragment>
-                  : ''}
-
-                {item.clientType === 'corporate' && item.paymentMethod === 'cash' && !item.adminDecided ? <li>Админ еще не рассмотрел заявку</li> : ''}
-
-                {item.clientType === 'corporate' && item.paymentMethod === 'cash' && item.adminDecided ? (
-                  <React.Fragment>
-                    <li>Админ рассмотрел заявку</li>
-                    {item.adminConfirmed ? (
-                      <li className="text-success">Админ Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{item.adminCheckedAt}</Moment>)</li>
-                    ) : <li className="text-danger">Админ Отклонил (<Moment format="DD/MM/YYYY HH:mm">{item.adminCheckedAt}</Moment>)</li>}
-                  </React.Fragment>
-                ) : ''}
-
-                {item.clientType === 'individual' && !item.adminDecided ? <li>Админ еще не рассмотрел заявку</li> : ''}
-                {item.clientType === 'individual' && item.adminDecided ? (
-                  <React.Fragment>
-                    <li>Админ рассмотрел заявку</li>
-                    {item.adminConfirmed ? (
-                      <li className="text-success">Админ Подтвердил (<Moment format="DD/MM/YYYY HH:mm">{item.adminCheckedAt}</Moment>)</li>
-                    ) : <li className="text-danger">Админ Отклонил (<Moment format="DD/MM/YYYY HH:mm">{item.adminCheckedAt}</Moment>)</li>}
-                  </React.Fragment>
-                ) : ''}
-
-                {item.clientType === 'corporate' ?
-                  <React.Fragment>
-                    {item.clientId ? (
-                      <li>Корпоративный Клиент: {item.clientId.name}</li>
-                    ) : <li>Корпоративный Клиент</li>}
-                    <li>Имя клиента: {item.client}</li>
-                  </React.Fragment>
-                  : ''}
-
-                {item.clientType === 'individual' ?
-                  <li>Физический Клиент: {item.client}</li>
-                  : ''}
-
-                <li>Дата выполнения: <Moment format="DD/MM/YYYY">{item.dateFrom}</Moment></li>
-                {item.completed ? (
-                  <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
-                ) : (
-                    <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment></li>
-                  )}
-                <li>Адрес: {item.address}</li>
-                <li>Тип услуги: {item.typeOfService}</li>
-                <li>Комментарии Оператора: {item.comment ? item.comment : 'Нет комментариев'}</li>
-                <li>Комментарии Дезинфектора: {item.disinfectorComment ? item.disinfectorComment : 'Нет комментариев'}</li>
-                {item.completed ? (
-                  <React.Fragment>
-                    <li>Срок гарантии (в месяцах): {item.guarantee}</li>
-
-                    <li>Расход Материалов (заказ выполнили {item.disinfectors.length} чел):</li>
-                    <ul className="font-bold mb-0">
-                      {renderOrderConsumption}
-                    </ul>
-                  </React.Fragment>
-                ) : ''}
-
-                {item.completed && item.clientType === 'corporate' ? (
-                  <React.Fragment>
-                    {item.paymentMethod === 'cash' ? (
-                      <React.Fragment>
-                        <li>Тип Платежа: Наличный</li>
-                        <li>Общая Сумма: {item.cost.toLocaleString()} UZS (каждому по {(item.cost / item.disinfectors.length).toLocaleString()} UZS)</li>
-                      </React.Fragment>
-                    ) : (
-                        <React.Fragment>
-                          <li>Тип Платежа: Безналичный</li>
-                          <li>Номер Договора: {item.contractNumber}</li>
-                        </React.Fragment>
-                      )}
-                  </React.Fragment>
-                ) : ''}
-
-                {item.completed && item.clientType === 'individual' ?
-                  <li>Общая Сумма: {item.cost.toLocaleString()} UZS, (каждому по {(item.cost / item.disinfectors.length).toLocaleString()} UZS)</li>
-                  : ''}
-
-                {item.userAcceptedOrder ? (
-                  <li>Заказ принял: {item.userAcceptedOrder.occupation} {item.userAcceptedOrder.name}</li>
-                ) : ''}
-
-                <li>Заказ добавил: {item.userCreated.occupation} {item.userCreated.name} (<Moment format="DD/MM/YYYY HH:mm">{item.createdAt}</Moment>)</li>
-
-                {item.completed ? <li>Форма Выполнения Заказа заполнена: <Moment format="DD/MM/YYYY HH:mm">{item.completedAt}</Moment></li> : ''}
-
+                <RenderOrder
+                  order={item}
+                  shouldRenderIfOrderIsPovtor={false}
+                  shouldRenderIfOrderIsFailed={false}
+                  shouldRenderNextOrdersAfterFailArray={false}
+                  shouldRenderDisinfector={true}
+                  shouldRenderOperatorDecided={true}
+                  shouldRenderAccountantDecided={true}
+                  shouldRenderMaterialConsumption={false}
+                  shouldRenderPaymentMethod={true}
+                  shouldRenderUserAcceptedOrder={true}
+                  shouldRenderUserCreated={true}
+                  shouldRenderCompletedAt={true}
+                />
               </ul>
             </div>
           </div>
@@ -330,8 +212,8 @@ class ShowOperStats extends Component {
             </div>
           </React.Fragment>
         ) : (
-            <button className="btn btn-dark" onClick={this.toggleShowOrders.bind(this, true)}>Показать заказы</button>
-          )}
+          <button className="btn btn-dark" onClick={this.toggleShowOrders.bind(this, true)}>Показать заказы</button>
+        )}
       </React.Fragment>
     )
   }

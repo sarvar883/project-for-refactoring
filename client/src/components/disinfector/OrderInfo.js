@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+
 import { getOrders, addDisinfectorComment } from '../../actions/orderActions';
-import Moment from 'react-moment';
+
+import RenderOrder from '../common/RenderOrder';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
+
 
 class OrderInfo extends Component {
   state = {
@@ -44,35 +47,22 @@ class OrderInfo extends Component {
         <div className="card order">
           <div className="card-body p-0">
             <ul className="font-bold">
-              <li>Дезинфектор: {orderObject.disinfectorId.name}</li>
-              {orderObject.clientType === 'corporate' ?
-                <React.Fragment>
-                  {orderObject.clientId ? (
-                    <li>Корпоративный Клиент: {orderObject.clientId.name}</li>
-                  ) : <li>Корпоративный Клиент</li>}
-                  <li>Имя клиента: {orderObject.client}</li>
-                </React.Fragment>
-                : ''}
-              {orderObject.clientType === 'individual' ?
-                <li>Физический Клиент: {orderObject.client}</li> : ''
-              }
-              <li>Телефонный номер клиента: {orderObject.phone}</li>
-              {orderObject.phone2 !== '' ? (<li>Запасной номер: {orderObject.phone2}</li>) : ''}
-              <li>Дата и Время выполнения: <Moment format="DD/MM/YYYY HH:mm">{orderObject.dateFrom}</Moment></li>
-              <li>Адрес: {orderObject.address}</li>
-
-
-              <li>Тип услуги: {orderObject.typeOfService}</li>
-
-              <li>Комментарии Оператора: {orderObject.comment ? orderObject.comment : 'Нет комментариев'}</li>
-              <li>Комментарии Дезинфектора: {this.state.disinfectorComment ? this.state.disinfectorComment : 'Нет комментариев'}</li>
-
-              {orderObject.userAcceptedOrder ? (
-                <li>Заказ принял: {orderObject.userAcceptedOrder.occupation} {orderObject.userAcceptedOrder.name}</li>
-              ) : ''}
-
-              <li>Заказ Добавлен: {orderObject.userCreated.occupation} {orderObject.userCreated.name} <Moment format="DD/MM/YYYY HH:mm">{orderObject.createdAt}</Moment></li>
+              <RenderOrder
+                order={orderObject}
+                shouldRenderIfOrderIsPovtor={false}
+                shouldRenderIfOrderIsFailed={false}
+                shouldRenderNextOrdersAfterFailArray={false}
+                shouldRenderDisinfector={true}
+                shouldRenderOperatorDecided={false}
+                shouldRenderAccountantDecided={false}
+                shouldRenderMaterialConsumption={false}
+                shouldRenderPaymentMethod={false}
+                shouldRenderUserAcceptedOrder={true}
+                shouldRenderUserCreated={true}
+                shouldRenderCompletedAt={true}
+              />
             </ul>
+
             {this.state.addComment ? (
               <form onSubmit={this.onSubmit}>
                 <TextAreaFieldGroup
@@ -88,8 +78,8 @@ class OrderInfo extends Component {
                 </div>
               </form>
             ) : (
-                <button type="button" className="btn btn-success d-block" onClick={this.toggleAddComment}>Добавить Комментарий</button>
-              )}
+              <button type="button" className="btn btn-success d-block" onClick={this.toggleAddComment}>Добавить Комментарий</button>
+            )}
             {currentTime.getTime() > new Date(orderObject.dateFrom).getTime() ? (
               <Link to={`/order-complete-form/${orderObject._id}`} className="btn btn-primary mt-3">Форма О Выполнении</Link>
             ) : ''}
