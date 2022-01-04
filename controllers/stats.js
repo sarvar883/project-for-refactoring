@@ -1,6 +1,11 @@
 const Order = require('../models/order');
 const AddMaterial = require('../models/addMaterial');
 
+const yearHelper = require('../utils/yearMinMax');
+const monthHelper = require('../utils/monthMinMax');
+const weekHelper = require('../utils/weekMinMax');
+const dayHelper = require('../utils/dayMinMax');
+
 
 exports.monthStatsForDisinfector = async (req, res) => {
   const id = req.body.id;
@@ -149,62 +154,39 @@ exports.dayStatsForDisinfector = async (req, res) => {
 };
 
 
-exports.monthStatsForAdmin = (req, res) => {
-  const month = Number(req.body.month);
-  const year = Number(req.body.year);
+exports.genStatsForAdmin = (req, res) => {
+  // общая статистика
+  let timeObject = {};
+  if (req.body.object.type === 'month') {
+    timeObject = monthHelper(req.body.object.month, req.body.object.year);
+  } else if (req.body.object.type === 'week') {
+    timeObject = weekHelper(req.body.object.days);
+  } else if (req.body.object.type === 'day') {
+    timeObject = dayHelper(req.body.object.day);
+  }
 
-  Order.find()
-    .populate('disinfectorId clientId')
-    // .populate('disinfectorId userCreated clientId userAcceptedOrder disinfectors.user')
-    .exec()
-    .then(orders => {
-      orders = orders.filter(order =>
-        new Date(order.dateFrom).getMonth() === month &&
-        new Date(order.dateFrom).getFullYear() === year
-      );
-      return res.json(orders);
+  Order.find({
+    $and: [
+      { dateFrom: { '$gte': timeObject.min } },
+      { dateFrom: { '$lt': timeObject.max } }
+    ],
+  })
+    .populate({
+      path: 'disinfectorId',
+      select: 'name occupation'
     })
-    .catch(err => {
-      console.log('monthStatsForAdmin ERROR', err);
-      res.status(404).json(err);
-    });
-};
-
-
-exports.weekStatsForAdmin = (req, res) => {
-  const days = req.body.days;
-
-  Order.find()
-    .populate('disinfectorId clientId')
-    .exec()
-    .then(orders => {
-      orders = orders.filter(order =>
-        new Date(order.dateFrom) >= new Date(days[0]) &&
-        new Date(order.dateFrom).setHours(0, 0, 0, 0) <= new Date(days[6])
-      );
-      return res.json(orders);
+    .populate({
+      path: 'clientId',
+      select: 'name'
     })
-    .catch(err => {
-      console.log('weekStatsForAdmin ERROR', err);
-      res.status(404).json(err);
-    });
-};
-
-
-exports.dayStatsForAdmin = (req, res) => {
-  const day = req.body.day;
-
-  Order.find()
-    .populate('disinfectorId clientId')
-    .exec()
-    .then(orders => {
-      orders = orders.filter(order =>
-        new Date(order.dateFrom).setHours(0, 0, 0, 0) === new Date(day).setHours(0, 0, 0, 0)
-      );
-      return res.json(orders);
+    .populate({
+      path: 'disinfectors.user',
+      select: 'name occupation'
     })
+    .exec()
+    .then(orders => res.json(orders))
     .catch(err => {
-      console.log('dayStatsForAdmin ERROR', err);
+      console.log('genStatsForAdmin ERROR', err);
       res.status(404).json(err);
     });
 };

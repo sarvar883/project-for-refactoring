@@ -86,55 +86,34 @@ export const adminConfirmsOrderQuery = (object, history) => (dispatch) => {
 };
 
 
-export const getMonthStatsForAdmin = (month, year) => (dispatch) => {
+export const getGenStatsForAdmin = (object) => (dispatch) => {
   dispatch(loadingStats());
-  axios.post('/stats/for-admin-month', { month: month, year: year })
-    .then(res =>
-      dispatch({
-        type: GET_ADMIN_MONTH_STATS,
-        payload: res.data
-      })
-    )
-    .catch(err =>
+
+  axios.post('/stats/for-admin-general', { object })
+    .then((res) => {
+      if (object.type === 'month') {
+        return dispatch({
+          type: GET_ADMIN_MONTH_STATS,
+          payload: res.data,
+        });
+
+      } else if (object.type === 'week') {
+        return dispatch({
+          type: GET_ADMIN_WEEK_STATS,
+          payload: res.data,
+        });
+
+      } else if (object.type === 'day') {
+        return dispatch({
+          type: GET_ADMIN_DAY_STATS,
+          payload: res.data,
+        });
+      }
+    })
+    .catch((err) =>
       dispatch({
         type: GET_ERRORS,
-        payload: err
-      })
-    );
-};
-
-
-export const getWeekStatsForAdmin = (days) => (dispatch) => {
-  dispatch(loadingStats());
-  axios.post('/stats/for-admin-week', { days: days })
-    .then(res =>
-      dispatch({
-        type: GET_ADMIN_WEEK_STATS,
-        payload: res.data
-      })
-    )
-    .catch(err =>
-      dispatch({
-        type: GET_ERRORS,
-        payload: err
-      })
-    );
-};
-
-
-export const getDayStatsForAdmin = (day) => (dispatch) => {
-  dispatch(loadingStats());
-  axios.post('/stats/for-admin-day', { day: day })
-    .then(res =>
-      dispatch({
-        type: GET_ADMIN_DAY_STATS,
-        payload: res.data
-      })
-    )
-    .catch(err =>
-      dispatch({
-        type: GET_ERRORS,
-        payload: err
+        payload: err,
       })
     );
 };

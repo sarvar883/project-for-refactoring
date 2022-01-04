@@ -14,11 +14,11 @@ router.post('/for-disinfector-week', passport.authenticate('jwt', { session: fal
 
 router.post('/for-disinfector-day', passport.authenticate('jwt', { session: false }), statsController.dayStatsForDisinfector);
 
-router.post('/for-admin-month', passport.authenticate('jwt', { session: false }), isAdmin, statsController.monthStatsForAdmin);
-
-router.post('/for-admin-week', passport.authenticate('jwt', { session: false }), isAdmin, statsController.weekStatsForAdmin);
-
-router.post('/for-admin-day', passport.authenticate('jwt', { session: false }), isAdmin, statsController.dayStatsForAdmin);
+// общая статистика
+router.post('/for-admin-general',
+  passport.authenticate('jwt', { session: false }),
+  statsController.genStatsForAdmin
+);
 
 router.post('/for-admin-disinf-stats-month', passport.authenticate('jwt', { session: false }), isAdmin, statsController.disinfMonthStatsForAdmin);
 

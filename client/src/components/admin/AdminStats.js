@@ -5,7 +5,7 @@ import Spinner from '../common/Spinner';
 import Moment from 'react-moment';
 import axios from 'axios';
 
-import { getDayStatsForAdmin, getMonthStatsForAdmin, getWeekStatsForAdmin } from '../../actions/adminActions';
+import { getGenStatsForAdmin } from '../../actions/adminActions';
 import monthsNames from '../../utils/monthsNames';
 import getMonthAndYearLabels from '../../utils/getMonthAndYearLabels';
 import ShowAdminStats from './ShowAdminStats';
@@ -37,7 +37,14 @@ class AdminStats extends Component {
     const thisYear = new Date().getFullYear();
     const URL = 'http://localhost:5000';
 
-    this.props.getMonthStatsForAdmin(thisMonth, thisYear);
+    const object = {
+      type: 'month',
+      month: thisMonth,
+      year: thisYear
+    };
+
+    this.props.getGenStatsForAdmin(object);
+
     // axios.post(`${URL}/stats/for-admin-month`, { month: thisMonth, year: thisYear })
     //   .then(res => {
     //     this.setState({
@@ -57,7 +64,14 @@ class AdminStats extends Component {
 
   getMonthStats = (e) => {
     e.preventDefault();
-    this.props.getMonthStatsForAdmin(this.state.month, this.state.year);
+    const object = {
+      type: 'month',
+      month: Number(this.state.month),
+      year: Number(this.state.year)
+    };
+
+    this.props.getGenStatsForAdmin(object);
+
     this.setState({
       headingMonth: this.state.month,
       headingYear: this.state.year
@@ -66,7 +80,14 @@ class AdminStats extends Component {
 
   getDayStats = (e) => {
     e.preventDefault();
-    this.props.getDayStatsForAdmin(this.state.day);
+
+    const object = {
+      type: 'day',
+      day: this.state.day
+    };
+
+    this.props.getGenStatsForAdmin(object);
+
     this.setState({
       headingDay: this.state.day.split('-').reverse().join('-')
     });
@@ -74,8 +95,14 @@ class AdminStats extends Component {
 
 
   // weekly calendar
-  handleDayChange = date => {
-    this.props.getWeekStatsForAdmin(getWeekDays(getWeekRange(date).from));
+  handleDayChange = (date) => {
+    const object = {
+      type: 'week',
+      days: getWeekDays(getWeekRange(date).from)
+    };
+
+    this.props.getGenStatsForAdmin(object);
+
     this.setState({
       selectedDays: getWeekDays(getWeekRange(date).from)
     });
@@ -94,7 +121,13 @@ class AdminStats extends Component {
   };
 
   handleWeekClick = (weekNumber, days, e) => {
-    this.props.getWeekStatsForAdmin(getWeekDays(getWeekRange(days[0]).from));
+    const object = {
+      type: 'week',
+      days: getWeekDays(getWeekRange(days[0]).from)
+    };
+
+    this.props.getGenStatsForAdmin(object);
+
     this.setState({
       selectedDays: getWeekDays(getWeekRange(days[0]).from)
     });
@@ -215,4 +248,4 @@ const mapStateToProps = state => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getDayStatsForAdmin, getMonthStatsForAdmin, getWeekStatsForAdmin })(withRouter(AdminStats));
+export default connect(mapStateToProps, { getGenStatsForAdmin })(withRouter(AdminStats));
