@@ -5,6 +5,8 @@ import Spinner from '../common/Spinner';
 import Moment from 'react-moment';
 
 import { getAccStats } from '../../actions/accountantActions';
+import monthsNames from '../../utils/monthsNames';
+import getMonthAndYearLabels from '../../utils/getMonthAndYearLabels';
 import ShowAccStats from './ShowAccStats';
 
 import { getWeekDays, getWeekRange } from '../../utils/weekPickerFunctions';
@@ -119,38 +121,12 @@ class AccStats extends Component {
 
 
   render() {
-    const date = new Date();
-    const monthsNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+    const { monthLabels, yearLabels } = getMonthAndYearLabels();
 
-    let years = [
-      { label: "-- Выберите Год -- ", value: "" }
-    ];
-    for (let i = 2019; i <= date.getFullYear(); i++) {
-      years.push({
-        label: i, value: i
-      });
-    }
-
-    const months = [
-      { label: "-- Выберите месяц -- ", value: "" },
-      { label: "Январь", value: 0 },
-      { label: "Февраль", value: 1 },
-      { label: "Март", value: 2 },
-      { label: "Апрель", value: 3 },
-      { label: "Май", value: 4 },
-      { label: "Июнь", value: 5 },
-      { label: "Июль", value: 6 },
-      { label: "Август", value: 7 },
-      { label: "Сентябрь", value: 8 },
-      { label: "Октябрь", value: 9 },
-      { label: "Ноябрь", value: 10 },
-      { label: "Декабрь", value: 11 }
-    ];
-
-    const yearsOptions = years.map((year, index) =>
+    const yearsOptions = yearLabels.map((year, index) =>
       <option value={year.value} key={index}>{year.label}</option>
     );
-    const monthOptions = months.map((month, index) =>
+    const monthOptions = monthLabels.map((month, index) =>
       <option data-testid="month-options" value={month.value} key={index}>{month.label}</option>
     );
 

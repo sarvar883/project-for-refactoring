@@ -6,6 +6,8 @@ import Moment from 'react-moment';
 import axios from 'axios';
 
 import { getDayStatsForAdmin, getMonthStatsForAdmin, getWeekStatsForAdmin } from '../../actions/adminActions';
+import monthsNames from '../../utils/monthsNames';
+import getMonthAndYearLabels from '../../utils/getMonthAndYearLabels';
 import ShowAdminStats from './ShowAdminStats';
 
 import { getWeekDays, getWeekRange } from '../../utils/weekPickerFunctions';
@@ -102,30 +104,12 @@ class AdminStats extends Component {
 
 
   render() {
-    const date = new Date();
-    const monthsNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-    const months = [
-      { label: "-- Выберите месяц -- ", value: "" }
-    ];
-    monthsNames.forEach((month, i) => {
-      months.push({
-        label: month, value: i
-      });
-    });
+    const { monthLabels, yearLabels } = getMonthAndYearLabels();
 
-    let years = [
-      { label: "-- Выберите Год -- ", value: "" }
-    ];
-    for (let i = 2019; i <= date.getFullYear(); i++) {
-      years.push({
-        label: i, value: i
-      });
-    }
-
-    const yearsOptions = years.map((year, index) =>
+    const yearsOptions = yearLabels.map((year, index) =>
       <option value={year.value} key={index}>{year.label}</option>
     );
-    const monthOptions = months.map((month, index) =>
+    const monthOptions = monthLabels.map((month, index) =>
       <option value={month.value} key={index}>{month.label}</option>
     );
 

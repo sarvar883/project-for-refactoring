@@ -7,6 +7,8 @@ import Moment from 'react-moment';
 import ShowDisMatComings from './ShowDisMatComings';
 
 import { getUserMatComing } from '../../actions/disinfectorActions';
+import monthsNames from '../../utils/monthsNames';
+import getMonthAndYearLabels from '../../utils/getMonthAndYearLabels';
 
 import { getWeekDays, getWeekRange } from '../../utils/weekPickerFunctions';
 import DayPicker from 'react-day-picker';
@@ -112,38 +114,12 @@ class DisMatCom extends Component {
 
 
   render() {
-    const date = new Date();
-    const monthsNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+    const { monthLabels, yearLabels } = getMonthAndYearLabels();
 
-    let years = [
-      { label: "-- Выберите Год -- ", value: "" }
-    ];
-    for (let i = 2019; i <= date.getFullYear(); i++) {
-      years.push({
-        label: i, value: i
-      });
-    }
-
-    const months = [
-      { label: "-- Выберите месяц -- ", value: "" },
-      { label: "Январь", value: 0 },
-      { label: "Февраль", value: 1 },
-      { label: "Март", value: 2 },
-      { label: "Апрель", value: 3 },
-      { label: "Май", value: 4 },
-      { label: "Июнь", value: 5 },
-      { label: "Июль", value: 6 },
-      { label: "Август", value: 7 },
-      { label: "Сентябрь", value: 8 },
-      { label: "Октябрь", value: 9 },
-      { label: "Ноябрь", value: 10 },
-      { label: "Декабрь", value: 11 }
-    ];
-
-    const yearsOptions = years.map((year, index) =>
+    const yearsOptions = yearLabels.map((year, index) =>
       <option value={year.value} key={index}>{year.label}</option>
     );
-    const monthOptions = months.map((month, index) =>
+    const monthOptions = monthLabels.map((month, index) =>
       <option value={month.value} key={index}>{month.label}</option>
     );
 

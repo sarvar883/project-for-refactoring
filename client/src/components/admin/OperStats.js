@@ -7,6 +7,8 @@ import Moment from 'react-moment';
 import ShowOperStats from './ShowOperStats';
 
 import { getAllOperatorsAndAmins, getOperatorStats } from '../../actions/adminActions';
+import monthsNames from '../../utils/monthsNames';
+import getMonthAndYearLabels from '../../utils/getMonthAndYearLabels';
 
 import { getWeekDays, getWeekRange } from '../../utils/weekPickerFunctions';
 import DayPicker from 'react-day-picker';
@@ -133,31 +135,12 @@ class OperStats extends Component {
 
 
   render() {
-    const date = new Date();
+    const { monthLabels, yearLabels } = getMonthAndYearLabels();
 
-    const monthsNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-    const months = [
-      { label: "-- Выберите месяц -- ", value: "" }
-    ];
-    monthsNames.forEach((month, i) => {
-      months.push({
-        label: month, value: i
-      });
-    });
-
-    let years = [
-      { label: "-- Выберите Год -- ", value: "" }
-    ];
-    for (let i = 2019; i <= date.getFullYear(); i++) {
-      years.push({
-        label: i, value: i
-      });
-    }
-
-    const yearsOptions = years.map((year, index) =>
+    const yearsOptions = yearLabels.map((year, index) =>
       <option value={year.value} key={index}>{year.label}</option>
     );
-    const monthOptions = months.map((month, index) =>
+    const monthOptions = monthLabels.map((month, index) =>
       <option value={month.value} key={index}>{month.label}</option>
     );
 
