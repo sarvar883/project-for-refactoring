@@ -2,39 +2,14 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Spinner from '../common/Spinner';
-import moment from 'moment';
 import Moment from 'react-moment';
+
 import { getMonthStats, getWeekStats, getDayStats } from '../../actions/disinfectorActions';
 import ShowDisinfStats from './ShowDisinfStats';
 
+import { getWeekDays, getWeekRange } from '../../utils/weekPickerFunctions';
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
-
-
-
-function getWeekDays(weekStart) {
-  const days = [];
-  for (let i = 1; i < 8; i += 1) {
-    days.push(
-      moment(weekStart)
-        .add(i, 'days')
-        .toDate()
-    );
-  }
-  return days;
-}
-
-function getWeekRange(date) {
-  return {
-    from: moment(date)
-      .startOf('week')
-      .toDate(),
-    to: moment(date)
-      .endOf('week')
-      .toDate(),
-  };
-}
-
 
 
 class DisinfStats extends Component {
