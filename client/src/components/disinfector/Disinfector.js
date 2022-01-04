@@ -4,15 +4,30 @@ import { connect } from 'react-redux';
 import { getOrders } from '../../actions/orderActions';
 import { getDisinfectorMaterials } from '../../actions/disinfectorActions';
 import Spinner from '../common/Spinner';
-import DisplayOrders from './DisplayOrders';
+import OrderInfo from './OrderInfo';
+
 
 class Disinfector extends Component {
+  state = {
+    orders: [],
+  };
+
   componentDidMount() {
     this.props.getDisinfectorMaterials(this.props.auth.user.id);
     this.props.getOrders(this.props.auth.user.id);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.order.orders) {
+      this.setState({
+        orders: nextProps.order.orders
+      });
+    }
+  };
+
   render() {
+    const orders = this.state.orders.sort((a, b) => new Date(a.dateFrom) - new Date(b.dateFrom));
+
     let currentMaterials = this.props.auth.user.materials.map((item, index) =>
       <li key={index}>{item.material}: {item.amount.toLocaleString()} {item.unit}</li>
     );
@@ -47,12 +62,19 @@ class Disinfector extends Component {
 
         <div className="container-fluid">
           {this.props.order.loading ? <Spinner /> : (
-            <div className="row">
-              <div className="col-12">
-                <h2 className="text-center mt-3">Ваши Заказы</h2>
+            <React.Fragment>
+              <div className="row">
+                <div className="col-12">
+                  <h2 className="text-center mt-3">Ваши Заказы</h2>
+                </div>
               </div>
-              <DisplayOrders />
-            </div>
+
+              <div className="row">
+                {orders.map((order, index) => (
+                  <OrderInfo orderObject={order} index={index} key={index} />
+                ))}
+              </div>
+            </React.Fragment>
           )}
         </div>
       </React.Fragment>
