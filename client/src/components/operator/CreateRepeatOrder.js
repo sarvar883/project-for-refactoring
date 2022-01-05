@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+
 import Spinner from '../common/Spinner';
 import TextFieldGroup from '../common/TextFieldGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 import advertisements from '../common/advertisements';
+import orderTypes from '../../utils/orderTypes';
 
 import { getAllUsers, getRepeatOrderForm, createRepeatOrder } from '../../actions/orderActions';
+
 
 class CreateRepeatOrder extends Component {
   state = {
@@ -147,17 +150,6 @@ class CreateRepeatOrder extends Component {
       label: `${worker.name}, ${worker.occupation}`, value: worker._id
     }));
 
-    const orderTypes = [
-      { label: '-- Выберите тип заказа --', value: "" },
-      { label: 'DF', value: 'DF' },
-      { label: 'DZ', value: 'DZ' },
-      { label: 'KL', value: 'KL' },
-      { label: 'TR', value: 'TR' },
-      { label: 'GR', value: 'GR' },
-      { label: 'MX', value: 'MX' },
-      { label: 'KOMP', value: 'KOMP' }
-    ];
-
     const advOptions = [
       { label: '-- Откуда узнали о нас? --', value: "" }
     ];
@@ -239,8 +231,8 @@ class CreateRepeatOrder extends Component {
                           <button className="btn btn-danger mb-2" onClick={this.deleteSecondPhone}>Убрать запасной номер телефона</button>
                         </React.Fragment>
                       ) : (
-                          <button className="btn btn-success mb-3" onClick={this.toggleSecondPhone}>Добавить другой номер</button>
-                        )}
+                        <button className="btn btn-success mb-3" onClick={this.toggleSecondPhone}>Добавить другой номер</button>
+                      )}
 
                       <div className="form-group">
                         <label htmlFor="typeOfService">Выберите тип заказа:</label>
@@ -263,15 +255,15 @@ class CreateRepeatOrder extends Component {
                       {this.props.order.loading ? (
                         <p>Дезинфекторы загружаются...</p>
                       ) : (
-                          <div className="form-group">
-                            <label htmlFor="disinfectorId">Выберите Дезинфектора:</label>
-                            <select className="form-control" value={this.state.disinfectorId} name="disinfectorId" onChange={this.onChange} required>
-                              {disinfectorOptions.map((item, index) =>
-                                <option key={index} value={item.value}>{item.label}</option>
-                              )}
-                            </select>
-                          </div>
-                        )}
+                        <div className="form-group">
+                          <label htmlFor="disinfectorId">Выберите Дезинфектора:</label>
+                          <select className="form-control" value={this.state.disinfectorId} name="disinfectorId" onChange={this.onChange} required>
+                            {disinfectorOptions.map((item, index) =>
+                              <option key={index} value={item.value}>{item.label}</option>
+                            )}
+                          </select>
+                        </div>
+                      )}
 
                       <div className="form-group">
                         <label htmlFor="userAcceptedOrder">Кто принял Заказ:</label>

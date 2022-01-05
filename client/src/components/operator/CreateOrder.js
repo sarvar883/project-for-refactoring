@@ -8,6 +8,7 @@ import SelectListGroup from '../common/SelectListGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 import advertisements from '../common/advertisements';
 import validatePhoneNumber from '../../utils/validatePhone';
+import orderTypes from '../../utils/orderTypes';
 
 
 class CreateOrder extends Component {
@@ -48,19 +49,6 @@ class CreateOrder extends Component {
     this.props.getCorporateClients();
     this.props.getAllUsers();
     window.scrollTo({ top: 0 });
-
-    const orderTypes = [
-      { label: 'DF', value: 'DF' },
-      { label: 'DZ', value: 'DZ' },
-      { label: 'KL', value: 'KL' },
-      { label: 'TR', value: 'TR' },
-      { label: 'GR', value: 'GR' },
-      { label: 'MX', value: 'MX' },
-      { label: 'KOMP', value: 'KOMP' },
-      { label: 'Консультация', value: 'Консультация' },
-      { label: 'Профилактика', value: 'Профилактика' },
-      { label: 'Осмотр', value: 'Осмотр' }
-    ];
 
     let array = [];
     orderTypes.forEach(object => {
@@ -210,20 +198,6 @@ class CreateOrder extends Component {
       label: `${worker.name}, ${worker.occupation}`, value: worker._id
     }));
 
-    const orderTypes = [
-      // { label: '-- Выберите тип заказа --', value: 0 },
-      { label: 'DF', value: 'DF' },
-      { label: 'DZ', value: 'DZ' },
-      { label: 'KL', value: 'KL' },
-      { label: 'TR', value: 'TR' },
-      { label: 'GR', value: 'GR' },
-      { label: 'MX', value: 'MX' },
-      { label: 'KOMP', value: 'KOMP' },
-      { label: 'Консультация', value: 'Консультация' },
-      { label: 'Профилактика', value: 'Профилактика' },
-      { label: 'Осмотр', value: 'Осмотр' }
-    ];
-
     const clientTypes = [
       { label: '-- Выберите тип клиента --', value: '' },
       { label: 'Корпоративный', value: 'corporate' },
@@ -336,13 +310,6 @@ class CreateOrder extends Component {
                     onChange={this.onChange}
                     error={errors.timeFrom}
                   />
-                  {/* <SelectListGroup
-                    name="typeOfService"
-                    value={this.state.typeOfService}
-                    onChange={this.onChange}
-                    error={errors.typeOfService}
-                    options={orderTypes}
-                  /> */}
 
                   <label htmlFor="">Выберите тип заказа (можно выбрать несколько):</label>
                   {orderTypes.map((item, key) =>

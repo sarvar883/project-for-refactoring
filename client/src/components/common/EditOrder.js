@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+
 import Spinner from '../common/Spinner';
 import TextFieldGroup from '../common/TextFieldGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 import isEmpty from '../../validation/is-empty';
 import advertisements from '../common/advertisements';
+import orderTypes from '../../utils/orderTypes';
 
 import { getDisinfectors, getAllUsers, getCorporateClients, getOrderForEdit, editOrder } from '../../actions/orderActions';
 
@@ -96,20 +98,6 @@ class EditOrder extends Component {
         defaultHourString = `${new Date(date).getHours()}:00`;
       }
 
-
-
-      const orderTypes = [
-        { label: 'DF', value: 'DF' },
-        { label: 'DZ', value: 'DZ' },
-        { label: 'KL', value: 'KL' },
-        { label: 'TR', value: 'TR' },
-        { label: 'GR', value: 'GR' },
-        { label: 'MX', value: 'MX' },
-        { label: 'KOMP', value: 'KOMP' },
-        { label: 'Консультация', value: 'Консультация' },
-        { label: 'Профилактика', value: 'Профилактика' },
-        { label: 'Осмотр', value: 'Осмотр' }
-      ];
 
       let array = [];
       orderTypes.forEach(object => {
@@ -375,8 +363,8 @@ class EditOrder extends Component {
                           <button className="btn btn-danger mb-2" onClick={this.deleteSecondPhone}>Убрать запасной номер телефона</button>
                         </React.Fragment>
                       ) : (
-                          <button className="btn btn-success mb-3" onClick={this.toggleSecondPhone}>Добавить другой номер</button>
-                        )}
+                        <button className="btn btn-success mb-3" onClick={this.toggleSecondPhone}>Добавить другой номер</button>
+                      )}
 
                       <TextFieldGroup
                         label="Дата выполнения заказа"
@@ -395,15 +383,6 @@ class EditOrder extends Component {
                         required
                       />
 
-                      {/* <div className="form-group">
-                        <label htmlFor="typeOfService">Выберите Тип Заказа:</label>
-                        <select className="form-control" value={this.state.typeOfService} name="typeOfService" onChange={this.onChange} required>
-                          {orderTypes.map((item, index) =>
-                            <option key={index} value={item.value}>{item.label}</option>
-                          )}
-                        </select>
-                      </div> */}
-
                       <label htmlFor="">Выберите тип заказа (можно выбрать несколько):</label>
                       {renderServiceTypes}
 
@@ -419,15 +398,15 @@ class EditOrder extends Component {
                       {this.props.order.loading ? (
                         <p>Дезинфекторы загружаются...</p>
                       ) : (
-                          <div className="form-group">
-                            <label htmlFor="disinfectorId">Выберите Дезинфектора:</label>
-                            <select className="form-control" value={this.state.disinfectorId} name="disinfectorId" onChange={this.onChange} required>
-                              {disinfectorOptions.map((item, index) =>
-                                <option key={index} value={item.value}>{item.label}</option>
-                              )}
-                            </select>
-                          </div>
-                        )}
+                        <div className="form-group">
+                          <label htmlFor="disinfectorId">Выберите Дезинфектора:</label>
+                          <select className="form-control" value={this.state.disinfectorId} name="disinfectorId" onChange={this.onChange} required>
+                            {disinfectorOptions.map((item, index) =>
+                              <option key={index} value={item.value}>{item.label}</option>
+                            )}
+                          </select>
+                        </div>
+                      )}
 
 
                       <div className="form-group">
