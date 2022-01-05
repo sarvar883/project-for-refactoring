@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+
 import { deleteOrder } from '../../actions/orderActions';
+import getDateStringElements from '../../utils/dateStringElements';
 
 // socket.io
 import openSocket from 'socket.io-client';
@@ -105,19 +107,11 @@ class SortedOrders extends Component {
   }
 
   onClick = (hour, date) => {
-    let defaultDateMonth, defaultDateDay, defaultHourString;
-    if (new Date(date).getMonth() < 9) {
-      defaultDateMonth = `0${new Date(date).getMonth() + 1}`;
-    } else {
-      defaultDateMonth = `${new Date(date).getMonth() + 1}`;
-    }
+    const dateObject = getDateStringElements(date);
 
-    if (new Date(date).getDate() < 10) {
-      defaultDateDay = `0${new Date(date).getDate()}`;
-    } else {
-      defaultDateDay = new Date(date).getDate();
-    }
-    const defaultDateString = `${new Date(date).getFullYear()}-${defaultDateMonth}-${defaultDateDay}`;
+    const defaultDateString = `${dateObject.year}-${dateObject.month}-${dateObject.day}`;
+
+    let defaultHourString = '';
     if (hour < 10) {
       defaultHourString = `0${hour}:00`;
     } else {
