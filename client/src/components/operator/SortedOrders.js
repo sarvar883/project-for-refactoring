@@ -143,7 +143,12 @@ class SortedOrders extends Component {
 
   render() {
     let array = [];
-    for (let i = 0; i <= 23; i++) {
+
+    // в одном дне есть 24 часа. поэтому 23 - последний час дня 
+    const LAST_HOUR_IN_DAY = 23;
+
+    // пробегаем по часам в конкретном дне (от 0 до 23)
+    for (let i = 0; i <= LAST_HOUR_IN_DAY; i++) {
       array.push({ hour: i, elements: [] });
     }
 
