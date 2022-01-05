@@ -20,6 +20,7 @@ class ShowAccStats extends Component {
       totalOrders,
       completed,
       confirmedOrders,
+      rejected,
     } = calculateStats(this.state.orders);
 
 

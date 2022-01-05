@@ -72,7 +72,7 @@ class RenderOrder extends Component {
         )}
 
         {shouldRenderDisinfector && order.disinfectorId && (
-          <li>Ответственный: {order.disinfectorId.occupation} {order.disinfectorId.name}</li>
+          <li className='disinfector'>Ответственный: {order.disinfectorId.occupation} {order.disinfectorId.name}</li>
         )}
 
 
@@ -156,16 +156,16 @@ class RenderOrder extends Component {
         {order.clientType === 'corporate' && (
           <React.Fragment>
             {order.clientId ? (
-              <li className="text-danger">Корпоративный Клиент: {order.clientId.name}</li>
+              <li className="client text-danger">Корпоративный Клиент: {order.clientId.name}</li>
             ) : (
-              <li className="text-danger">Корпоративный Клиент</li>
+              <li className="client text-danger">Корпоративный Клиент</li>
             )}
-            <li className="text-danger">Имя клиента: {order.client}</li>
+            <li className="client text-danger">Имя клиента: {order.client}</li>
           </React.Fragment>
         )}
 
 
-        {order.clientType === 'individual' && (
+        {order.clientType === 'client individual' && (
           <li className="text-danger">Физический Клиент: {order.client}</li>
         )}
 
@@ -175,18 +175,18 @@ class RenderOrder extends Component {
 
         {dateRenderMethod === 'default' && order.dateFrom && (
           <React.Fragment>
-            <li className="text-danger">Дата выполнения: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
-            <li className="text-danger">Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment> ПО <Moment format="HH:mm">{order.completedAt}</Moment></li>
+            <li className="date text-danger">Дата выполнения: <Moment format="DD/MM/YYYY">{order.dateFrom}</Moment></li>
+            <li className="date text-danger">Время выполнения: С <Moment format="HH:mm">{order.dateFrom}</Moment> ПО <Moment format="HH:mm">{order.completedAt}</Moment></li>
           </React.Fragment>
         )}
 
         {dateRenderMethod === 'dateFromOnly' && order.dateFrom && (
-          <li className="text-danger">Дата и Время: <Moment format="DD/MM/YYYY HH:mm">{order.dateFrom}</Moment></li>
+          <li className="date text-danger">Дата и Время: <Moment format="DD/MM/YYYY HH:mm">{order.dateFrom}</Moment></li>
         )}
 
 
-        <li className="text-danger">Адрес: {order.address}</li>
-        <li className="text-danger">Тип услуги: {order.typeOfService}</li>
+        <li className="address text-danger">Адрес: {order.address}</li>
+        <li className="typeOfService text-danger">Тип услуги: {order.typeOfService}</li>
         <li className="text-danger">Откуда узнали: {order.advertising}</li>
 
         <li>Комментарии Оператора: {order.comment || '--'}</li>
