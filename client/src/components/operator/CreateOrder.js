@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+
 import { getCorporateClients, getAllUsers, createOrder } from '../../actions/orderActions';
 import TextFieldGroup from '../common/TextFieldGroup';
 import SelectListGroup from '../common/SelectListGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 import advertisements from '../common/advertisements';
+import validatePhoneNumber from '../../utils/validatePhone';
+
 
 class CreateOrder extends Component {
   constructor(props) {
@@ -114,17 +117,22 @@ class CreateOrder extends Component {
     const date = this.state.date.split('-');
     const dateStringFrom = new Date(`${date[1]}-${date[2]}-${date[0]} ${this.state.timeFrom}`);
 
-    let numberCharacters = 0, phone2Characters = 0;
-    for (let i = 1; i <= 12; i++) {
-      if (this.state.phone[i] >= '0' && this.state.phone[i] <= '9') {
-        numberCharacters++;
-      }
-      if (this.state.phone2[i] >= '0' && this.state.phone2[i] <= '9') {
-        phone2Characters++;
-      }
+    // validate phone number
+    const phoneValidityObject = validatePhoneNumber(this.state.phone);
+    const phone2ValidityObject = validatePhoneNumber(this.state.phone2);
+
+    // phone
+    if (!phoneValidityObject.isValid) {
+      return alert(phoneValidityObject.message);
     }
 
-    let serviceTypeString = '', selectedItems = 0;
+    // phone 2
+    if (this.state.hasSecondPhone && !phone2ValidityObject.isValid) {
+      return alert(phone2ValidityObject.message);
+    }
+
+    let serviceTypeString = '';
+    let selectedItems = 0;
     this.state.typeOfService.forEach(item => {
       if (item.selected) {
         selectedItems++;
@@ -136,45 +144,47 @@ class CreateOrder extends Component {
       }
     });
 
-    if (this.state.phone.length !== 13 || (this.state.hasSecondPhone && this.state.phone2.length !== 13)) {
-      alert('Телефонный номер должен содержать 13 символов. Введите в формате +998XXXXXXXXX');
-    } else if (this.state.phone[0] !== '+' || (this.state.hasSecondPhone && this.state.phone2[0] !== '+')) {
-      alert('Телефонный номер должен начинаться с "+". Введите в формате +998XXXXXXXXX');
-    } else if (numberCharacters !== 12 || (this.state.hasSecondPhone && phone2Characters !== 12)) {
-      alert('Телефонный номер должен содержать "+" и 12 цифр');
-    } else if (selectedItems === 0) {
-      alert('Выберите тип заказа');
-    } else {
-
-      // find object ответственный дезинфектор
-      let respDisinf;
-      this.props.order.allUsers.forEach((item, index) => {
-        if (item._id === this.state.disinfectorId) {
-          respDisinf = item;
-          return;
-        }
-      });
-
-      const newOrder = {
-        disinfectorId: this.state.disinfectorId,
-        tgChat: respDisinf.tgChat ? respDisinf.tgChat : '',
-        client: this.state.client,
-        clientType: this.state.clientType,
-        clientId: this.state.clientId,
-        address: this.state.address,
-        date: this.state.date,
-        dateFrom: dateStringFrom,
-        timeFrom: this.state.timeFrom,
-        phone: this.state.phone,
-        phone2: this.state.phone2,
-        typeOfService: serviceTypeString,
-        advertising: this.state.advertising,
-        comment: this.state.comment,
-        userCreated: this.props.auth.user.id,
-        userAcceptedOrder: this.state.userAcceptedOrder
-      };
-      this.props.createOrder(newOrder, this.props.history, this.props.auth.user.occupation);
+    if (selectedItems === 0) {
+      return alert('Выберите тип заказа');
     }
+
+    // validate corporate client
+    if (this.state.clientType === 'corporate' && this.state.clientId === '') {
+      return alert('Выберите корпоративного клиента');
+    }
+
+    // input data validation is successful
+
+    // найти ответственного дезинфектора
+    let respDisinf;
+    this.props.order.allUsers.forEach((item, index) => {
+      if (item._id === this.state.disinfectorId) {
+        respDisinf = item;
+        return;
+      }
+    });
+
+    // объект нового заказа
+    const newOrder = {
+      disinfectorId: this.state.disinfectorId,
+      tgChat: respDisinf.tgChat ? respDisinf.tgChat : '',
+      client: this.state.client,
+      clientType: this.state.clientType,
+      clientId: this.state.clientId,
+      address: this.state.address,
+      date: this.state.date,
+      dateFrom: dateStringFrom,
+      timeFrom: this.state.timeFrom,
+      phone: this.state.phone,
+      phone2: this.state.phone2,
+      typeOfService: serviceTypeString,
+      advertising: this.state.advertising,
+      comment: this.state.comment,
+      userCreated: this.props.auth.user.id,
+      userAcceptedOrder: this.state.userAcceptedOrder
+    };
+    // отправить запрос в БД
+    this.props.createOrder(newOrder, this.props.history, this.props.auth.user.occupation);
   };
 
   render() {
@@ -307,8 +317,8 @@ class CreateOrder extends Component {
                       <button className="btn btn-danger mb-2" onClick={this.deleteSecondPhone}>Убрать запасной номер телефона</button>
                     </React.Fragment>
                   ) : (
-                      <button className="btn btn-success mb-3" onClick={this.toggleSecondPhone}>Добавить другой номер</button>
-                    )}
+                    <button className="btn btn-success mb-3" onClick={this.toggleSecondPhone}>Добавить другой номер</button>
+                  )}
 
                   <TextFieldGroup
                     label="Дата выполнения заказа"
@@ -354,14 +364,14 @@ class CreateOrder extends Component {
                   {this.props.order.loading ? (
                     <p>Дезинфекторы загружаются...</p>
                   ) : (
-                      <SelectListGroup
-                        name="disinfectorId"
-                        value={this.state.disinfectorId}
-                        onChange={this.onChange}
-                        error={errors.disinfectorId}
-                        options={disinfectorOptions}
-                      />
-                    )}
+                    <SelectListGroup
+                      name="disinfectorId"
+                      value={this.state.disinfectorId}
+                      onChange={this.onChange}
+                      error={errors.disinfectorId}
+                      options={disinfectorOptions}
+                    />
+                  )}
                   <SelectListGroup
                     name="userAcceptedOrder"
                     value={this.state.userAcceptedOrder}

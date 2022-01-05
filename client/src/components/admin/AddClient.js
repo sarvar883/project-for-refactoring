@@ -6,6 +6,8 @@ import { addClient } from '../../actions/adminActions';
 
 import TextFieldGroup from '../common/TextFieldGroup';
 import SelectListGroup from '../common/SelectListGroup';
+import validatePhoneNumber from '../../utils/validatePhone';
+
 
 class AddClient extends Component {
   state = {
@@ -28,39 +30,38 @@ class AddClient extends Component {
     e.preventDefault();
 
     if (!this.state.type) {
-      alert('Выберите тип клиента');
-    } else if (this.state.type === 'individual') {
-      let numberCharacters = 0;
-      for (let i = 1; i <= 12; i++) {
-        if (this.state.phone[i] >= '0' && this.state.phone[i] <= '9') {
-          numberCharacters++;
-        }
+      return alert('Выберите тип клиента');
+    }
+
+    let object = {};
+
+    if (this.state.type === 'individual') {
+      // validate phone number
+      const phoneValidityObject = validatePhoneNumber(this.state.phone);
+
+      // phone
+      if (!phoneValidityObject.isValid) {
+        return alert(phoneValidityObject.message);
       }
 
-      if (this.state.phone.length !== 13) {
-        alert('Телефонный номер должен содержать 13 символов. Введите в формате +998XXXXXXXXX');
-      } else if (this.state.phone[0] !== '+') {
-        alert('Телефонный номер должен начинаться с "+". Введите в формате +998XXXXXXXXX');
-      } else if (numberCharacters !== 12) {
-        alert('Телефонный номер должен содержать "+" и 12 цифр');
-      } else {
-        let object = {
-          type: this.state.type,
-          name: this.state.name,
-          phone: this.state.phone,
-          address: this.state.address,
-          createdAt: new Date()
-        };
-        this.props.addClient(object, this.props.history, this.props.auth.user.occupation);
-      }
-    } else if (this.state.type === 'corporate') {
-      let object = {
+      object = {
+        type: this.state.type,
+        name: this.state.name,
+        phone: this.state.phone,
+        address: this.state.address,
+        createdAt: new Date()
+      };
+    }
+
+    if (this.state.type === 'corporate') {
+      object = {
         type: this.state.type,
         name: this.state.name,
         createdAt: new Date()
       };
-      this.props.addClient(object, this.props.history, this.props.auth.user.occupation);
     }
+
+    this.props.addClient(object, this.props.history, this.props.auth.user.occupation);
   }
 
   render() {
