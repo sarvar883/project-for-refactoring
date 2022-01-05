@@ -3,6 +3,7 @@ import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import materials from '../common/materials';
+import calculateStats from '../../utils/calcStats';
 import RenderOrder from '../common/RenderOrder';
 
 
@@ -20,23 +21,27 @@ class ShowAdminStats extends Component {
   };
 
   render() {
-    let totalSum = 0,
-      totalScore = 0,
-      totalConsumption = [],
-      completedOrders = [],
-      confirmedOrders = [],
-      rejectedOrders = [];
+    // calculate statistics
+    let {
+      totalSum,
+      totalScore,
+      totalOrders,
+      completed,
+      confirmedOrders,
 
-    let corporateClientOrders = {
-      sum: 0,
-      orders: 0
-    };
+      corporate,
+      corporatePercent,
+      corpSum,
+      corpSumPercent,
 
-    let indivClientOrders = {
-      sum: 0,
-      orders: 0
-    };
+      indiv,
+      indivPercent,
+      indivSum,
+      indivSumPercent
+    } = calculateStats(this.state.orders);
 
+
+    let totalConsumption = [];
     materials.forEach(object => {
       const emptyObject = {
         material: object.material,
@@ -46,72 +51,19 @@ class ShowAdminStats extends Component {
       totalConsumption.push(emptyObject);
     });
 
+    // calculate total consumption of all orders in given period
     this.state.orders.forEach(order => {
-      if (order.completed) {
-        completedOrders.push(order);
-
-        if (order.clientType === 'corporate') {
-
-          if (order.paymentMethod === 'cash') {
-            if (order.operatorConfirmed && order.adminConfirmed) {
-              confirmedOrders.push(order);
-              totalSum += order.cost;
-              totalScore += order.score;
-
-              corporateClientOrders.orders++;
-              corporateClientOrders.sum += order.cost;
+      order.disinfectors.forEach(element => {
+        element.consumption.forEach(object => {
+          totalConsumption.forEach(item => {
+            if (object.material === item.material && object.unit === item.unit) {
+              item.amount += object.amount;
             }
-
-            if ((order.operatorDecided && !order.operatorConfirmed) || (order.adminDecided && !order.adminConfirmed)) {
-              rejectedOrders.push(order);
-            }
-          }
-
-          if (order.paymentMethod === 'notCash') {
-            if (order.operatorConfirmed && order.accountantConfirmed) {
-              confirmedOrders.push(order);
-              totalSum += order.cost;
-              totalScore += order.score;
-
-              corporateClientOrders.orders++;
-              corporateClientOrders.sum += order.cost;
-            }
-            if ((order.operatorDecided && !order.operatorConfirmed) || (order.accountantDecided && !order.accountantConfirmed)) {
-              rejectedOrders.push(order);
-            }
-          }
-        }
-
-
-
-
-
-        if (order.clientType === 'individual') {
-          if (order.operatorConfirmed && order.adminConfirmed) {
-            confirmedOrders.push(order);
-            totalSum += order.cost;
-            totalScore += order.score;
-
-            indivClientOrders.orders++;
-            indivClientOrders.sum += order.cost;
-          }
-          if ((order.operatorDecided && !order.operatorConfirmed) || (order.adminDecided && !order.adminConfirmed)) {
-            rejectedOrders.push(order);
-          }
-        }
-
-        // calculate total consumption of all orders in given period
-        order.disinfectors.forEach(element => {
-          element.consumption.forEach(object => {
-            totalConsumption.forEach(item => {
-              if (object.material === item.material && object.unit === item.unit) {
-                item.amount += object.amount;
-              }
-            });
           });
         });
-      }
-    });
+      });
+    })
+
 
     let renderTotalConsumption = totalConsumption.map((item, key) =>
       <li key={key}>{item.material}: {item.amount.toLocaleString()} {item.unit}</li>
@@ -154,8 +106,8 @@ class ShowAdminStats extends Component {
               <div className="card-body p-0">
                 <h3 className="text-center">Заказы</h3>
                 <ul className="font-bold mb-0 list-unstyled">
-                  <li className='total'>Всего Получено Заказов: {this.state.orders.length}</li>
-                  <li className='completed'>Выполнено Заказов: {completedOrders.length}</li>
+                  <li className='total'>Всего Получено Заказов: {totalOrders}</li>
+                  <li className='completed'>Выполнено Заказов: {completed}</li>
                   <li className='confirmed'>Подтверждено Заказов: {confirmedOrders.length}</li>
                   <li className='totalSum'>Общая Сумма: {totalSum}</li>
                   <li className='totalScore'>Средний балл: {(totalScore / confirmedOrders.length).toFixed(2)}</li>
@@ -169,11 +121,12 @@ class ShowAdminStats extends Component {
               <div className="card-body p-0">
                 <ul className="font-bold mb-0 list-unstyled">
                   <h4 className="text-center">Корпоративные клиенты</h4>
-                  <li>Количество подтвержденных заказов: {corporateClientOrders.orders}</li>
-                  <li>На общую сумму: {corporateClientOrders.sum.toLocaleString()} UZS</li>
+                  <li>Подтвержденные заказы: {corporate} ({corporatePercent} %)</li>
+                  <li>На общую сумму: {corpSum.toLocaleString()} UZS  ({corpSumPercent} %)</li>
+
                   <h4 className="text-center">Физические клиенты</h4>
-                  <li>Количество подтвержденных заказов: {indivClientOrders.orders}</li>
-                  <li>На общую сумму: {indivClientOrders.sum.toLocaleString()} UZS</li>
+                  <li>Подтвержденные заказы: {indiv} ({indivPercent} %)</li>
+                  <li>На общую сумму: {indivSum.toLocaleString()} UZS ({indivSumPercent} %)</li>
                 </ul>
               </div>
             </div>

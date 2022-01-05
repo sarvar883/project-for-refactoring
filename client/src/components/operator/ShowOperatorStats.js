@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-// import Moment from 'react-moment';
 
+import calculateStats from '../../utils/calcStats';
 import materials from '../common/materials';
+
 
 class ShowOperatorStats extends Component {
   state = {
@@ -12,13 +13,17 @@ class ShowOperatorStats extends Component {
   };
 
   render() {
-    let confirmedOrders = [],
-      operatorDecidedOrders = [],
-      rejectedOrders = [],
-      totalScore = 0,
-      totalSum = 0,
-      totalConsumption = [];
+    // calculate statistics
+    let {
+      totalSum,
+      totalScore,
+      totalOrders,
+      confirmedOrders,
+      rejected,
+    } = calculateStats(this.state.orders);
 
+
+    let totalConsumption = [];
     materials.forEach(item => {
       let emptyObject = {
         material: item.material,
@@ -29,27 +34,6 @@ class ShowOperatorStats extends Component {
     });
 
     this.state.orders.forEach(order => {
-      if (order.completed && order.operatorDecided) {
-        operatorDecidedOrders.push(order);
-
-        if (order.operatorConfirmed && (order.adminConfirmed || order.accountantConfirmed)) {
-          confirmedOrders.push(order);
-          totalSum += order.cost / order.disinfectors.length;
-          totalScore += order.score;
-        }
-
-        if (order.clientType === 'corporate') {
-          if (!order.operatorConfirmed || (order.accountantDecided && !order.accountantConfirmed)) {
-            rejectedOrders.push(order);
-          }
-        } else if (order.clientType === 'individual') {
-          if (!order.operatorConfirmed || (order.adminDecided && !order.adminConfirmed)) {
-            rejectedOrders.push(order);
-          }
-        }
-      }
-
-
       // calculate total consumption of all orders accepted by operator in given period
       order.disinfectors.forEach(element => {
         element.consumption.forEach(object => {
@@ -60,7 +44,6 @@ class ShowOperatorStats extends Component {
           });
         });
       });
-
     });
 
     let renderTotalConsumption = totalConsumption.map((item, key) =>
@@ -74,11 +57,11 @@ class ShowOperatorStats extends Component {
             <div className="card-body p-0">
               <h4 className="text-center">Заказы, которые вы приняли:</h4>
               <ul className="font-bold mb-0 list-unstyled">
-                <li>Принятые Заказов: {this.state.orders.length}</li>
+                <li>Принятые Заказов: {totalOrders}</li>
                 <li>Выполнено и Подтверждено Заказов: {confirmedOrders.length}</li>
                 <li>Общая Сумма: {totalSum.toLocaleString()} UZS</li>
                 <li>Средний балл подтвержденных заказов: {(totalScore / confirmedOrders.length).toFixed(2)} (из 5)</li>
-                <li>Отвергнутые заказы: {rejectedOrders.length}</li>
+                <li>Отвергнутые заказы: {rejected}</li>
               </ul>
             </div>
           </div>

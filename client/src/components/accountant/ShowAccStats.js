@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-// import Moment from 'react-moment';
 
+import calculateStats from '../../utils/calcStats';
 import materials from '../common/materials';
+
 
 class ShowAccStats extends Component {
   state = {
@@ -12,13 +13,17 @@ class ShowAccStats extends Component {
   };
 
   render() {
-    let confirmedOrders = [],
-      operatorDecidedOrders = [],
-      rejectedOrders = [],
-      totalScore = 0,
-      totalSum = 0,
-      totalConsumption = [];
+    // calculate statistics
+    let {
+      totalSum,
+      totalScore,
+      totalOrders,
+      completed,
+      confirmedOrders,
+    } = calculateStats(this.state.orders);
 
+
+    let totalConsumption = [];
     materials.forEach(item => {
       let emptyObject = {
         material: item.material,
@@ -29,27 +34,6 @@ class ShowAccStats extends Component {
     });
 
     this.state.orders.forEach(order => {
-      if (order.completed && order.operatorDecided) {
-        operatorDecidedOrders.push(order);
-
-        if (order.operatorConfirmed && (order.adminConfirmed || order.accountantConfirmed)) {
-          confirmedOrders.push(order);
-          totalSum += order.cost;
-          totalScore += order.score;
-        }
-
-        if (order.clientType === 'corporate') {
-          if (!order.operatorConfirmed || (order.accountantDecided && !order.accountantConfirmed)) {
-            rejectedOrders.push(order);
-          }
-        } else if (order.clientType === 'individual') {
-          if (!order.operatorConfirmed || (order.adminDecided && !order.adminConfirmed)) {
-            rejectedOrders.push(order);
-          }
-        }
-      }
-
-
       // calculate total consumption of all orders accepted by operator in given period
       order.disinfectors.forEach(element => {
         element.consumption.forEach(object => {
@@ -60,7 +44,6 @@ class ShowAccStats extends Component {
           });
         });
       });
-
     });
 
 
@@ -75,11 +58,12 @@ class ShowAccStats extends Component {
             <div className="card-body p-0">
               <h4 className="text-center">Заказы корпоративных клиентов:</h4>
               <ul className="font-bold mb-0 list-unstyled">
-                <li>Всего Получено Заказов: {this.state.orders.length}</li>
-                <li>Выполнено и Подтверждено Заказов: {confirmedOrders.length}</li>
-                <li>Общая Сумма: {totalSum.toLocaleString()} UZS</li>
-                <li>Средний балл подтвержденных заказов: {(totalScore / confirmedOrders.length).toFixed(2)} (из 5)</li>
-                <li>Отвергнутые заказы: {rejectedOrders.length}</li>
+                <li className='total'>Всего Получено Заказов: {totalOrders}</li>
+                <li className='completed'>Выполнено Заказов: {completed}</li>
+                <li className='confirmed'>Подтверждено Заказов: {confirmedOrders.length}</li>
+                <li className='totalSum'>Общая Сумма: {totalSum}</li>
+                <li className='totalScore'>Средний балл: {(totalScore / confirmedOrders.length).toFixed(2)}</li>
+                <li>Отвергнуто Заказов: {rejected}</li>
               </ul>
             </div>
           </div>

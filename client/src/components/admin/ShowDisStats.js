@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import materials from '../common/materials';
+import calculateStats from '../../utils/calcStats';
 import RenderOrder from '../common/RenderOrder';
 
 
@@ -49,24 +50,25 @@ class ShowDisStats extends Component {
   };
 
   render() {
+    // calculate statistics
+    let {
+      totalSum,
+      totalScore,
+      totalOrders,
+      completed,
+      confirmedOrders,
+      rejected,
 
-    let totalSum = 0,
-      totalScore = 0,
-      totalSumOfAcceptedOrders = 0,
-      totalConsumption = [],
-      completedOrders = [],
-      confirmedOrders = [],
-      rejectedOrders = [];
+      corporate,
+      corporatePercent,
+      corpSum,
+      corpSumPercent,
 
-    let corporateClientOrders = {
-      sum: 0,
-      orders: 0
-    };
-
-    let indivClientOrders = {
-      sum: 0,
-      orders: 0
-    };
+      indiv,
+      indivPercent,
+      indivSum,
+      indivSumPercent
+    } = calculateStats(this.state.orders);
 
     materials.forEach(item => {
       const emptyObject = {
@@ -78,58 +80,6 @@ class ShowDisStats extends Component {
     });
 
     this.state.orders.forEach(order => {
-      if (order.completed) {
-        completedOrders.push(order);
-      }
-
-      if (order.clientType === 'corporate') {
-        if (order.paymentMethod === 'cash') {
-          if (order.operatorConfirmed && order.adminConfirmed) {
-            confirmedOrders.push(order);
-            totalSum += order.cost;
-            totalScore += order.score;
-
-            corporateClientOrders.orders++;
-            corporateClientOrders.sum += order.cost;
-          }
-
-          if ((order.operatorDecided && !order.operatorConfirmed) || (order.adminDecided && !order.adminConfirmed)) {
-            rejectedOrders.push(order);
-          }
-        }
-
-        if (order.paymentMethod === 'notCash') {
-          if (order.operatorConfirmed && order.accountantConfirmed) {
-            confirmedOrders.push(order);
-            totalSum += order.cost;
-            totalScore += order.score;
-
-            corporateClientOrders.orders++;
-            corporateClientOrders.sum += order.cost;
-          }
-          if ((order.operatorDecided && !order.operatorConfirmed) || (order.accountantDecided && !order.accountantConfirmed)) {
-            rejectedOrders.push(order);
-          }
-        }
-      }
-
-
-
-
-      if (order.clientType === 'individual') {
-        if (order.completed && order.operatorConfirmed && order.adminConfirmed) {
-          confirmedOrders.push(order);
-          totalSum += order.cost / order.disinfectors.length;
-          totalScore += order.score;
-
-          indivClientOrders.orders++;
-          indivClientOrders.sum += order.cost;
-        }
-        if (order.completed && ((order.operatorDecided && !order.operatorConfirmed) || (order.adminDecided && !order.adminConfirmed))) {
-          rejectedOrders.push(order);
-        }
-      }
-
       // calculate total consumption of all orders of disinfector in given period
       if (order.completed) {
 
@@ -146,8 +96,8 @@ class ShowDisStats extends Component {
         });
 
       }
-
     });
+
 
     this.state.acceptedOrders.forEach(order => {
 
@@ -189,12 +139,12 @@ class ShowDisStats extends Component {
               <div className="card-body p-0">
                 <h2 className="text-center">Заказы</h2>
                 <ul className="font-bold mb-0 list-unstyled">
-                  <li>Всего Получено Заказов: {this.state.orders.length}</li>
-                  <li>Выполнено Заказов: {completedOrders.length}</li>
-                  <li>Подтверждено Заказов: {confirmedOrders.length}</li>
-                  <li>Общая Сумма: {totalSum.toLocaleString()} UZS</li>
-                  <li>Средний балл подтвержденных заказов: {(totalScore / confirmedOrders.length).toFixed(2)} (из 5)</li>
-                  <li>Отвергнуто Заказов: {rejectedOrders.length}</li>
+                  <li className='total'>Всего Получено Заказов: {totalOrders}</li>
+                  <li className='completed'>Выполнено Заказов: {completed}</li>
+                  <li className='confirmed'>Подтверждено Заказов: {confirmedOrders.length}</li>
+                  <li className='totalSum'>Общая Сумма: {totalSum}</li>
+                  <li className='totalScore'>Средний балл: {(totalScore / confirmedOrders.length).toFixed(2)}</li>
+                  <li>Отвергнуто Заказов: {rejected}</li>
                 </ul>
               </div>
             </div>
@@ -207,12 +157,14 @@ class ShowDisStats extends Component {
                   <li>Пользователь принял заказов: {this.state.acceptedOrders.length}</li>
                   <li>Общая сумма принятых заказов: {totalSumOfAcceptedOrders.toLocaleString()} UZS</li>
 
-                  <h4 className="text-center mt-2">Корпоративные клиенты</h4>
-                  <li>Количество подтвержденных заказов: {corporateClientOrders.orders}</li>
-                  <li>На общую сумму: {corporateClientOrders.sum.toLocaleString()} UZS</li>
+                  <h4 className="text-center">Корпоративные клиенты</h4>
+                  <li>Подтвержденные заказы: {corporate} ({corporatePercent} %)</li>
+                  <li>На общую сумму: {corpSum.toLocaleString()} UZS  ({corpSumPercent} %)</li>
+
                   <h4 className="text-center">Физические клиенты</h4>
-                  <li>Количество подтвержденных заказов: {indivClientOrders.orders}</li>
-                  <li>На общую сумму: {indivClientOrders.sum.toLocaleString()} UZS</li>
+                  <li>Подтвержденные заказы: {indiv} ({indivPercent} %)</li>
+                  <li>На общую сумму: {indivSum.toLocaleString()} UZS ({indivSumPercent} %)</li>
+
                 </ul>
               </div>
             </div>

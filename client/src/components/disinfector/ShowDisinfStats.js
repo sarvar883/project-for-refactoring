@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import RenderOrder from '../common/RenderOrder';
+import calculateStats from '../../utils/calcStats';
 import materials from '../common/materials';
 
 
@@ -43,15 +44,18 @@ class ShowDisinfStats extends Component {
   };
 
   render() {
-    let operatorDecidedOrders = [],
-      confirmedOrders = [],
-      rejectedOrders = [],
-      totalScore = 0,
-      totalSum = 0,
-      totalSumOfAcceptedOrders = 0,
-      totalConsumption = [],
-      emptyArray = [];
+    // calculate statistics
+    let {
+      totalSum,
+      totalScore,
+      totalOrders,
+      completed,
+      confirmedOrders,
+    } = calculateStats(this.state.orders);
 
+
+    let totalConsumption = [];
+    let emptyArray = [];
     materials.forEach(item => {
       let emptyObject = {
         material: item.material,
@@ -63,28 +67,6 @@ class ShowDisinfStats extends Component {
     });
 
     this.state.orders.forEach(order => {
-      if (order.completed && order.operatorDecided) {
-        operatorDecidedOrders.push(order);
-
-        if (order.operatorConfirmed && (order.adminConfirmed || order.accountantConfirmed)) {
-          confirmedOrders.push(order);
-          totalSum += order.cost / order.disinfectors.length;
-          totalScore += order.score;
-        }
-
-
-        if (order.clientType === 'corporate') {
-          if (!order.operatorConfirmed || (order.accountantDecided && !order.accountantConfirmed)) {
-            rejectedOrders.push(order);
-          }
-        } else if (order.clientType === 'individual') {
-          if (!order.operatorConfirmed || (order.adminDecided && !order.adminConfirmed)) {
-            rejectedOrders.push(order);
-          }
-        }
-      }
-
-
       totalConsumption = [...emptyArray];
       // calculate total consumption of all orders in given period of the logged in disinfector
       order.disinfectors.forEach(element => {
@@ -104,6 +86,8 @@ class ShowDisinfStats extends Component {
       <li key={key}>{item.material}: {item.amount.toLocaleString()} {item.unit}</li>
     );
 
+
+    let totalSumOfAcceptedOrders = 0;
     this.state.acceptedOrders.forEach(order => {
 
       if (order.clientType === 'corporate') {
@@ -122,86 +106,6 @@ class ShowDisinfStats extends Component {
 
     let renderConfirmedOrders = this.renderOrders(confirmedOrders);
     let renderAcceptedOrders = this.renderOrders(this.state.acceptedOrders);
-
-    // let renderConfirmedOrders = confirmedOrders.map((item, key) => {
-    //   // consumption array of specific confirmed order
-    //   let consumptionArray = [];
-
-    //   item.disinfectors.forEach(element => {
-    //     consumptionArray.push({
-    //       user: element.user,
-    //       consumption: element.consumption
-    //     });
-    //   });
-
-    //   let renderOrderConsumption = consumptionArray.map((object, number) =>
-    //     <li key={number}>
-    //       <p className="mb-0">Пользователь: {object.user.occupation} {object.user.name}</p>
-    //       {object.consumption.map((element, number) =>
-    //         <p key={number} className="mb-0">{element.material}: {element.amount.toLocaleString()} {element.unit}</p>
-    //       )}
-    //     </li>
-    //   );
-
-
-    //   return (
-    //     <div className="col-lg-4 col-md-6" key={key}>
-    //       <div className="card order mt-2">
-    //         <div className="card-body p-0">
-    //           <ul className="font-bold mb-0 list-unstyled">
-    //             <li>Ответственный: {item.disinfectorId.occupation} {item.disinfectorId.name}</li>
-
-    //             {item.clientType === 'corporate' ?
-    //               <React.Fragment>
-    //                 <li>Корпоративный Клиент: {item.clientId.name}</li>
-    //                 <li>Имя клиента: {item.client}</li>
-    //               </React.Fragment>
-    //               : ''}
-
-    //             {item.clientType === 'individual' ?
-    //               <li>Физический Клиент: {item.client}</li>
-    //               : ''}
-
-
-    //             <li>Телефон Клиента: {item.phone}</li>
-    //             {item.phone2 ? <li>Другой номер: {item.phone2}</li> : ''}
-    //             <li>Адрес: {item.address}</li>
-    //             <li>Дата выполнения: <Moment format="DD/MM/YYYY">{item.dateFrom}</Moment></li>
-    //             <li>Время выполнения: С <Moment format="HH:mm">{item.dateFrom}</Moment> ПО <Moment format="HH:mm">{item.completedAt}</Moment></li>
-    //             <li>Комментарии Оператора: {item.comment ? item.comment : 'Нет комментариев'}</li>
-    //             <li>Комментарии Дезинфектора: {item.disinfectorComment ? item.disinfectorComment : 'Нет комментариев'}</li>
-
-    //             <li>Расход Материалов (заказ выполнили {item.disinfectors.length} чел):</li>
-    //             <ul className="font-bold mb-0">
-    //               {renderOrderConsumption}
-    //             </ul>
-
-    //             {item.clientType === 'corporate' ?
-    //               <React.Fragment>
-    //                 <li>Номер Договора: {item.contractNumber}</li>
-    //                 {item.accountantDecided && item.accountantConfirmed ? (
-    //                   <React.Fragment>
-    //                     <li>Счет-Фактура: {item.invoice}</li>
-    //                     <li>Общая Cумма: {item.cost.toLocaleString()} UZS (каждому по {(item.cost / item.disinfectors.length).toLocaleString()} UZS)</li>
-    //                   </React.Fragment>
-    //                 ) : ''}
-    //               </React.Fragment>
-    //               : ''}
-
-    //             {item.clientType === 'individual' ?
-    //               <React.Fragment>
-    //                 <li>Общая Cумма: {item.cost.toLocaleString()} UZS (каждому по {(item.cost / item.disinfectors.length).toLocaleString()} UZS)</li>
-    //               </React.Fragment>
-    //               : ''}
-
-    //             <li>Балл: {item.score}</li>
-    //             <li>Отзыв Клиента: {item.clientReview}</li>
-    //           </ul>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   )
-    // });
 
 
     // total received materials that disinfector received from admin in given period
@@ -261,11 +165,11 @@ class ShowDisinfStats extends Component {
               <div className="card-body p-0">
                 <h4 className="text-center">Заказы</h4>
                 <ul className="font-bold mb-0 list-unstyled">
-                  <li>Всего Получено Заказов: {this.state.orders.length}</li>
-                  <li>Выполнено и Подтверждено Заказов: {confirmedOrders.length}</li>
-                  <li>Общая Сумма: {totalSum.toLocaleString()} UZS</li>
-                  <li>Отвергнуто заказов: {rejectedOrders.length}</li>
-                  <li className="pb-2">Средний балл подтвержденных заказов: {(totalScore / confirmedOrders.length).toFixed(2)} (из 5)</li>
+                  <li className='total'>Всего Получено Заказов: {totalOrders}</li>
+                  <li className='completed'>Выполнено Заказов: {completed}</li>
+                  <li className='confirmed'>Подтверждено Заказов: {confirmedOrders.length}</li>
+                  <li className='totalSum'>Общая Сумма: {totalSum}</li>
+                  <li className='totalScore'>Средний балл: {(totalScore / confirmedOrders.length).toFixed(2)}</li>
 
                   <li>Принятые заказы: {this.state.acceptedOrders.length}</li>
                   <li>Общая сумма принятых заказов: {totalSumOfAcceptedOrders.toLocaleString()} UZS</li>
